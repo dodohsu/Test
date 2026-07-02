@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>JBridge.ai — Proposal 1: Aurora Dark</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ─────────────────────────────────────────────
+   PROPOSAL 1 · AURORA DARK
+   Style: Cinematic Dark + Aurora Mesh + Glassmorphism
+   References: Linear.app · Vercel · Resend · Luma
+   ───────────────────────────────────────────── */
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:        #03050f;
+  --bg-card:   rgba(255,255,255,0.04);
+  --border:    rgba(255,255,255,0.08);
+  --border-hi: rgba(255,255,255,0.14);
+  --fg:        #f0f2ff;
+  --muted:     #7a7f9a;
+  --accent:    #6366f1;
+  --accent2:   #8b5cf6;
+  --accent3:   #06b6d4;
+  --green:     #22c55e;
+  --red:       #ef4444;
+  --radius:    14px;
+  --font:      'Inter', system-ui, sans-serif;
+  --mono:      'JetBrains Mono', monospace;
+}
+
+html { font-family: var(--font); background: var(--bg); color: var(--fg); scroll-behavior: smooth; }
+body { min-height: 100vh; overflow-x: hidden; }
+
+/* ── Aurora background ── */
+.aurora-wrap {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden;
+}
+.blob {
+  position: absolute; border-radius: 50%; filter: blur(120px); opacity: .18;
+  animation: drift 18s ease-in-out infinite alternate;
+}
+.blob-1 { width: 700px; height: 700px; background: #6366f1; top: -200px; left: -100px; animation-delay: 0s; }
+.blob-2 { width: 600px; height: 600px; background: #8b5cf6; top: 100px; right: -150px; animation-delay: -6s; }
+.blob-3 { width: 500px; height: 500px; background: #06b6d4; bottom: 0; left: 30%; animation-delay: -12s; }
+@keyframes drift {
+  0%   { transform: translate(0,0) scale(1); }
+  50%  { transform: translate(40px, -30px) scale(1.08); }
+  100% { transform: translate(-20px, 20px) scale(.95); }
+}
+
+/* ── Noise texture overlay ── */
+.noise {
+  position: fixed; inset: 0; z-index: 1; pointer-events: none; opacity: .035;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ── Layout wrapper ── */
+.site { position: relative; z-index: 2; }
+
+/* ─── NAV ─── */
+nav {
+  position: sticky; top: 0; z-index: 100;
+  padding: 0 24px;
+  border-bottom: 1px solid var(--border);
+  backdrop-filter: blur(24px) saturate(180%);
+  background: rgba(3,5,15,.7);
+}
+.nav-inner {
+  max-width: 1100px; margin: 0 auto;
+  height: 60px; display: flex; align-items: center; justify-content: space-between;
+}
+.logo {
+  font-size: 17px; font-weight: 700; letter-spacing: -.4px;
+  background: linear-gradient(135deg, #a5b4fc 0%, #818cf8 50%, #6366f1 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  text-decoration: none;
+}
+.nav-links { display: flex; align-items: center; gap: 28px; }
+.nav-links a {
+  font-size: 13.5px; color: var(--muted); text-decoration: none;
+  transition: color .2s;
+}
+.nav-links a:hover { color: var(--fg); }
+.nav-actions { display: flex; align-items: center; gap: 10px; }
+.btn-ghost {
+  padding: 7px 16px; border-radius: 8px; font-size: 13.5px; font-weight: 500;
+  color: var(--muted); border: 1px solid var(--border); background: transparent;
+  cursor: pointer; text-decoration: none; transition: all .2s;
+}
+.btn-ghost:hover { color: var(--fg); border-color: var(--border-hi); background: rgba(255,255,255,.05); }
+.btn-primary {
+  padding: 7px 18px; border-radius: 8px; font-size: 13.5px; font-weight: 600;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  color: #fff; border: none; cursor: pointer; text-decoration: none;
+  box-shadow: 0 0 20px rgba(99,102,241,.35);
+  transition: all .25s cubic-bezier(.34,1.56,.64,1);
+}
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 35px rgba(99,102,241,.5), 0 8px 24px rgba(0,0,0,.3);
+}
+
+/* ─── HERO ─── */
+.hero {
+  padding: 110px 24px 90px;
+  text-align: center;
+  position: relative;
+}
+.hero::after {
+  content: '';
+  position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
+  width: 600px; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(99,102,241,.4), transparent);
+}
+.hero-eyebrow {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 5px 14px; border-radius: 100px;
+  background: rgba(99,102,241,.12); border: 1px solid rgba(99,102,241,.25);
+  font-size: 12px; font-weight: 500; color: #a5b4fc;
+  letter-spacing: .04em; text-transform: uppercase;
+  margin-bottom: 28px;
+}
+.hero-eyebrow .dot { width: 6px; height: 6px; border-radius: 50%; background: #6366f1;
+  box-shadow: 0 0 8px #6366f1; animation: pulse-dot 2s ease-in-out infinite; }
+@keyframes pulse-dot { 0%,100%{ opacity:1; transform:scale(1); } 50%{ opacity:.5; transform:scale(.8); } }
+
+.hero h1 {
+  font-size: clamp(46px, 7vw, 80px); font-weight: 900;
+  letter-spacing: -.04em; line-height: 1.05;
+  background: linear-gradient(160deg, #fff 0%, rgba(255,255,255,.7) 60%, rgba(255,255,255,.4) 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  margin-bottom: 22px;
+}
+.hero p {
+  font-size: 18px; color: var(--muted); line-height: 1.65;
+  max-width: 520px; margin: 0 auto 40px;
+}
+.hero-ctas { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
+.btn-hero-primary {
+  padding: 13px 28px; border-radius: 10px; font-size: 15px; font-weight: 600;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  color: #fff; border: none; cursor: pointer; text-decoration: none;
+  box-shadow: 0 0 30px rgba(99,102,241,.4);
+  transition: all .25s cubic-bezier(.34,1.56,.64,1);
+  display: inline-flex; align-items: center; gap: 8px;
+}
+.btn-hero-primary:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 0 50px rgba(99,102,241,.6), 0 12px 32px rgba(0,0,0,.4);
+}
+.btn-hero-secondary {
+  padding: 13px 28px; border-radius: 10px; font-size: 15px; font-weight: 500;
+  color: var(--fg); border: 1px solid var(--border-hi); background: rgba(255,255,255,.04);
+  cursor: pointer; text-decoration: none;
+  backdrop-filter: blur(8px);
+  transition: all .2s;
+  display: inline-flex; align-items: center; gap: 8px;
+}
+.btn-hero-secondary:hover { background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.2); }
+
+/* ── Provider badges ── */
+.providers {
+  display: flex; justify-content: center; align-items: center;
+  gap: 12px; flex-wrap: wrap; margin-top: 56px;
+}
+.provider-chip {
+  display: inline-flex; align-items: center; gap: 9px;
+  padding: 8px 18px; border-radius: 100px;
+  background: rgba(255,255,255,.04);
+  border: 1px solid var(--border);
+  backdrop-filter: blur(12px);
+  font-size: 14px; font-weight: 600; color: var(--fg);
+  cursor: default; transition: all .25s cubic-bezier(.34,1.56,.64,1);
+}
+.provider-chip:hover {
+  transform: translateY(-4px);
+  border-color: rgba(255,255,255,.18);
+  box-shadow: 0 8px 32px rgba(0,0,0,.3), 0 0 0 1px rgba(255,255,255,.08);
+  background: rgba(255,255,255,.08);
+}
+.provider-chip:hover .chip-dot { box-shadow: 0 0 12px var(--glow); }
+.chip-dot { width: 8px; height: 8px; border-radius: 50%; transition: box-shadow .25s; }
+
+/* ─── FEATURES ─── */
+.features {
+  padding: 100px 24px;
+  position: relative;
+}
+.section-label {
+  font-size: 12px; font-weight: 600; letter-spacing: .1em;
+  text-transform: uppercase; color: #6366f1; margin-bottom: 16px;
+}
+.section-title {
+  font-size: clamp(28px, 4vw, 42px); font-weight: 800; letter-spacing: -.03em;
+  color: var(--fg); margin-bottom: 12px;
+}
+.section-sub { font-size: 16px; color: var(--muted); max-width: 480px; line-height: 1.6; }
+.section-head { margin-bottom: 56px; }
+
+.container { max-width: 1100px; margin: 0 auto; }
+
+.features-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto auto;
+  gap: 16px;
+}
+
+/* Glass cards */
+.glass-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  backdrop-filter: blur(20px);
+  padding: 32px;
+  transition: all .3s cubic-bezier(.34,1.56,.64,1);
+  position: relative; overflow: hidden;
+}
+.glass-card::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,.04) 0%, transparent 60%);
+  pointer-events: none;
+}
+.glass-card:hover {
+  border-color: var(--border-hi);
+  transform: translateY(-4px);
+  box-shadow: 0 20px 60px rgba(0,0,0,.4), 0 0 0 1px rgba(255,255,255,.06);
+}
+.card-icon {
+  width: 44px; height: 44px; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 20px; font-size: 20px;
+}
+.card-icon.purple { background: rgba(99,102,241,.15); box-shadow: 0 0 20px rgba(99,102,241,.2); }
+.card-icon.violet { background: rgba(139,92,246,.15); box-shadow: 0 0 20px rgba(139,92,246,.2); }
+.card-icon.cyan { background: rgba(6,182,212,.15); box-shadow: 0 0 20px rgba(6,182,212,.2); }
+.card-icon.green { background: rgba(34,197,94,.15); box-shadow: 0 0 20px rgba(34,197,94,.2); }
+.card-title { font-size: 17px; font-weight: 700; color: var(--fg); margin-bottom: 10px; }
+.card-desc { font-size: 14px; color: var(--muted); line-height: 1.65; }
+
+/* Code card – span full width */
+.code-card {
+  grid-column: 1 / -1;
+  padding: 0; overflow: hidden;
+}
+.code-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--border);
+  background: rgba(255,255,255,.02);
+}
+.code-header-left { display: flex; align-items: center; gap: 10px; }
+.code-dots { display: flex; gap: 6px; }
+.code-dots span {
+  width: 11px; height: 11px; border-radius: 50%;
+}
+.code-dots .r { background: #ff5f57; }
+.code-dots .y { background: #ffbd2e; }
+.code-dots .g { background: #28c840; }
+.code-label { font-size: 12px; color: var(--muted); font-family: var(--mono); }
+.copy-btn {
+  font-size: 11px; color: var(--muted); background: rgba(255,255,255,.06);
+  border: 1px solid var(--border); border-radius: 6px; padding: 4px 10px; cursor: pointer;
+  font-family: var(--font); transition: all .15s;
+}
+.copy-btn:hover { background: rgba(255,255,255,.1); color: var(--fg); }
+.code-body { padding: 28px 32px; overflow-x: auto; }
+pre {
+  font-family: var(--mono); font-size: 13.5px; line-height: 1.8;
+  color: #cdd6f4;
+}
+.t-cmd { color: #89dceb; } /* command */
+.t-flag { color: #89b4fa; } /* flag */
+.t-url { color: #a6e3a1; } /* url */
+.t-str { color: #f9e2af; } /* string */
+.t-key { color: #cba6f7; } /* key highlight */
+.t-comment { color: #585b70; } /* comment */
+
+/* ─── SDK SECTION ─── */
+.sdk-section { padding: 0 24px 100px; }
+.sdk-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.sdk-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px;
+  transition: all .25s;
+  position: relative; overflow: hidden;
+}
+.sdk-card::after {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(99,102,241,.5), transparent);
+  opacity: 0; transition: opacity .3s;
+}
+.sdk-card:hover::after { opacity: 1; }
+.sdk-card:hover {
+  border-color: rgba(99,102,241,.25);
+  background: rgba(99,102,241,.05);
+  transform: translateY(-3px);
+}
+.sdk-icon {
+  width: 40px; height: 40px; border-radius: 10px;
+  background: rgba(99,102,241,.12); display: flex; align-items: center; justify-content: center;
+  font-size: 18px; margin-bottom: 18px;
+}
+.sdk-title {
+  font-size: 15px; font-weight: 700; color: var(--fg); margin-bottom: 6px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.sdk-badge {
+  font-family: var(--mono); font-size: 10px; font-weight: 700;
+  color: #6366f1; background: rgba(99,102,241,.12);
+  padding: 2px 8px; border-radius: 5px; letter-spacing: .03em;
+}
+.sdk-endpoint {
+  font-family: var(--mono); font-size: 11.5px; color: #a5b4fc;
+  background: rgba(99,102,241,.08); padding: 6px 10px; border-radius: 6px;
+  margin: 10px 0; display: block;
+}
+.sdk-desc { font-size: 13px; color: var(--muted); line-height: 1.6; }
+
+/* ─── PRICING ─── */
+.pricing-section { padding: 0 24px 100px; }
+.pricing-wrap {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius); overflow: hidden;
+  backdrop-filter: blur(20px);
+}
+.pricing-head {
+  display: grid; grid-template-columns: 1fr 1fr 1fr;
+  padding: 14px 24px;
+  background: rgba(255,255,255,.03);
+  border-bottom: 1px solid var(--border);
+  font-size: 11px; font-weight: 600; letter-spacing: .08em;
+  text-transform: uppercase; color: var(--muted);
+}
+.pricing-head .col-r { text-align: right; }
+.pricing-row {
+  display: grid; grid-template-columns: 1fr 1fr 1fr;
+  padding: 14px 24px;
+  border-bottom: 1px solid rgba(255,255,255,.04);
+  transition: background .15s;
+  font-size: 13.5px;
+}
+.pricing-row:last-child { border-bottom: none; }
+.pricing-row:hover { background: rgba(255,255,255,.03); }
+.pricing-row .model { font-family: var(--mono); color: var(--fg); font-size: 13px; }
+.pricing-row .price { text-align: right; color: var(--muted); font-variant-numeric: tabular-nums; }
+.pricing-row .price.highlight { color: #a5b4fc; }
+
+/* ─── CTA ─── */
+.cta-section {
+  padding: 100px 24px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.cta-section::before {
+  content: '';
+  position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%);
+  width: 800px; height: 400px;
+  background: radial-gradient(ellipse 60% 50%, rgba(99,102,241,.12) 0%, transparent 70%);
+  pointer-events: none;
+}
+.cta-section h2 {
+  font-size: clamp(28px, 4vw, 48px); font-weight: 800; letter-spacing: -.03em;
+  color: var(--fg); margin-bottom: 16px;
+}
+.cta-section p { font-size: 16px; color: var(--muted); margin-bottom: 40px; }
+
+/* ─── FOOTER ─── */
+footer {
+  border-top: 1px solid var(--border);
+  padding: 32px 24px;
+}
+.footer-inner {
+  max-width: 1100px; margin: 0 auto;
+  display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;
+}
+.footer-copy { font-size: 13px; color: var(--muted); }
+.footer-links { display: flex; gap: 24px; }
+.footer-links a { font-size: 13px; color: var(--muted); text-decoration: none; transition: color .2s; }
+.footer-links a:hover { color: var(--fg); }
+
+/* ─── GRADIENT DIVIDER ─── */
+.divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(99,102,241,.3), rgba(139,92,246,.3), transparent);
+  margin: 0 24px;
+}
+
+/* ─── SVG ICONS ─── */
+svg { display: inline-block; vertical-align: middle; }
+
+/* ─── PROPOSAL LABEL ─── */
+.proposal-label {
+  position: fixed; bottom: 24px; right: 24px; z-index: 999;
+  background: rgba(99,102,241,.9); color: #fff;
+  padding: 8px 16px; border-radius: 100px;
+  font-size: 12px; font-weight: 600; letter-spacing: .04em;
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,.2);
+}
+</style>
+</head>
+<body>
+
+<div class="aurora-wrap">
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="blob blob-3"></div>
+</div>
+<div class="noise"></div>
+
+<div class="site">
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <a href="#" class="logo">JBridge.ai</a>
+    <div class="nav-links">
+      <a href="#features">Features</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#">Docs</a>
+    </div>
+    <div class="nav-actions">
+      <a href="#" class="btn-ghost">Sign In</a>
+      <a href="#" class="btn-primary">Get Started Free</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-eyebrow">
+    <span class="dot"></span>
+    Access leading AI models from top providers
+  </div>
+  <h1>One API.<br>Every Model.</h1>
+  <p>Compatible with OpenAI and Anthropic formats. Access top models from every major provider — pay only for what you use.</p>
+  <div class="hero-ctas">
+    <a href="#" class="btn-hero-primary">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+      Get Started Free
+    </a>
+    <a href="#features" class="btn-hero-secondary">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+      See Features
+    </a>
+  </div>
+
+  <!-- Provider badges -->
+  <div class="providers">
+    <div class="provider-chip" style="--glow:#10A37F">
+      <span class="chip-dot" style="background:#10A37F"></span> OpenAI
+    </div>
+    <div class="provider-chip" style="--glow:#D97757">
+      <span class="chip-dot" style="background:#D97757"></span> Anthropic
+    </div>
+    <div class="provider-chip" style="--glow:#3B82F6">
+      <span class="chip-dot" style="background:#3B82F6"></span> DeepSeek
+    </div>
+    <div class="provider-chip" style="--glow:#9CA3AF">
+      <span class="chip-dot" style="background:#9CA3AF"></span> Grok
+    </div>
+    <div class="provider-chip" style="--glow:#8B5CF6">
+      <span class="chip-dot" style="background:#8B5CF6"></span> Kimi
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- FEATURES -->
+<section class="features" id="features">
+  <div class="container">
+    <div class="section-head">
+      <div class="section-label">Features</div>
+      <h2 class="section-title">Everything You Need</h2>
+      <p class="section-sub">Built for developers who want simplicity without compromise</p>
+    </div>
+
+    <div class="features-grid">
+      <!-- Feature 1 -->
+      <div class="glass-card">
+        <div class="card-icon purple">
+          <svg width="20" height="20" fill="none" stroke="#818cf8" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/></svg>
+        </div>
+        <div class="card-title">Unified API</div>
+        <div class="card-desc">Compatible with OpenAI and Anthropic formats, supporting all major models. Switch providers without changing a line of code.</div>
+      </div>
+
+      <!-- Feature 2 -->
+      <div class="glass-card">
+        <div class="card-icon cyan">
+          <svg width="20" height="20" fill="none" stroke="#22d3ee" stroke-width="2" viewBox="0 0 24 24"><path d="M3 3v16a2 2 0 0 0 2 2h16M7 16h8m-8-5h12M7 6h3"/></svg>
+        </div>
+        <div class="card-title">Usage Tracking</div>
+        <div class="card-desc">Real-time monitoring of tokens, costs, and latency for every request. Know exactly where your budget goes.</div>
+      </div>
+
+      <!-- Feature 3 -->
+      <div class="glass-card">
+        <div class="card-icon violet">
+          <svg width="20" height="20" fill="none" stroke="#a78bfa" stroke-width="2" viewBox="0 0 24 24"><path d="m15.5 7.5 2.3 2.3a1 1 0 0 0 1.4 0l2.1-2.1a1 1 0 0 0 0-1.4L19 4m2-2-9.6 9.6"/><circle cx="7.5" cy="15.5" r="5.5"/></svg>
+        </div>
+        <div class="card-title">Key Management</div>
+        <div class="card-desc">Create multiple API keys with per-key model restrictions and rate limits. Full control over access.</div>
+      </div>
+
+      <!-- Feature 4 -->
+      <div class="glass-card">
+        <div class="card-icon green">
+          <svg width="20" height="20" fill="none" stroke="#4ade80" stroke-width="2" viewBox="0 0 24 24"><path d="M4.9 16.1C1 12.2 1 5.8 4.9 1.9m2.9 2.8a6.14 6.14 0 0 0-.8 7.5"/><circle cx="12" cy="9" r="2"/><path d="M16.2 4.8c2 2 2.26 5.11.8 7.47M19.1 1.9a9.96 9.96 0 0 1 0 14.1m-9.6 2h5M8 22l4-11 4 11"/></svg>
+        </div>
+        <div class="card-title">Streaming Support</div>
+        <div class="card-desc">Full SSE streaming support for chat completions. Low-latency, real-time responses with zero configuration.</div>
+      </div>
+
+      <!-- Code card -->
+      <div class="glass-card code-card">
+        <div class="code-header">
+          <div class="code-header-left">
+            <div class="code-dots">
+              <span class="r"></span><span class="y"></span><span class="g"></span>
+            </div>
+            <span class="code-label">curl · chat/completions</span>
+          </div>
+          <button class="copy-btn">Copy</button>
+        </div>
+        <div class="code-body">
+<pre><span class="t-cmd">curl</span> <span class="t-flag">-X POST</span> <span class="t-url">https://api.jbridge.ai/v1/chat/completions</span> <span class="t-flag">\</span>
+  <span class="t-flag">-H</span> <span class="t-str">"Authorization: Bearer <span class="t-key">sk-jb-YOUR_KEY</span>"</span> <span class="t-flag">\</span>
+  <span class="t-flag">-H</span> <span class="t-str">"Content-Type: application/json"</span> <span class="t-flag">\</span>
+  <span class="t-flag">-d</span> <span class="t-str">'{</span>
+    <span class="t-str">"model"</span><span style="color:#cdd6f4">:</span> <span class="t-str">"gpt-5.4"</span><span style="color:#cdd6f4">,</span>
+    <span class="t-str">"messages"</span><span style="color:#cdd6f4">: [</span>
+      <span style="color:#cdd6f4">{ </span><span class="t-str">"role"</span><span style="color:#cdd6f4">:</span> <span class="t-str">"user"</span><span style="color:#cdd6f4">,</span> <span class="t-str">"content"</span><span style="color:#cdd6f4">:</span> <span class="t-str">"Hello!"</span><span style="color:#cdd6f4"> }</span>
+    <span style="color:#cdd6f4">]</span>
+  <span class="t-str">'}</span></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- SDK SECTION -->
+<section class="sdk-section">
+  <div class="container">
+    <div class="section-head">
+      <div class="section-label">SDKs</div>
+      <h2 class="section-title">Works with Popular SDKs</h2>
+      <p class="section-sub">Change your base URL. That's it.</p>
+    </div>
+    <div class="sdk-grid">
+      <div class="sdk-card">
+        <div class="sdk-icon">
+          <svg width="18" height="18" fill="none" stroke="#818cf8" stroke-width="2" viewBox="0 0 24 24"><path d="M4 17l6-6-6-6M12 19h8"/></svg>
+        </div>
+        <div class="sdk-title">OpenAI SDK <span class="sdk-badge">POST</span></div>
+        <code class="sdk-endpoint">/api/v1/chat/completions</code>
+        <p class="sdk-desc">Drop-in replacement for Python, Node.js, and any OpenAI-compatible SDK.</p>
+      </div>
+      <div class="sdk-card">
+        <div class="sdk-icon">
+          <svg width="18" height="18" fill="none" stroke="#a78bfa" stroke-width="2" viewBox="0 0 24 24"><path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594zM20 2v4m2-2h-4"/><circle cx="4" cy="20" r="2"/></svg>
+        </div>
+        <div class="sdk-title">Anthropic SDK <span class="sdk-badge">POST</span></div>
+        <code class="sdk-endpoint">/api/v1/messages</code>
+        <p class="sdk-desc">Compatible with the official Anthropic SDK and Claude Code LLM Gateway.</p>
+      </div>
+      <div class="sdk-card">
+        <div class="sdk-icon">
+          <svg width="18" height="18" fill="none" stroke="#22d3ee" stroke-width="2" viewBox="0 0 24 24"><path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/></svg>
+        </div>
+        <div class="sdk-title">OpenAI Responses <span class="sdk-badge">POST</span></div>
+        <code class="sdk-endpoint">/api/v1/responses</code>
+        <p class="sdk-desc">Supports the OpenAI Responses API format for Codex CLI and Agents SDK.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- PRICING -->
+<section class="pricing-section" id="pricing">
+  <div class="container">
+    <div class="section-head" style="text-align:center;">
+      <div class="section-label" style="text-align:center;">Pricing</div>
+      <h2 class="section-title">Transparent Pricing</h2>
+      <p class="section-sub" style="margin:0 auto;">Pay per token. No subscriptions, no contracts.</p>
+    </div>
+    <div class="pricing-wrap">
+      <div class="pricing-head">
+        <span>Model</span>
+        <span class="col-r">Input / 1M tokens</span>
+        <span class="col-r">Output / 1M tokens</span>
+      </div>
+      <div class="pricing-row"><span class="model">claude-haiku-4-5</span><span class="price">$1.00</span><span class="price">$5.00</span></div>
+      <div class="pricing-row"><span class="model">claude-opus-4-7</span><span class="price">$5.00</span><span class="price">$25.00</span></div>
+      <div class="pricing-row"><span class="model">claude-sonnet-4-6</span><span class="price">$3.00</span><span class="price">$15.00</span></div>
+      <div class="pricing-row"><span class="model">deepseek-v3.2</span><span class="price">$0.58</span><span class="price">$1.68</span></div>
+      <div class="pricing-row"><span class="model">gpt-5.4</span><span class="price highlight">$2.50</span><span class="price highlight">$15.00</span></div>
+      <div class="pricing-row"><span class="model">gpt-5.4-mini</span><span class="price">$0.75</span><span class="price">$4.50</span></div>
+      <div class="pricing-row"><span class="model">gpt-5.4-nano</span><span class="price">$0.20</span><span class="price">$1.25</span></div>
+      <div class="pricing-row"><span class="model">grok-4-1-fast-reasoning</span><span class="price">$0.20</span><span class="price">$0.50</span></div>
+      <div class="pricing-row"><span class="model">kimi-k2.5</span><span class="price">$0.60</span><span class="price">$3.00</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <div class="container">
+    <h2>Ready to get started?</h2>
+    <p>Create a free account and get your API key in seconds.</p>
+    <a href="#" class="btn-hero-primary">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+      Create Free Account
+    </a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <p class="footer-copy">© 2026 KKCompany Technologies. All rights reserved.</p>
+    <nav class="footer-links">
+      <a href="#">Docs</a>
+      <a href="#">Terms of Service</a>
+      <a href="#">Privacy Policy</a>
+      <a href="#">Refund Policy</a>
+    </nav>
+  </div>
+</footer>
+
+</div><!-- /site -->
+
+<div class="proposal-label">Proposal 1 · Aurora Dark</div>
+
+</body>
+</html>

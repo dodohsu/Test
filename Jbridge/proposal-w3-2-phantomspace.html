@@ -1,0 +1,1434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JBridge.ai — One API. Every Model.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    /* ============================================================
+       DESIGN TOKENS — PHANTOM SPACE
+    ============================================================ */
+    :root {
+      --bg:           #0A0B14;
+      --surface:      #12141F;
+      --surface-elv:  #1A1C2E;
+      --primary:      #9945FF;
+      --secondary:    #14F195;
+      --blue:         #43B4CA;
+      --text-1:       #FFFFFF;
+      --text-2:       rgba(255,255,255,0.6);
+      --text-muted:   rgba(255,255,255,0.35);
+      --border:       rgba(153,69,255,0.2);
+      --border-hover: rgba(153,69,255,0.5);
+      --grad-brand:   linear-gradient(135deg, #9945FF, #14F195);
+      --grad-text:    linear-gradient(90deg, #9945FF, #43B4CA, #14F195);
+      --font-sans:    'Plus Jakarta Sans', system-ui, sans-serif;
+      --font-mono:    'JetBrains Mono', 'Fira Code', monospace;
+      --radius-sm:    6px;
+      --radius-md:    12px;
+      --radius-lg:    16px;
+      --radius-xl:    24px;
+      --ease-out:     cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* ============================================================
+       RESET & BASE
+    ============================================================ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font-sans);
+      background: var(--bg);
+      color: var(--text-1);
+      line-height: 1.6;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    button { font-family: inherit; cursor: pointer; border: none; background: none; }
+    ul { list-style: none; }
+    img { max-width: 100%; display: block; }
+
+    /* ============================================================
+       BACKGROUND LAYERS
+    ============================================================ */
+
+    /* Starfield canvas — fullscreen fixed */
+    #starfield {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* Aurora blobs */
+    .aurora {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .aurora-blob {
+      position: absolute;
+      border-radius: 50%;
+    }
+
+    .aurora-blob--purple {
+      top: -200px;
+      right: -150px;
+      width: 800px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(153,69,255,0.15), transparent 60%);
+      filter: blur(80px);
+      animation: floatPurple 20s ease-in-out infinite alternate;
+    }
+
+    .aurora-blob--green {
+      bottom: -200px;
+      left: -150px;
+      width: 700px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(20,241,149,0.08), transparent 60%);
+      filter: blur(80px);
+      animation: floatGreen 20s ease-in-out infinite alternate;
+    }
+
+    @keyframes floatPurple {
+      from { transform: translate(0, 0); }
+      to   { transform: translate(30px, 30px); }
+    }
+    @keyframes floatGreen {
+      from { transform: translate(0, 0); }
+      to   { transform: translate(-30px, -30px); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .aurora-blob { animation: none; }
+    }
+
+    /* Page content sits above bg layers */
+    .page-content {
+      position: relative;
+      z-index: 2;
+    }
+
+    /* ============================================================
+       NAVIGATION
+    ============================================================ */
+    .nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      height: 64px;
+      background: rgba(10,11,20,0.8);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(153,69,255,0.15);
+      display: flex;
+      align-items: center;
+      padding: 0 max(24px, calc((100vw - 1200px) / 2));
+    }
+
+    .nav__inner {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .nav__logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      font-size: 18px;
+      letter-spacing: -0.3px;
+    }
+
+    /* Hexagon logo mark */
+    .logo-hex {
+      width: 32px;
+      height: 36px;
+      flex-shrink: 0;
+    }
+
+    .nav__links {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+    }
+
+    .nav__links a {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-2);
+      transition: color 0.15s;
+    }
+
+    .nav__links a:hover { color: var(--text-1); }
+
+    .nav__actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .nav__login {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-2);
+      padding: 8px 16px;
+      transition: color 0.15s;
+    }
+    .nav__login:hover { color: var(--text-1); }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 10px 20px;
+      background: var(--grad-brand);
+      color: #fff;
+      font-size: 14px;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      transition: transform 0.2s var(--ease-out), box-shadow 0.2s var(--ease-out);
+      cursor: pointer;
+      border: none;
+      white-space: nowrap;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 32px rgba(153,69,255,0.4), 0 0 0 1px rgba(153,69,255,0.3);
+    }
+
+    .btn-primary:active { transform: translateY(0); }
+
+    .btn-ghost {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 10px 20px;
+      background: transparent;
+      color: var(--text-1);
+      font-size: 14px;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--primary);
+      transition: background 0.2s, box-shadow 0.2s;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .btn-ghost:hover {
+      background: rgba(153,69,255,0.1);
+      box-shadow: 0 0 20px rgba(153,69,255,0.2);
+    }
+
+    /* ============================================================
+       HERO SECTION
+    ============================================================ */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 120px 24px 80px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Gradient mesh overlay — hero only */
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse at 30% 50%, rgba(153,69,255,0.12), transparent 50%),
+        radial-gradient(ellipse at 70% 50%, rgba(20,241,149,0.06), transparent 50%);
+      pointer-events: none;
+    }
+
+    .hero__badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      background: rgba(153,69,255,0.12);
+      border: 1px solid rgba(153,69,255,0.3);
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #b97bff;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      margin-bottom: 32px;
+    }
+
+    .hero__badge-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--secondary);
+      animation: pulseDot 2s ease-in-out infinite;
+    }
+
+    @keyframes pulseDot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%       { opacity: 0.5; transform: scale(0.75); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .hero__badge-dot { animation: none; }
+    }
+
+    .hero__h1 {
+      font-size: clamp(56px, 8vw, 96px);
+      font-weight: 800;
+      line-height: 1.0;
+      letter-spacing: -2px;
+      max-width: 900px;
+      margin: 0 auto 24px;
+    }
+
+    .hero__h1 .white { color: var(--text-1); }
+
+    .hero__h1 .grad {
+      background: var(--grad-text);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero__sub {
+      font-size: clamp(16px, 2vw, 20px);
+      color: var(--text-2);
+      max-width: 560px;
+      margin: 0 auto 40px;
+      line-height: 1.65;
+      font-weight: 400;
+    }
+
+    .hero__ctas {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 56px;
+    }
+
+    .hero__ctas .btn-primary { padding: 14px 28px; font-size: 15px; }
+    .hero__ctas .btn-ghost   { padding: 14px 28px; font-size: 15px; }
+
+    /* Provider chips */
+    .hero__providers {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 64px;
+    }
+
+    .hero__providers-label {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-muted);
+      margin-right: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .provider-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 6px 14px;
+      background: rgba(18,20,31,0.9);
+      border: 1px solid rgba(153,69,255,0.25);
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-2);
+      backdrop-filter: blur(8px);
+      transition: border-color 0.2s, color 0.2s;
+    }
+
+    .provider-chip:hover {
+      border-color: rgba(153,69,255,0.55);
+      color: var(--text-1);
+    }
+
+    .provider-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    /* Hero terminal/code block */
+    .hero__terminal {
+      width: 100%;
+      max-width: 700px;
+      margin: 0 auto;
+      background: rgba(18,20,31,0.75);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid rgba(153,69,255,0.3);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      text-align: left;
+      box-shadow: 0 32px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(153,69,255,0.1);
+    }
+
+    .terminal__bar {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 12px 16px;
+      background: rgba(10,11,20,0.6);
+      border-bottom: 1px solid rgba(153,69,255,0.15);
+    }
+
+    .terminal__dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+    }
+    .terminal__dot--red   { background: #FF5F57; }
+    .terminal__dot--amber { background: #FFBD2E; }
+    .terminal__dot--green { background: #28CA41; }
+
+    .terminal__title {
+      margin-left: 8px;
+      font-size: 12px;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+    }
+
+    .terminal__body {
+      padding: 20px 24px 22px;
+      font-family: var(--font-mono);
+      font-size: 13.5px;
+      line-height: 1.7;
+      overflow-x: auto;
+    }
+
+    .terminal__body pre { margin: 0; white-space: pre; }
+
+    .tok-kw    { color: #FF79C6; }
+    .tok-fn    { color: #50FA7B; }
+    .tok-str   { color: #F1FA8C; }
+    .tok-num   { color: #BD93F9; }
+    .tok-var   { color: #8BE9FD; }
+    .tok-cmt   { color: rgba(255,255,255,0.3); }
+    .tok-punct { color: rgba(255,255,255,0.55); }
+
+    /* ============================================================
+       STATS BAR
+    ============================================================ */
+    .stats-bar {
+      padding: 40px 24px;
+      position: relative;
+    }
+
+    .stats-bar__inner {
+      max-width: 900px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      background: rgba(18,20,31,0.7);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(153,69,255,0.2);
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+    }
+
+    .stat {
+      padding: 28px 24px;
+      text-align: center;
+      position: relative;
+    }
+
+    .stat + .stat::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 20%; bottom: 20%;
+      width: 1px;
+      background: rgba(153,69,255,0.2);
+    }
+
+    .stat__value {
+      font-size: clamp(22px, 3vw, 32px);
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      background: var(--grad-text);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1.1;
+      margin-bottom: 6px;
+    }
+
+    .stat__label {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-2);
+    }
+
+    /* ============================================================
+       SECTION SHARED
+    ============================================================ */
+    .section {
+      padding: 96px 24px;
+    }
+
+    .section__header {
+      text-align: center;
+      margin-bottom: 64px;
+    }
+
+    .section__eyebrow {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--primary);
+      margin-bottom: 14px;
+    }
+
+    .section__title {
+      font-size: clamp(32px, 4vw, 52px);
+      font-weight: 800;
+      letter-spacing: -1px;
+      line-height: 1.1;
+      margin-bottom: 16px;
+    }
+
+    .section__sub {
+      font-size: 18px;
+      color: var(--text-2);
+      max-width: 520px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+
+    /* ============================================================
+       FEATURES
+    ============================================================ */
+    .features-grid {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+    }
+
+    .feature-card {
+      background: rgba(18,20,31,0.8);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 36px 36px 32px;
+      transition: border-color 0.25s, transform 0.25s var(--ease-out), box-shadow 0.25s;
+    }
+
+    .feature-card:hover {
+      border-color: var(--border-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 16px 48px rgba(0,0,0,0.35), 0 0 0 1px rgba(153,69,255,0.15);
+    }
+
+    .feature-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+      flex-shrink: 0;
+    }
+
+    .feature-icon--purple { background: linear-gradient(135deg, #9945FF, #43B4CA); }
+    .feature-icon--green  { background: linear-gradient(135deg, #14F195, #43B4CA); }
+    .feature-icon--blue   { background: linear-gradient(135deg, #43B4CA, #9945FF); }
+    .feature-icon--teal   { background: linear-gradient(135deg, #14F195, #9945FF); }
+
+    .feature-card__title {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+      margin-bottom: 10px;
+      color: var(--text-1);
+    }
+
+    .feature-card__desc {
+      font-size: 15px;
+      color: var(--text-2);
+      line-height: 1.65;
+    }
+
+    /* ============================================================
+       SDK SECTION
+    ============================================================ */
+    .sdk-section {
+      background: rgba(10,11,20,0.5);
+      border-top: 1px solid rgba(153,69,255,0.1);
+      border-bottom: 1px solid rgba(153,69,255,0.1);
+    }
+
+    .sdk-grid {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 56px;
+      align-items: start;
+    }
+
+    .sdk-left__endpoints {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 32px;
+    }
+
+    .endpoint-card {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      padding: 16px 20px;
+      background: rgba(18,20,31,0.8);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      transition: border-color 0.2s;
+    }
+
+    .endpoint-card:hover { border-color: var(--border-hover); }
+
+    .endpoint-card__label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .endpoint-card__path {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--secondary);
+    }
+
+    .sdk-right__terminal {
+      background: rgba(18,20,31,0.75);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid rgba(153,69,255,0.3);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: 0 24px 64px rgba(0,0,0,0.4);
+    }
+
+    .sdk-left__title {
+      font-size: clamp(26px, 3vw, 38px);
+      font-weight: 800;
+      letter-spacing: -0.8px;
+      line-height: 1.2;
+      margin-bottom: 14px;
+    }
+
+    .sdk-left__sub {
+      font-size: 16px;
+      color: var(--text-2);
+      line-height: 1.65;
+    }
+
+    /* ============================================================
+       PRICING TABLE
+    ============================================================ */
+    .pricing-table-wrap {
+      max-width: 900px;
+      margin: 0 auto;
+      background: rgba(18,20,31,0.6);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(153,69,255,0.2);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+    }
+
+    .pricing-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .pricing-table thead tr {
+      background: rgba(10,11,20,0.8);
+      border-bottom: 1px solid rgba(153,69,255,0.2);
+    }
+
+    .pricing-table thead th {
+      padding: 16px 24px;
+      text-align: left;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .pricing-table thead th:not(:first-child) { text-align: right; }
+
+    .pricing-table tbody tr {
+      border-bottom: 1px solid rgba(153,69,255,0.08);
+      transition: background 0.15s;
+    }
+
+    .pricing-table tbody tr:last-child { border-bottom: none; }
+
+    .pricing-table tbody tr:hover { background: rgba(153,69,255,0.06); }
+
+    .pricing-table td {
+      padding: 16px 24px;
+      font-size: 14px;
+      vertical-align: middle;
+    }
+
+    .pricing-table td:not(:first-child) { text-align: right; }
+
+    .model-name {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-1);
+    }
+
+    .model-provider {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .price-value {
+      font-family: var(--font-mono);
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .price-value--cheap { color: var(--secondary); }
+    .price-value--norm  { color: var(--text-2); }
+
+    .pricing-table thead th:first-child {
+      position: relative;
+      padding-left: 28px;
+    }
+
+    .pricing-table thead th:first-child::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 3px;
+      background: var(--grad-brand);
+    }
+
+    /* ============================================================
+       CTA SECTION
+    ============================================================ */
+    .cta-section {
+      position: relative;
+      overflow: hidden;
+      padding: 120px 24px;
+      text-align: center;
+    }
+
+    .cta-section::before {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 50%; transform: translateX(-50%);
+      width: 800px; height: 400px;
+      background: radial-gradient(ellipse at 50% 100%, rgba(153,69,255,0.2), transparent 70%);
+      pointer-events: none;
+    }
+
+    .cta-card {
+      position: relative;
+      max-width: 680px;
+      margin: 0 auto;
+      background: rgba(18,20,31,0.7);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid rgba(153,69,255,0.25);
+      border-radius: var(--radius-xl);
+      padding: 64px 48px;
+      overflow: hidden;
+    }
+
+    .cta-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 50% 0%, rgba(153,69,255,0.1), transparent 60%);
+      pointer-events: none;
+    }
+
+    .cta__title {
+      font-size: clamp(36px, 5vw, 56px);
+      font-weight: 800;
+      letter-spacing: -1.5px;
+      line-height: 1.05;
+      margin-bottom: 20px;
+    }
+
+    .cta__title .grad {
+      background: var(--grad-text);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .cta__sub {
+      font-size: 17px;
+      color: var(--text-2);
+      margin-bottom: 36px;
+      line-height: 1.6;
+    }
+
+    .cta__btn {
+      padding: 16px 36px;
+      font-size: 16px;
+      font-weight: 700;
+      border-radius: var(--radius-md);
+    }
+
+    /* ============================================================
+       FOOTER
+    ============================================================ */
+    .footer {
+      border-top: 1px solid rgba(153,69,255,0.12);
+      padding: 40px 24px;
+    }
+
+    .footer__inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+
+    .footer__left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .footer__copy {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .footer__links {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+
+    .footer__links a {
+      font-size: 13px;
+      color: var(--text-muted);
+      transition: color 0.15s;
+    }
+
+    .footer__links a:hover { color: var(--text-2); }
+
+    /* ============================================================
+       RESPONSIVE
+    ============================================================ */
+    @media (max-width: 900px) {
+      .nav__links { display: none; }
+      .features-grid { grid-template-columns: 1fr; }
+      .sdk-grid { grid-template-columns: 1fr; gap: 40px; }
+      .stats-bar__inner { grid-template-columns: repeat(2, 1fr); }
+      .stat + .stat:nth-child(3)::before { display: none; }
+    }
+
+    @media (max-width: 600px) {
+      .hero { padding: 100px 20px 64px; }
+      .section { padding: 64px 20px; }
+      .stats-bar__inner { grid-template-columns: repeat(2, 1fr); }
+      .feature-card { padding: 28px 24px; }
+      .cta-card { padding: 44px 28px; }
+      .footer__inner { flex-direction: column; align-items: flex-start; }
+      .pricing-table td, .pricing-table th { padding: 12px 16px; }
+    }
+
+    /* Focus visible */
+    :focus-visible {
+      outline: 2px solid var(--primary);
+      outline-offset: 3px;
+      border-radius: 4px;
+    }
+
+    /* skip link */
+    .skip-link {
+      position: absolute;
+      left: -9999px;
+      top: 0;
+      z-index: 999;
+      padding: 8px 16px;
+      background: var(--primary);
+      color: #fff;
+      font-weight: 600;
+      border-radius: 0 0 8px 0;
+    }
+    .skip-link:focus { left: 0; }
+
+    /* Scroll anchor offset for fixed nav */
+    [id] { scroll-margin-top: 80px; }
+  </style>
+</head>
+<body>
+
+  <!-- Skip link for keyboard accessibility -->
+  <a href="#main" class="skip-link">Skip to main content</a>
+
+  <!-- Starfield canvas (fixed, behind everything) -->
+  <canvas id="starfield" aria-hidden="true"></canvas>
+
+  <!-- Aurora blobs -->
+  <div class="aurora" aria-hidden="true">
+    <div class="aurora-blob aurora-blob--purple"></div>
+    <div class="aurora-blob aurora-blob--green"></div>
+  </div>
+
+  <!-- All page content -->
+  <div class="page-content">
+
+    <!-- ===== NAVIGATION ===== -->
+    <header>
+      <nav class="nav" role="navigation" aria-label="Main navigation">
+        <div class="nav__inner">
+
+          <!-- Logo -->
+          <a href="#" class="nav__logo" aria-label="JBridge.ai home">
+            <svg class="logo-hex" viewBox="0 0 32 36" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <defs>
+                <linearGradient id="hexGrad" x1="0" y1="0" x2="32" y2="36" gradientUnits="userSpaceOnUse">
+                  <stop offset="0%" stop-color="#9945FF"/>
+                  <stop offset="100%" stop-color="#14F195"/>
+                </linearGradient>
+              </defs>
+              <!-- Hexagon path -->
+              <path d="M16 1L30.5 9.5V26.5L16 35L1.5 26.5V9.5L16 1Z" fill="url(#hexGrad)" stroke="rgba(255,255,255,0.15)" stroke-width="0.5"/>
+              <!-- "J" lettermark -->
+              <text x="16" y="24" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif" font-weight="800" font-size="14" fill="white">J</text>
+            </svg>
+            <span>JBridge.ai</span>
+          </a>
+
+          <!-- Nav links -->
+          <ul class="nav__links" role="list">
+            <li><a href="#features">Features</a></li>
+            <li><a href="#pricing">Pricing</a></li>
+            <li><a href="#sdk">Docs</a></li>
+          </ul>
+
+          <!-- Nav actions -->
+          <div class="nav__actions">
+            <a href="#" class="nav__login">Log in</a>
+            <a href="#" class="btn-primary" role="button">Get Started Free</a>
+          </div>
+
+        </div>
+      </nav>
+    </header>
+
+    <!-- ===== MAIN CONTENT ===== -->
+    <main id="main">
+
+      <!-- ===== HERO ===== -->
+      <section class="hero" aria-label="Hero">
+
+        <!-- Badge -->
+        <div class="hero__badge" role="status">
+          <span class="hero__badge-dot" aria-hidden="true"></span>
+          Now supporting 18+ models
+        </div>
+
+        <!-- H1 -->
+        <h1 class="hero__h1">
+          <span class="white">One API.</span><br>
+          <span class="grad">Every Model.</span>
+        </h1>
+
+        <!-- Sub -->
+        <p class="hero__sub">
+          Compatible with OpenAI and Anthropic formats. Access top models, pay only for what you use.
+        </p>
+
+        <!-- CTAs -->
+        <div class="hero__ctas">
+          <a href="#" class="btn-primary" role="button">
+            Get Started Free
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </a>
+          <a href="#sdk" class="btn-ghost" role="button">Read Docs</a>
+        </div>
+
+        <!-- Providers -->
+        <div class="hero__providers" aria-label="Supported AI providers">
+          <span class="hero__providers-label">Works with</span>
+          <span class="provider-chip">
+            <span class="provider-dot" style="background:#10a37f;" aria-hidden="true"></span>
+            OpenAI
+          </span>
+          <span class="provider-chip">
+            <span class="provider-dot" style="background:#d97706;" aria-hidden="true"></span>
+            Anthropic
+          </span>
+          <span class="provider-chip">
+            <span class="provider-dot" style="background:#4f8ff7;" aria-hidden="true"></span>
+            DeepSeek
+          </span>
+          <span class="provider-chip">
+            <span class="provider-dot" style="background:#1d9bf0;" aria-hidden="true"></span>
+            Grok
+          </span>
+          <span class="provider-chip">
+            <span class="provider-dot" style="background:#ff4d6d;" aria-hidden="true"></span>
+            Kimi
+          </span>
+        </div>
+
+        <!-- Terminal code block -->
+        <div class="hero__terminal" role="figure" aria-label="Code example">
+          <div class="terminal__bar" aria-hidden="true">
+            <span class="terminal__dot terminal__dot--red"></span>
+            <span class="terminal__dot terminal__dot--amber"></span>
+            <span class="terminal__dot terminal__dot--green"></span>
+            <span class="terminal__title">python3 quickstart.py</span>
+          </div>
+          <div class="terminal__body">
+<pre><code><span class="tok-kw">import</span> <span class="tok-var">anthropic</span>
+
+<span class="tok-var">client</span> <span class="tok-punct">=</span> <span class="tok-var">anthropic</span><span class="tok-punct">.</span><span class="tok-fn">Anthropic</span><span class="tok-punct">(</span>
+    <span class="tok-var">api_key</span><span class="tok-punct">=</span><span class="tok-str">"jb-xxx"</span><span class="tok-punct">,</span>
+    <span class="tok-var">base_url</span><span class="tok-punct">=</span><span class="tok-str">"https://api.jbridge.ai"</span>
+<span class="tok-punct">)</span>
+
+<span class="tok-var">message</span> <span class="tok-punct">=</span> <span class="tok-var">client</span><span class="tok-punct">.</span><span class="tok-var">messages</span><span class="tok-punct">.</span><span class="tok-fn">create</span><span class="tok-punct">(</span>
+    <span class="tok-var">model</span><span class="tok-punct">=</span><span class="tok-str">"gpt-5.4"</span><span class="tok-punct">,</span>
+    <span class="tok-var">max_tokens</span><span class="tok-punct">=</span><span class="tok-num">1024</span><span class="tok-punct">,</span>
+    <span class="tok-var">messages</span><span class="tok-punct">=[{</span><span class="tok-str">"role"</span><span class="tok-punct">:</span> <span class="tok-str">"user"</span><span class="tok-punct">,</span> <span class="tok-str">"content"</span><span class="tok-punct">:</span> <span class="tok-str">"Hello!"</span><span class="tok-punct">}]</span>
+<span class="tok-punct">)</span>
+<span class="tok-fn">print</span><span class="tok-punct">(</span><span class="tok-var">message</span><span class="tok-punct">.</span><span class="tok-var">content</span><span class="tok-punct">)</span>
+<span class="tok-cmt"># Works instantly — no code changes needed</span></code></pre>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- ===== STATS BAR ===== -->
+      <section class="stats-bar" aria-label="Platform statistics">
+        <div class="stats-bar__inner">
+
+          <div class="stat">
+            <div class="stat__value">18+</div>
+            <div class="stat__label">AI Models</div>
+          </div>
+
+          <div class="stat">
+            <div class="stat__value">5</div>
+            <div class="stat__label">Providers</div>
+          </div>
+
+          <div class="stat">
+            <div class="stat__value">&lt;50ms</div>
+            <div class="stat__label">Avg Latency</div>
+          </div>
+
+          <div class="stat">
+            <div class="stat__value">100%</div>
+            <div class="stat__label">Compatible</div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ===== FEATURES ===== -->
+      <section class="section" id="features" aria-labelledby="features-title">
+        <div class="section__header">
+          <span class="section__eyebrow">Platform</span>
+          <h2 class="section__title" id="features-title">Everything You Need</h2>
+          <p class="section__sub">Built for developers who want simplicity without compromise</p>
+        </div>
+
+        <div class="features-grid">
+
+          <!-- Feature 1 -->
+          <article class="feature-card">
+            <div class="feature-icon feature-icon--purple" aria-hidden="true">
+              <!-- Unified API icon -->
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
+                <circle cx="12" cy="12" r="3"/>
+              </svg>
+            </div>
+            <h3 class="feature-card__title">Unified API</h3>
+            <p class="feature-card__desc">Compatible with OpenAI and Anthropic formats, supporting all major models. Switch providers without changing a line of code.</p>
+          </article>
+
+          <!-- Feature 2 -->
+          <article class="feature-card">
+            <div class="feature-icon feature-icon--green" aria-hidden="true">
+              <!-- Usage Tracking icon -->
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="20" x2="18" y2="10"/>
+                <line x1="12" y1="20" x2="12" y2="4"/>
+                <line x1="6"  y1="20" x2="6"  y2="14"/>
+              </svg>
+            </div>
+            <h3 class="feature-card__title">Usage Tracking</h3>
+            <p class="feature-card__desc">Real-time monitoring of tokens, costs, and latency for every request.</p>
+          </article>
+
+          <!-- Feature 3 -->
+          <article class="feature-card">
+            <div class="feature-icon feature-icon--blue" aria-hidden="true">
+              <!-- Key Management icon -->
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="7.5" cy="15.5" r="4.5"/>
+                <path d="M21 2l-9.6 9.6"/>
+                <path d="M15.5 7.5l3 3"/>
+              </svg>
+            </div>
+            <h3 class="feature-card__title">Key Management</h3>
+            <p class="feature-card__desc">Create multiple API keys with per-key model restrictions and rate limits.</p>
+          </article>
+
+          <!-- Feature 4 -->
+          <article class="feature-card">
+            <div class="feature-icon feature-icon--teal" aria-hidden="true">
+              <!-- Streaming icon -->
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M5 12h14"/>
+                <path d="M15 7l5 5-5 5"/>
+                <path d="M3 7l2 2-2 2"/>
+              </svg>
+            </div>
+            <h3 class="feature-card__title">Streaming Support</h3>
+            <p class="feature-card__desc">Full SSE streaming support for chat completions. Low-latency, real-time responses.</p>
+          </article>
+
+        </div>
+      </section>
+
+      <!-- ===== SDK SECTION ===== -->
+      <section class="section sdk-section" id="sdk" aria-labelledby="sdk-title">
+        <div class="sdk-grid">
+
+          <!-- Left column -->
+          <div class="sdk-left">
+            <span class="section__eyebrow">Integration</span>
+            <h2 class="sdk-left__title" id="sdk-title">Drop-in Replacement</h2>
+            <p class="sdk-left__sub">Point any existing SDK to JBridge. No library changes. No refactors. Access every model through the format you already know.</p>
+
+            <div class="sdk-left__endpoints">
+
+              <div class="endpoint-card">
+                <span class="endpoint-card__label">OpenAI SDK</span>
+                <span class="endpoint-card__path">/api/v1/chat/completions</span>
+              </div>
+
+              <div class="endpoint-card">
+                <span class="endpoint-card__label">Anthropic SDK</span>
+                <span class="endpoint-card__path">/api/v1/messages</span>
+              </div>
+
+              <div class="endpoint-card">
+                <span class="endpoint-card__label">OpenAI Responses</span>
+                <span class="endpoint-card__path">/api/v1/responses</span>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Right column — code terminal -->
+          <div class="sdk-right__terminal" role="figure" aria-label="Python SDK code example">
+            <div class="terminal__bar" aria-hidden="true">
+              <span class="terminal__dot terminal__dot--red"></span>
+              <span class="terminal__dot terminal__dot--amber"></span>
+              <span class="terminal__dot terminal__dot--green"></span>
+              <span class="terminal__title">sdk_example.py</span>
+            </div>
+            <div class="terminal__body">
+<pre><code><span class="tok-cmt"># Use Anthropic SDK — any model via JBridge</span>
+<span class="tok-kw">import</span> <span class="tok-var">anthropic</span>
+
+<span class="tok-var">client</span> <span class="tok-punct">=</span> <span class="tok-var">anthropic</span><span class="tok-punct">.</span><span class="tok-fn">Anthropic</span><span class="tok-punct">(</span>
+    <span class="tok-var">api_key</span><span class="tok-punct">=</span><span class="tok-str">"jb-xxx"</span><span class="tok-punct">,</span>
+    <span class="tok-var">base_url</span><span class="tok-punct">=</span><span class="tok-str">"https://api.jbridge.ai"</span>
+<span class="tok-punct">)</span>
+
+<span class="tok-var">message</span> <span class="tok-punct">=</span> <span class="tok-var">client</span><span class="tok-punct">.</span><span class="tok-var">messages</span><span class="tok-punct">.</span><span class="tok-fn">create</span><span class="tok-punct">(</span>
+    <span class="tok-var">model</span><span class="tok-punct">=</span><span class="tok-str">"gpt-5.4"</span><span class="tok-punct">,</span>
+    <span class="tok-var">max_tokens</span><span class="tok-punct">=</span><span class="tok-num">1024</span><span class="tok-punct">,</span>
+    <span class="tok-var">messages</span><span class="tok-punct">=[</span>
+        <span class="tok-punct">{</span>
+            <span class="tok-str">"role"</span><span class="tok-punct">:</span> <span class="tok-str">"user"</span><span class="tok-punct">,</span>
+            <span class="tok-str">"content"</span><span class="tok-punct">:</span> <span class="tok-str">"Explain quantum entanglement"</span>
+        <span class="tok-punct">}</span>
+    <span class="tok-punct">]</span>
+<span class="tok-punct">)</span>
+
+<span class="tok-fn">print</span><span class="tok-punct">(</span><span class="tok-var">message</span><span class="tok-punct">.</span><span class="tok-var">content</span><span class="tok-punct">[</span><span class="tok-num">0</span><span class="tok-punct">].</span><span class="tok-var">text</span><span class="tok-punct">)</span>
+<span class="tok-cmt"># Switch to deepseek-v3.2 by changing model=""</span>
+<span class="tok-cmt"># — everything else stays identical</span></code></pre>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ===== PRICING ===== -->
+      <section class="section" id="pricing" aria-labelledby="pricing-title">
+        <div class="section__header">
+          <span class="section__eyebrow">Pricing</span>
+          <h2 class="section__title" id="pricing-title">Pay Only for What You Use</h2>
+          <p class="section__sub">Per-token pricing with no monthly seat fees. Billed by the million tokens.</p>
+        </div>
+
+        <div class="pricing-table-wrap">
+          <table class="pricing-table" aria-label="Model pricing table">
+            <thead>
+              <tr>
+                <th scope="col">Model</th>
+                <th scope="col">Input / 1M tokens</th>
+                <th scope="col">Output / 1M tokens</th>
+              </tr>
+            </thead>
+            <tbody>
+
+              <tr>
+                <td>
+                  <div class="model-name">claude-haiku-4-5</div>
+                  <div class="model-provider">Anthropic</div>
+                </td>
+                <td><span class="price-value price-value--cheap">$1.00</span></td>
+                <td><span class="price-value price-value--norm">$5.00</span></td>
+              </tr>
+
+              <tr>
+                <td>
+                  <div class="model-name">claude-opus-4-6</div>
+                  <div class="model-provider">Anthropic</div>
+                </td>
+                <td><span class="price-value price-value--norm">$5.00</span></td>
+                <td><span class="price-value price-value--norm">$25.00</span></td>
+              </tr>
+
+              <tr>
+                <td>
+                  <div class="model-name">deepseek-v3.2</div>
+                  <div class="model-provider">DeepSeek</div>
+                </td>
+                <td><span class="price-value price-value--cheap">$0.58</span></td>
+                <td><span class="price-value price-value--cheap">$1.68</span></td>
+              </tr>
+
+              <tr>
+                <td>
+                  <div class="model-name">gpt-5.4</div>
+                  <div class="model-provider">OpenAI</div>
+                </td>
+                <td><span class="price-value price-value--norm">$2.50</span></td>
+                <td><span class="price-value price-value--norm">$15.00</span></td>
+              </tr>
+
+              <tr>
+                <td>
+                  <div class="model-name">gpt-5.5</div>
+                  <div class="model-provider">OpenAI</div>
+                </td>
+                <td><span class="price-value price-value--norm">$5.00</span></td>
+                <td><span class="price-value price-value--norm">$30.00</span></td>
+              </tr>
+
+              <tr>
+                <td>
+                  <div class="model-name">kimi-k2.5</div>
+                  <div class="model-provider">Kimi</div>
+                </td>
+                <td><span class="price-value price-value--cheap">$0.60</span></td>
+                <td><span class="price-value price-value--cheap">$3.00</span></td>
+              </tr>
+
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ===== CTA SECTION ===== -->
+      <section class="cta-section" aria-labelledby="cta-title">
+        <div class="cta-card">
+          <h2 class="cta__title" id="cta-title">
+            <span class="grad">Ready to get</span><br>
+            started?
+          </h2>
+          <p class="cta__sub">Join thousands of developers accessing every major AI model through one unified API.</p>
+          <a href="#" class="btn-primary cta__btn" role="button">
+            Create Free Account
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </a>
+        </div>
+      </section>
+
+    </main><!-- /main -->
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="footer" role="contentinfo">
+      <div class="footer__inner">
+
+        <div class="footer__left">
+          <!-- Logo mark -->
+          <svg width="24" height="27" viewBox="0 0 32 36" fill="none" aria-hidden="true">
+            <defs>
+              <linearGradient id="hexGradFtr" x1="0" y1="0" x2="32" y2="36" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stop-color="#9945FF"/>
+                <stop offset="100%" stop-color="#14F195"/>
+              </linearGradient>
+            </defs>
+            <path d="M16 1L30.5 9.5V26.5L16 35L1.5 26.5V9.5L16 1Z" fill="url(#hexGradFtr)"/>
+            <text x="16" y="24" text-anchor="middle" font-family="Plus Jakarta Sans, sans-serif" font-weight="800" font-size="14" fill="white">J</text>
+          </svg>
+          <span class="footer__copy">© 2026 KKCompany Technologies</span>
+        </div>
+
+        <nav class="footer__links" aria-label="Footer navigation">
+          <a href="#sdk">Docs</a>
+          <a href="#">Terms of Service</a>
+          <a href="#">Privacy Policy</a>
+          <a href="#">Refund Policy</a>
+        </nav>
+
+      </div>
+    </footer>
+
+  </div><!-- /page-content -->
+
+  <!-- ============================================================
+       JAVASCRIPT — STARFIELD CANVAS
+  ============================================================ -->
+  <script>
+    (function () {
+      'use strict';
+
+      /* ── Starfield ── */
+      const canvas = document.getElementById('starfield');
+      const ctx    = canvas.getContext('2d');
+
+      const STAR_COUNT = 120;
+      let stars = [];
+      let W = 0, H = 0;
+
+      function resize() {
+        W = canvas.width  = window.innerWidth;
+        H = canvas.height = window.innerHeight;
+      }
+
+      function rand(min, max) { return Math.random() * (max - min) + min; }
+
+      function initStars() {
+        stars = [];
+        for (let i = 0; i < STAR_COUNT; i++) {
+          stars.push({
+            x:       rand(0, W),
+            y:       rand(0, H),
+            r:       rand(0.5, 1.6),
+            opacity: rand(0.1, 0.8),
+            speed:   rand(2000, 5000),         // ms per cycle
+            offset:  rand(0, 2 * Math.PI),      // phase offset
+            // ~30% of stars are purple-tinted
+            purple:  Math.random() < 0.3
+          });
+        }
+      }
+
+      function drawStars(ts) {
+        ctx.clearRect(0, 0, W, H);
+        for (const s of stars) {
+          const t    = (ts / s.speed + s.offset) % (2 * Math.PI);
+          const alpha = 0.2 + 0.8 * (0.5 + 0.5 * Math.sin(t));
+          ctx.beginPath();
+          ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+          if (s.purple) {
+            ctx.fillStyle = `rgba(153,69,255,${alpha * 0.85})`;
+          } else {
+            ctx.fillStyle = `rgba(255,255,255,${alpha * 0.55})`;
+          }
+          ctx.fill();
+        }
+      }
+
+      let raf;
+      function animate(ts) {
+        drawStars(ts);
+        raf = requestAnimationFrame(animate);
+      }
+
+      // Respect reduced-motion
+      const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)');
+      function start() {
+        if (prefersReduced.matches) {
+          // Draw one static frame
+          drawStars(0);
+        } else {
+          cancelAnimationFrame(raf);
+          raf = requestAnimationFrame(animate);
+        }
+      }
+
+      prefersReduced.addEventListener('change', () => {
+        cancelAnimationFrame(raf);
+        start();
+      });
+
+      window.addEventListener('resize', () => {
+        resize();
+        initStars();
+        if (prefersReduced.matches) drawStars(0);
+      }, { passive: true });
+
+      resize();
+      initStars();
+      start();
+    })();
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Security · Settings · JBridge.ai</title>
+<script>(function(){try{var t=localStorage.getItem('jb-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);var l=localStorage.getItem('jb-lang');if(l&&/^(en|zh-TW|zh-CN|ja|ko)$/.test(l))document.documentElement.setAttribute('lang',l);}catch(e){}}());</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../shared/dashboard.css">
+</head>
+<body>
+
+<header class="topnav">
+  <div class="topnav-inner">
+    <div class="topnav-left">
+      <button class="nav-hamburger" id="hamburger" aria-label="Toggle navigation" aria-expanded="false"><span></span><span></span><span></span></button>
+      <a href="../../../proposal-terminal-pro-v2.html" class="logo" aria-label="JBridge home">
+        <span class="logo-mark">J</span>
+        <span class="logo-wordmark">JBridge<span class="logo-ai">.ai</span></span>
+      </a>
+      <div class="topnav-crumb" aria-label="Breadcrumb">
+        <span>~/</span><span class="sep">›</span><span>settings</span><span class="sep">›</span><span class="cur">security</span>
+      </div>
+    </div>
+    <div class="topnav-right">
+      <span class="env-pill">production</span>
+      <a href="https://staging.jbridge.ai/docs" class="btn btn-ghost btn-sm" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        <span data-i18n="topnav.docs">Docs</span>
+      </a>
+      <button class="user-chip" aria-label="Account menu">
+        <span class="user-avatar">KK</span>
+        <span class="user-name">kk@jbridge.ai</span>
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<aside class="sidebar" id="sidebar" aria-label="Primary navigation">
+  <div class="side-group-label" data-i18n="nav.group.workspace">Workspace</div>
+  <a href="../../dashboard/index.html" class="side-link">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 12 12 3l9 9"/><path d="M5 10v10h14V10"/></svg>
+    <span data-i18n="nav.overview">Overview</span>
+  </a>
+  <a href="../../logs/index.html" class="side-link">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 4h16v4H4z"/><path d="M4 12h16v4H4z"/><path d="M4 20h10"/></svg>
+    <span data-i18n="nav.logs">Logs</span>
+  </a>
+  <a href="../../api-keys/index.html" class="side-link">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="7.5" cy="15.5" r="5.5"/><path d="m21 2-9.6 9.6"/><path d="m15.5 7.5 2.3 2.3a1 1 0 0 0 1.4 0l2.1-2.1a1 1 0 0 0 0-1.4L19 4"/></svg>
+    <span data-i18n="nav.api_keys">API Keys</span>
+  </a>
+  <a href="../../credits/index.html" class="side-link">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M2 10h20"/><path d="M6 14h4"/></svg>
+    <span data-i18n="nav.credits">Credits</span>
+  </a>
+  <a href="../../referral/index.html" class="side-link">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M17 11a4 4 0 1 0-3-7"/><path d="M3 11a4 4 0 1 1 3-7"/><circle cx="12" cy="14" r="4"/><path d="M8 20a4 4 0 0 1 8 0"/></svg>
+    <span data-i18n="nav.referral">Referral</span>
+  </a>
+
+  <div class="side-group-label" data-i18n="nav.group.get_started">Get started</div>
+  <a href="../../quickstart/index.html" class="side-link">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+    <span data-i18n="nav.quickstart">Quickstart</span>
+  </a>
+
+  <div class="side-group-label" data-i18n="nav.group.settings">Settings</div>
+  <a href="../account/index.html" class="side-link">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>
+    <span data-i18n="nav.account">Account</span>
+  </a>
+  <a href="../security/index.html" class="side-link active" aria-current="page">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 2 4 6v6c0 5 3.5 9.3 8 10 4.5-.7 8-5 8-10V6z"/></svg>
+    <span data-i18n="nav.security">Security</span>
+  </a>
+
+  <div class="side-footer">
+    <div class="side-actions" role="group" aria-label="Account actions">
+      <button type="button" class="side-action" data-theme-toggle aria-label="Toggle light or dark theme" aria-pressed="false">
+        <svg class="side-ic ic-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+        <svg class="side-ic ic-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        <span class="side-action-label" data-theme-label>淺色</span>
+      </button>
+      <div class="side-lang-wrap">
+        <button type="button" class="side-action" data-lang-toggle aria-haspopup="listbox" aria-expanded="false" aria-label="Switch language">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/></svg>
+          <span class="side-action-label" data-lang-label>English</span>
+          <svg class="side-action-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 15 6-6 6 6"/></svg>
+        </button>
+        <ul class="side-lang-menu" role="listbox" aria-label="Language" hidden>
+          <li role="option" data-lang="en" aria-selected="true"><svg class="side-lang-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span class="side-lang-name">English</span><span class="side-lang-tag">EN</span></li>
+          <li role="option" data-lang="zh-TW"><svg class="side-lang-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span class="side-lang-name">繁體中文</span><span class="side-lang-tag">ZH-TW</span></li>
+          <li role="option" data-lang="zh-CN"><svg class="side-lang-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span class="side-lang-name">简体中文</span><span class="side-lang-tag">ZH-CN</span></li>
+          <li role="option" data-lang="ja"><svg class="side-lang-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span class="side-lang-name">日本語</span><span class="side-lang-tag">JA</span></li>
+          <li role="option" data-lang="ko"><svg class="side-lang-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span class="side-lang-name">한국어</span><span class="side-lang-tag">KO</span></li>
+        </ul>
+      </div>
+      <a href="../../../proposal-terminal-pro-v2.html" class="side-action" aria-label="Home">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m3 12 9-9 9 9"/><path d="M5 10v10h14V10"/></svg>
+        <span class="side-action-label" data-i18n="side.home">首頁</span>
+      </a>
+      <button type="button" class="side-action danger" data-logout aria-label="Sign out">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>
+        <span class="side-action-label" data-i18n="side.logout">登出</span>
+      </button>
+    </div>
+    <div class="side-status">
+      <span class="status-dot"></span> <span data-i18n="side.status.ok">all systems operational</span> · <span class="dim">ap-northeast-1</span>
+    </div>
+  </div>
+</aside>
+<div class="sidebar-backdrop" id="sidebarBackdrop" aria-hidden="true"></div>
+
+<main class="app-main">
+  <div class="app-content">
+
+    <div class="page-head">
+      <div class="page-head-text">
+        <div class="section-mono-tag">settings · security</div>
+        <h1 class="page-title" data-i18n="page.security.title">Security</h1>
+        <p class="page-sub" data-i18n="page.security.sub">Password, two-factor authentication, active sessions and login history.</p>
+      </div>
+    </div>
+
+    <!-- Settings sub-tabs -->
+    <div class="tabs" role="tablist" style="max-width:360px;">
+      <a class="tab" role="tab" href="../account/index.html">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>
+        <span data-i18n="nav.account">Account</span>
+      </a>
+      <a class="tab active" role="tab" aria-current="page" href="../security/index.html">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 4 6v6c0 5 3.5 9.3 8 10 4.5-.7 8-5 8-10V6z"/></svg>
+        <span data-i18n="nav.security">Security</span>
+      </a>
+    </div>
+
+    <!-- Security score -->
+    <div class="card" style="margin-bottom:20px;">
+      <div class="card-body">
+        <div class="hstack-wrap" style="gap:24px;">
+          <!-- Donut score -->
+          <div style="position:relative;width:120px;height:120px;flex-shrink:0;" aria-hidden="true">
+            <svg viewBox="0 0 120 120" width="120" height="120">
+              <circle cx="60" cy="60" r="50" fill="none" stroke="#242424" stroke-width="10"/>
+              <circle cx="60" cy="60" r="50" fill="none" stroke="#00d084" stroke-width="10"
+                      stroke-dasharray="314" stroke-dashoffset="63" transform="rotate(-90 60 60)" stroke-linecap="round"/>
+            </svg>
+            <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:var(--mono);">
+              <span style="font-size:26px;font-weight:700;color:var(--fg);">80</span>
+              <span style="font-size:10px;color:var(--dim);text-transform:uppercase;letter-spacing:.1em;">score</span>
+            </div>
+          </div>
+          <div style="flex:1;min-width:240px;">
+            <div class="section-mono-tag" style="margin-bottom:6px;">security health</div>
+            <h2 style="font-size:20px;font-weight:800;letter-spacing:-.02em;margin-bottom:6px;">Strong, but enable a backup factor</h2>
+            <p class="muted" style="font-size:13.5px;line-height:1.55;">Your password is strong and 2FA is on. Add a recovery key so you don't get locked out.</p>
+            <div class="hstack" style="gap:8px;margin-top:14px;">
+              <span class="pill pill-ok"><span class="pdot"></span>password strong</span>
+              <span class="pill pill-ok"><span class="pdot"></span>2fa on</span>
+              <span class="pill pill-warn"><span class="pdot"></span>no recovery key</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Password -->
+    <div class="card" style="margin-bottom:20px;">
+      <div class="card-head">
+        <div class="card-head-title"><span class="dot"></span> Password</div>
+        <span class="card-head-sub">last changed 42 days ago</span>
+      </div>
+      <div class="card-body">
+        <form>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="curPw">Current password</label>
+              <input id="curPw" class="input mono" type="password" autocomplete="current-password">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="newPw">New password</label>
+              <input id="newPw" class="input mono" type="password" autocomplete="new-password">
+              <div class="form-hint">12+ characters · upper, lower, number, symbol.</div>
+            </div>
+          </div>
+          <div class="hstack" style="justify-content:flex-end;gap:8px;border-top:1px solid var(--border);padding-top:18px;">
+            <button type="submit" class="btn btn-primary">Update password</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Two-factor -->
+    <div class="card" style="margin-bottom:20px;">
+      <div class="card-head">
+        <div class="card-head-title"><span class="dot"></span> Two-factor authentication</div>
+        <span class="card-head-sub">2 of 3 methods</span>
+      </div>
+      <div class="card-body" style="padding:6px 0;">
+        <div class="hstack" style="padding:16px 20px;border-bottom:1px solid var(--border);gap:14px;">
+          <span style="width:36px;height:36px;border-radius:8px;background:var(--green-dim);border:1px solid rgba(0,208,132,.25);display:inline-flex;align-items:center;justify-content:center;color:var(--green);">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+          </span>
+          <div style="flex:1;">
+            <div class="fg" style="font-weight:600;">Authenticator app</div>
+            <div class="muted" style="font-size:13px;line-height:1.55;">1Password · added 2026-03-08</div>
+          </div>
+          <span class="pill pill-ok"><span class="pdot"></span>enabled</span>
+          <button class="btn btn-ghost btn-sm">Manage</button>
+        </div>
+        <div class="hstack" style="padding:16px 20px;border-bottom:1px solid var(--border);gap:14px;">
+          <span style="width:36px;height:36px;border-radius:8px;background:var(--green-dim);border:1px solid rgba(0,208,132,.25);display:inline-flex;align-items:center;justify-content:center;color:var(--green);">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          </span>
+          <div style="flex:1;">
+            <div class="fg" style="font-weight:600;">Security key (passkey)</div>
+            <div class="muted" style="font-size:13px;line-height:1.55;">YubiKey 5C · last used 2 days ago</div>
+          </div>
+          <span class="pill pill-ok"><span class="pdot"></span>enabled</span>
+          <button class="btn btn-ghost btn-sm">Manage</button>
+        </div>
+        <div class="hstack" style="padding:16px 20px;gap:14px;">
+          <span style="width:36px;height:36px;border-radius:8px;background:var(--amber-dim);border:1px solid rgba(245,158,11,.25);display:inline-flex;align-items:center;justify-content:center;color:var(--amber);">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 7H3v10h18z"/><path d="m3 7 9 6 9-6"/></svg>
+          </span>
+          <div style="flex:1;">
+            <div class="fg" style="font-weight:600;">Recovery codes</div>
+            <div class="muted" style="font-size:13px;line-height:1.55;">Generate a one-time backup set in case you lose your device.</div>
+          </div>
+          <span class="pill pill-warn"><span class="pdot"></span>not set</span>
+          <button class="btn btn-primary btn-sm">Generate</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Active sessions -->
+    <div class="card" style="margin-bottom:20px;">
+      <div class="card-head">
+        <div class="card-head-title"><span class="dot"></span> Active sessions</div>
+        <button class="btn btn-danger btn-sm">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/></svg>
+          Sign out all other devices
+        </button>
+      </div>
+      <div class="card-body card-body--flush">
+        <div class="tbl-wrap">
+          <table class="tbl">
+            <thead>
+              <tr>
+                <th>Device</th>
+                <th>Browser</th>
+                <th>IP</th>
+                <th>Location</th>
+                <th>Last active</th>
+                <th class="r"></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="fg">
+                  <span class="hstack" style="gap:8px;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="14" rx="2"/><path d="M8 20h8M12 18v2"/></svg>
+                    MacBook Pro
+                  </span>
+                </td>
+                <td>Chrome 142</td>
+                <td>2406:da14:•••:8a</td>
+                <td>Taipei, TW</td>
+                <td><span class="pill pill-ok"><span class="pdot"></span>this device</span></td>
+                <td class="r"><button class="btn btn-ghost btn-sm" disabled>current</button></td>
+              </tr>
+              <tr>
+                <td class="fg">
+                  <span class="hstack" style="gap:8px;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="2" width="12" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+                    iPhone 17
+                  </span>
+                </td>
+                <td>Safari 18.4</td>
+                <td>114.46.•••.22</td>
+                <td>Taipei, TW</td>
+                <td>3 hours ago</td>
+                <td class="r"><button class="btn btn-danger btn-sm">Revoke</button></td>
+              </tr>
+              <tr>
+                <td class="fg">
+                  <span class="hstack" style="gap:8px;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="14" rx="2"/><path d="M8 20h8"/></svg>
+                    Linux desktop
+                  </span>
+                </td>
+                <td>Firefox 132</td>
+                <td>52.78.•••.140</td>
+                <td>Seoul, KR</td>
+                <td>2 days ago</td>
+                <td class="r"><button class="btn btn-danger btn-sm">Revoke</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Login history -->
+    <div class="card">
+      <div class="card-head">
+        <div class="card-head-title"><span class="dot"></span> Login history</div>
+        <span class="card-head-sub">last 30 days</span>
+      </div>
+      <div class="card-body card-body--flush">
+        <div class="tbl-wrap">
+          <table class="tbl">
+            <thead>
+              <tr>
+                <th>Timestamp</th>
+                <th>Event</th>
+                <th>IP</th>
+                <th>Location</th>
+                <th>Method</th>
+                <th>Result</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>2026-05-18 09:12</td>
+                <td class="fg">Sign in</td>
+                <td>2406:da14:•••:8a</td>
+                <td>Taipei, TW</td>
+                <td>password + totp</td>
+                <td><span class="pill pill-ok"><span class="pdot"></span>success</span></td>
+              </tr>
+              <tr>
+                <td>2026-05-17 22:48</td>
+                <td class="fg">Sign in</td>
+                <td>114.46.•••.22</td>
+                <td>Taipei, TW</td>
+                <td>passkey</td>
+                <td><span class="pill pill-ok"><span class="pdot"></span>success</span></td>
+              </tr>
+              <tr>
+                <td>2026-05-14 03:21</td>
+                <td class="fg">Sign in</td>
+                <td>185.220.•••.41</td>
+                <td>Reykjavik, IS</td>
+                <td>password</td>
+                <td><span class="pill pill-err"><span class="pdot"></span>blocked</span></td>
+              </tr>
+              <tr>
+                <td>2026-05-12 10:04</td>
+                <td class="fg">Password changed</td>
+                <td>2406:da14:•••:8a</td>
+                <td>Taipei, TW</td>
+                <td>—</td>
+                <td><span class="pill pill-ok"><span class="pdot"></span>success</span></td>
+              </tr>
+              <tr>
+                <td>2026-05-08 14:32</td>
+                <td class="fg">2FA enabled</td>
+                <td>2406:da14:•••:8a</td>
+                <td>Taipei, TW</td>
+                <td>—</td>
+                <td><span class="pill pill-ok"><span class="pdot"></span>success</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<script src="../../shared/dashboard.js"></script>
+</body>
+</html>

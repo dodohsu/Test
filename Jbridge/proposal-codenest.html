@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CodeNest — Launch Your Coding Career</title>
+
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com"></script>
+
+<!-- React 18 -->
+<script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+
+<!-- Babel (JSX transform) -->
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+<!-- hls.js -->
+<script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.13/dist/hls.min.js"></script>
+
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        fontFamily: {
+          inter:   ['Inter', 'system-ui', 'sans-serif'],
+          jakarta: ['Plus Jakarta Sans', 'sans-serif'],
+          serif:   ['Instrument Serif', 'serif'],
+        },
+      }
+    }
+  }
+</script>
+
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --green: #5ed29c;
+    --bg:    #070b0a;
+  }
+
+  html, body, #root { height: 100%; }
+  body { background: var(--bg); color: #fff; font-family: 'Inter', sans-serif; overflow-x: hidden; }
+
+  /* ── Liquid Glass Card ── */
+  .liquid-glass-card {
+    position: relative;
+    width: 200px;
+    height: 200px;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.01);
+    background-blend-mode: luminosity;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.1);
+    transform: translateY(-50px);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    flex-shrink: 0;
+  }
+
+  .liquid-glass-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    padding: 1.4px;
+    border-radius: inherit;
+    background: linear-gradient(180deg,
+      rgba(255, 255, 255, 0.28) 0%,
+      rgba(255, 255, 255, 0.04) 100%
+    );
+    -webkit-mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+
+  /* ── Nav link hover ── */
+  .nav-link {
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.65);
+    text-decoration: none;
+    letter-spacing: 0.02em;
+    transition: color 0.15s;
+  }
+  .nav-link:hover { color: var(--green); }
+
+  /* ── Mobile menu link hover ── */
+  .mobile-link {
+    font-family: 'Inter', sans-serif;
+    font-size: 26px;
+    font-weight: 700;
+    color: rgba(255,255,255,0.85);
+    text-decoration: none;
+    letter-spacing: 0.04em;
+    transition: color 0.15s;
+  }
+  .mobile-link:hover { color: var(--green); }
+
+  /* ── CTA button ── */
+  .btn-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 30px;
+    border-radius: 9999px;
+    background: var(--green);
+    color: var(--bg);
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .btn-cta:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(94, 210, 156, 0.32);
+  }
+
+  /* ── Hamburger btn ── */
+  .hamburger-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: white;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* ── Mobile overlay ── */
+  .mobile-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 300;
+    background: var(--bg);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 36px;
+  }
+  .mobile-close-btn {
+    position: absolute;
+    top: 24px;
+    right: 24px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: white;
+  }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel">
+const { useState, useEffect, useRef } = React;
+
+/* ─────────── SVG Icons ─────────── */
+const ArrowRight = ({ size = 16 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none"
+    stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M5 12h14M12 5l7 7-7 7"/>
+  </svg>
+);
+
+const MenuIcon = ({ size = 24 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none"
+    stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <line x1="3" y1="7"  x2="21" y2="7"/>
+    <line x1="3" y1="12" x2="21" y2="12"/>
+    <line x1="3" y1="17" x2="21" y2="17"/>
+  </svg>
+);
+
+const XIcon = ({ size = 24 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none"
+    stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <line x1="18" y1="6"  x2="6"  y2="18"/>
+    <line x1="6"  y1="6"  x2="18" y2="18"/>
+  </svg>
+);
+
+/* ─────────── HLS Video Background ─────────── */
+function VideoBackground() {
+  const videoRef = useRef(null);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    const src = 'https://stream.mux.com/tLkHO1qZoaaQOUeVWo8hEBeGQfySP02EPS02BmnNFyXys.m3u8';
+
+    if (typeof Hls !== 'undefined' && Hls.isSupported()) {
+      const hls = new Hls({ enableWorker: false });
+      hls.loadSource(src);
+      hls.attachMedia(video);
+      hls.on(Hls.Events.MANIFEST_PARSED, () => {
+        video.play().catch(() => {});
+      });
+      return () => hls.destroy();
+    } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+      /* Safari native HLS */
+      video.src = src;
+      video.addEventListener('loadedmetadata', () => video.play().catch(() => {}));
+    }
+  }, []);
+
+  return (
+    <div style={{ position: 'absolute', inset: 0, zIndex: 0 }}>
+      {/* Video */}
+      <video
+        ref={videoRef}
+        autoPlay muted loop playsInline
+        style={{
+          width: '100%', height: '100%',
+          objectFit: 'cover',
+          opacity: 0.60,
+        }}
+      />
+
+      {/* Left dark gradient */}
+      <div style={{
+        position: 'absolute', inset: 0,
+        background: 'linear-gradient(to right, #070b0a 0%, rgba(7,11,10,0.82) 28%, rgba(7,11,10,0.38) 58%, transparent 100%)',
+      }}/>
+
+      {/* Bottom-up readability gradient */}
+      <div style={{
+        position: 'absolute', inset: 0,
+        background: 'linear-gradient(to top, #070b0a 0%, rgba(7,11,10,0.55) 28%, transparent 58%)',
+      }}/>
+    </div>
+  );
+}
+
+/* ─────────── Vertical Grid Lines ─────────── */
+function GridLines() {
+  return (
+    <div style={{
+      position: 'absolute', inset: 0,
+      zIndex: 1, pointerEvents: 'none',
+    }} className="hidden md:block">
+      {[25, 50, 75].map(pct => (
+        <div key={pct} style={{
+          position: 'absolute',
+          top: 0, bottom: 0,
+          left: `${pct}%`,
+          width: '1px',
+          background: 'rgba(255,255,255,0.10)',
+        }}/>
+      ))}
+    </div>
+  );
+}
+
+/* ─────────── Central SVG Ellipse Glow ─────────── */
+function CentralGlow() {
+  return (
+    <svg
+      aria-hidden="true"
+      style={{
+        position: 'absolute',
+        top: '-80px',
+        left: '50%',
+        transform: 'translateX(-50%)',
+        width: '820px',
+        height: '380px',
+        zIndex: 1,
+        pointerEvents: 'none',
+      }}
+      viewBox="0 0 820 380"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <defs>
+        <filter id="cg-blur" x="-40%" y="-40%" width="180%" height="180%">
+          <feGaussianBlur stdDeviation="25"/>
+        </filter>
+      </defs>
+      <ellipse cx="410" cy="190" rx="320" ry="115"
+        fill="rgba(0,180,110,0.17)" filter="url(#cg-blur)"/>
+    </svg>
+  );
+}
+
+/* ─────────── Liquid Glass Card ─────────── */
+function LiquidGlassCard() {
+  return (
+    <div className="liquid-glass-card">
+      {/* Tag */}
+      <span style={{ fontSize: '14px', color: 'rgba(255,255,255,0.42)', fontFamily: 'Inter, sans-serif', letterSpacing: '0.04em' }}>
+        [ 2025 ]
+      </span>
+
+      {/* Headline + description */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+        <p style={{
+          fontSize: '18px',
+          fontWeight: 600,
+          lineHeight: 1.25,
+          color: 'rgba(255,255,255,0.90)',
+        }}>
+          Taught by{' '}
+          <em style={{ fontFamily: 'Instrument Serif, serif', fontStyle: 'italic', fontWeight: 400 }}>
+            Industry
+          </em>{' '}
+          Professionals
+        </p>
+        <p style={{ fontSize: '11px', color: 'rgba(255,255,255,0.46)', lineHeight: 1.6 }}>
+          Learn from engineers who built real products at top tech companies.
+        </p>
+      </div>
+    </div>
+  );
+}
+
+/* ─────────── Navigation ─────────── */
+const NAV_LINKS = ['PROJECTS', 'BLOG', 'ABOUT', 'RESUME'];
+
+function Nav({ mobileOpen, setMobileOpen }) {
+  return (
+    <>
+      <header style={{
+        position: 'absolute',
+        top: 0, left: 0, right: 0,
+        zIndex: 100,
+      }}>
+        <div style={{
+          maxWidth: '1280px', margin: '0 auto',
+          padding: '28px 32px',
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+        }}>
+          {/* Logo */}
+          <a href="#" style={{
+            fontFamily: 'Inter, sans-serif',
+            fontWeight: 800,
+            fontSize: '20px',
+            letterSpacing: '-0.04em',
+            color: 'white',
+            textDecoration: 'none',
+          }}>
+            CodeNest
+          </a>
+
+          {/* Desktop links */}
+          <nav className="hidden md:flex" style={{ gap: '36px', display: 'flex', alignItems: 'center' }}>
+            {NAV_LINKS.map(link => (
+              <a key={link} href="#" className="nav-link">{link}</a>
+            ))}
+          </nav>
+
+          {/* Hamburger (mobile) */}
+          <button
+            className="hamburger-btn md:hidden"
+            onClick={() => setMobileOpen(true)}
+            aria-label="Open menu"
+          >
+            <MenuIcon size={24}/>
+          </button>
+        </div>
+      </header>
+
+      {/* Mobile full-screen overlay */}
+      {mobileOpen && (
+        <div className="mobile-overlay">
+          <button
+            className="mobile-close-btn"
+            onClick={() => setMobileOpen(false)}
+            aria-label="Close menu"
+          >
+            <XIcon size={28}/>
+          </button>
+          {NAV_LINKS.map(link => (
+            <a
+              key={link}
+              href="#"
+              className="mobile-link"
+              onClick={() => setMobileOpen(false)}
+            >
+              {link}
+            </a>
+          ))}
+        </div>
+      )}
+    </>
+  );
+}
+
+/* ─────────── Hero Section ─────────── */
+function Hero() {
+  return (
+    <section style={{
+      minHeight: '100vh',
+      position: 'relative',
+      overflow: 'hidden',
+      display: 'flex',
+      alignItems: 'center',
+    }}>
+      <VideoBackground/>
+      <GridLines/>
+      <CentralGlow/>
+
+      {/* Hero content */}
+      <div style={{
+        position: 'relative',
+        zIndex: 10,
+        width: '100%',
+        maxWidth: '1280px',
+        margin: '0 auto',
+        padding: '140px 32px 96px',
+      }}>
+
+        {/* Liquid glass card — sits above headline, shifted up 50px */}
+        <LiquidGlassCard/>
+
+        {/* Eyebrow */}
+        <p style={{
+          fontFamily: 'Plus Jakarta Sans, sans-serif',
+          fontWeight: 700,
+          fontSize: '11px',
+          color: '#5ed29c',
+          textTransform: 'uppercase',
+          letterSpacing: '0.16em',
+          marginBottom: '18px',
+        }}>
+          Career-Ready Curriculum
+        </p>
+
+        {/* Main headline */}
+        <h1 style={{
+          fontFamily: 'Inter, sans-serif',
+          fontWeight: 800,
+          fontSize: 'clamp(40px, 5.6vw, 72px)',
+          lineHeight: 1.0,
+          letterSpacing: '-0.04em',
+          textTransform: 'uppercase',
+          color: 'white',
+          marginBottom: '28px',
+          maxWidth: '760px',
+        }}>
+          LAUNCH YOUR<br/>
+          CODING CAREER<span style={{ color: '#5ed29c' }}>.</span>
+        </h1>
+
+        {/* Description */}
+        <p style={{
+          fontFamily: 'Inter, sans-serif',
+          fontSize: '14px',
+          color: 'rgba(255,255,255,0.70)',
+          lineHeight: 1.75,
+          maxWidth: '512px',
+          marginBottom: '44px',
+        }}>
+          Master in-demand coding skills with hands-on projects, real-world mentorship,
+          and a curriculum built for today's tech industry.
+        </p>
+
+        {/* CTA */}
+        <button className="btn-cta">
+          Get Started
+          <ArrowRight size={16}/>
+        </button>
+      </div>
+    </section>
+  );
+}
+
+/* ─────────── App ─────────── */
+function App() {
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  return (
+    <div style={{ background: 'var(--bg)', minHeight: '100vh' }}>
+      <Nav mobileOpen={mobileOpen} setMobileOpen={setMobileOpen}/>
+      <Hero/>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>

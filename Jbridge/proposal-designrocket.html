@@ -1,0 +1,1201 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JBridge.ai — One API. Every Model.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,300;0,14..32,400;0,14..32,500;0,14..32,600;0,14..32,700;0,14..32,800;0,14..32,900;1,14..32,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    /* ═══════════════════════════════════════════
+       DESIGN TOKENS  (mirrored from designrocket.io)
+       Background : hsl(276 63% 3%)
+       Gradient   : purple → pink → orange
+    ═══════════════════════════════════════════ */
+    :root {
+      --bg:        hsl(276,63%,3%);
+      --card:      hsl(276,45%,5%);
+      --card-2:    hsl(276,30%,7%);
+      --border:    rgba(168,85,247,.15);
+      --border-hi: rgba(168,85,247,.35);
+      --fg:        hsl(0,0%,98%);
+      --fg-2:      hsl(0,0%,65%);
+      --fg-3:      hsl(0,0%,38%);
+
+      /* gradient stops */
+      --gp: hsl(262,93%,69%);   /* #a855f7 */
+      --gk: hsl(327,98%,71%);   /* #f472b6 */
+      --go: hsl(21,100%,70%);   /* #fb923c */
+
+      --grad: linear-gradient(90deg, var(--gp), var(--gk) 45%, var(--go));
+      --grad-135: linear-gradient(135deg, var(--gp), var(--gk) 45%, var(--go));
+      --grad-v: linear-gradient(180deg, var(--gp), var(--gk) 50%, var(--go));
+
+      --r:  12px;
+      --r2: 8px;
+      --r3: 20px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--fg);
+      overflow-x: hidden;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ─── ANIMATED BACKGROUND ─────────────────── */
+    #bg-canvas {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    /* Rotating conic-gradient orb — the designrocket.io signature */
+    .orb-central {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 1000px;
+      height: 1000px;
+      margin: -500px 0 0 -500px;
+      border-radius: 50%;
+      background: conic-gradient(
+        from 0deg,
+        hsl(262,93%,65%) 0%,
+        hsl(290,80%,50%) 20%,
+        hsl(327,98%,68%) 40%,
+        hsl(21,100%,65%) 60%,
+        hsl(290,80%,50%) 80%,
+        hsl(262,93%,65%) 100%
+      );
+      filter: blur(130px);
+      opacity: 0.14;
+      animation: orb-spin 30s linear infinite;
+      transform-origin: center;
+    }
+
+    .orb-tl {
+      position: absolute;
+      top: -15%;
+      left: -10%;
+      width: 650px;
+      height: 650px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 40% 40%,
+        hsl(262,93%,70%) 0%,
+        hsl(290,80%,55%) 35%,
+        transparent 70%
+      );
+      filter: blur(90px);
+      opacity: 0.13;
+      animation: float-a 18s ease-in-out infinite;
+    }
+
+    .orb-br {
+      position: absolute;
+      bottom: -15%;
+      right: -10%;
+      width: 750px;
+      height: 750px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 60% 60%,
+        hsl(21,100%,68%) 0%,
+        hsl(327,98%,65%) 35%,
+        transparent 70%
+      );
+      filter: blur(110px);
+      opacity: 0.10;
+      animation: float-b 22s ease-in-out infinite;
+    }
+
+    /* Subtle dot grid */
+    .grid-dots {
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(rgba(168,85,247,.12) 1px, transparent 1px);
+      background-size: 44px 44px;
+    }
+
+    /* Vignette to darken edges */
+    .vignette {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 70% 70% at 50% 50%, transparent 30%, var(--bg) 100%);
+    }
+
+    @keyframes orb-spin {
+      0%   { transform: rotate(0deg)   scale(1);    }
+      25%  { transform: rotate(90deg)  scale(1.06); }
+      50%  { transform: rotate(180deg) scale(1);    }
+      75%  { transform: rotate(270deg) scale(0.96); }
+      100% { transform: rotate(360deg) scale(1);    }
+    }
+    @keyframes float-a {
+      0%,100% { transform: translate(0,0) scale(1); }
+      40%     { transform: translate(40px,-40px) scale(1.08); }
+      70%     { transform: translate(-20px,25px) scale(0.95); }
+    }
+    @keyframes float-b {
+      0%,100% { transform: translate(0,0) scale(1); }
+      35%     { transform: translate(-50px,30px) scale(1.06); }
+      65%     { transform: translate(30px,-20px) scale(0.96); }
+    }
+
+    /* ─── LAYOUT HELPERS ─────────────────────── */
+    .wrap {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 28px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ─── GRADIENT UTILITIES ─────────────────── */
+    .g-text {
+      background: var(--grad);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .g-line {
+      height: 1px;
+      background: linear-gradient(90deg, transparent 0%, var(--gp) 30%, var(--gk) 70%, transparent 100%);
+      opacity: .35;
+    }
+
+    /* Gradient-border card */
+    .g-card {
+      position: relative;
+      background: var(--card);
+      border-radius: var(--r);
+    }
+    .g-card::before {
+      content: '';
+      position: absolute;
+      inset: -1px;
+      border-radius: calc(var(--r) + 1px);
+      background: linear-gradient(135deg, rgba(168,85,247,.5) 0%, rgba(244,114,182,.2) 50%, rgba(251,146,60,.1) 100%);
+      z-index: -1;
+    }
+
+    /* ─── NAVIGATION ─────────────────────────── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 200;
+      padding: 14px 0;
+      background: rgba(8,2,14,.75);
+      backdrop-filter: blur(24px) saturate(150%);
+      -webkit-backdrop-filter: blur(24px) saturate(150%);
+      border-bottom: 1px solid rgba(168,85,247,.1);
+      transition: background .3s;
+    }
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 18px;
+      font-weight: 700;
+      color: #fff;
+      text-decoration: none;
+      letter-spacing: -.3px;
+    }
+    .logo-mark {
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      background: var(--grad-135);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 900;
+      color: #fff;
+      flex-shrink: 0;
+    }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+      list-style: none;
+    }
+    .nav-links a {
+      color: var(--fg-2);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      transition: color .2s;
+    }
+    .nav-links a:hover { color: #fff; }
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .btn-ghost {
+      background: none;
+      border: none;
+      color: var(--fg-2);
+      font-size: 14px;
+      font-weight: 500;
+      padding: 8px 14px;
+      border-radius: var(--r2);
+      cursor: pointer;
+      font-family: inherit;
+      transition: color .2s;
+      text-decoration: none;
+    }
+    .btn-ghost:hover { color: #fff; }
+    .btn-g {
+      background: var(--grad);
+      color: #fff;
+      border: none;
+      font-size: 14px;
+      font-weight: 600;
+      padding: 9px 20px;
+      border-radius: var(--r2);
+      cursor: pointer;
+      font-family: inherit;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: opacity .2s, transform .2s, box-shadow .25s;
+    }
+    .btn-g:hover {
+      opacity: .9;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 20px rgba(168,85,247,.45);
+    }
+
+    /* ─── HERO ───────────────────────────────── */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 130px 0 80px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(168,85,247,.1);
+      border: 1px solid rgba(168,85,247,.28);
+      border-radius: 100px;
+      padding: 6px 16px 6px 10px;
+      font-size: 13px;
+      font-weight: 500;
+      color: hsl(262,80%,82%);
+      margin-bottom: 36px;
+    }
+    .badge-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--gp);
+      box-shadow: 0 0 8px var(--gp);
+      animation: pulse-glow 2.2s ease-in-out infinite;
+    }
+    @keyframes pulse-glow {
+      0%,100% { opacity: 1; box-shadow: 0 0 8px var(--gp); }
+      50%      { opacity: .5; box-shadow: 0 0 16px var(--gp); }
+    }
+
+    .hero-h1 {
+      font-size: clamp(56px, 9vw, 100px);
+      font-weight: 900;
+      line-height: 1.02;
+      letter-spacing: -3px;
+      margin-bottom: 28px;
+    }
+    .hero-sub {
+      font-size: clamp(16px, 1.8vw, 19px);
+      color: var(--fg-2);
+      max-width: 500px;
+      margin: 0 auto 44px;
+      line-height: 1.65;
+    }
+
+    .hero-btns {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 52px;
+    }
+    .btn-g-lg {
+      background: var(--grad);
+      color: #fff;
+      border: none;
+      font-size: 15px;
+      font-weight: 600;
+      padding: 14px 36px;
+      border-radius: var(--r);
+      cursor: pointer;
+      font-family: inherit;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: opacity .2s, transform .25s, box-shadow .25s;
+    }
+    .btn-g-lg:hover {
+      opacity: .92;
+      transform: translateY(-2px);
+      box-shadow: 0 10px 40px rgba(168,85,247,.5);
+    }
+    .btn-o-lg {
+      background: transparent;
+      color: var(--fg-2);
+      border: 1px solid var(--border-hi);
+      font-size: 15px;
+      font-weight: 500;
+      padding: 14px 32px;
+      border-radius: var(--r);
+      cursor: pointer;
+      font-family: inherit;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: border-color .2s, color .2s, background .2s;
+    }
+    .btn-o-lg:hover {
+      border-color: var(--gp);
+      color: #fff;
+      background: rgba(168,85,247,.08);
+    }
+
+    /* Provider chips */
+    .providers {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .providers-label {
+      font-size: 13px;
+      color: var(--fg-3);
+      margin-right: 4px;
+    }
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 100px;
+      padding: 5px 13px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--fg-2);
+      transition: border-color .2s, color .2s;
+    }
+    .chip:hover { border-color: var(--border-hi); color: #fff; }
+    .chip-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    /* Hero terminal card */
+    .hero-visual {
+      margin-top: 72px;
+      width: 100%;
+      max-width: 780px;
+    }
+
+    /* ─── TERMINAL CARD ──────────────────────── */
+    .term-card {
+      background: hsl(276,63%,4%);
+      border: 1px solid rgba(168,85,247,.22);
+      border-radius: var(--r3);
+      overflow: hidden;
+      box-shadow:
+        0 50px 100px rgba(0,0,0,.7),
+        0 0 0 1px rgba(168,85,247,.08),
+        inset 0 1px 0 rgba(255,255,255,.04);
+    }
+    .term-head {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 13px 20px;
+      border-bottom: 1px solid rgba(168,85,247,.12);
+      background: rgba(168,85,247,.04);
+    }
+    .wdots { display: flex; gap: 6px; }
+    .wd {
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+    }
+    .wd-r { background: #ff5f57; }
+    .wd-y { background: #febc2e; }
+    .wd-g { background: #28c840; }
+    .term-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--fg-3);
+    }
+    .term-body {
+      padding: 26px 28px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13.5px;
+      line-height: 1.9;
+      text-align: left;
+    }
+    .tc-dim    { color: hsl(0,0%,36%); }
+    .tc-purple { color: hsl(262,80%,76%); }
+    .tc-pink   { color: hsl(327,90%,75%); }
+    .tc-orange { color: hsl(21,100%,68%); }
+    .tc-green  { color: hsl(142,65%,60%); }
+    .tc-blue   { color: hsl(213,80%,65%); }
+    .tc-str    { color: hsl(142,55%,62%); }
+    .tc-white  { color: #fff; }
+
+    /* ─── STATS BAR ──────────────────────────── */
+    .stats {
+      padding: 56px 0;
+      border-top: 1px solid rgba(168,85,247,.1);
+      border-bottom: 1px solid rgba(168,85,247,.1);
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+    }
+    .stat {
+      text-align: center;
+      padding: 20px;
+      border-right: 1px solid rgba(168,85,247,.1);
+    }
+    .stat:last-child { border-right: none; }
+    .stat-n {
+      font-size: 38px;
+      font-weight: 800;
+      line-height: 1;
+      margin-bottom: 6px;
+      letter-spacing: -1px;
+    }
+    .stat-l {
+      font-size: 14px;
+      color: var(--fg-3);
+      font-weight: 500;
+    }
+
+    /* ─── SECTION BASE ───────────────────────── */
+    .section { padding: 100px 0; }
+
+    .sec-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: rgba(168,85,247,.08);
+      border: 1px solid rgba(168,85,247,.2);
+      border-radius: 100px;
+      padding: 4px 14px;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--gp);
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      margin-bottom: 22px;
+    }
+    .sec-h {
+      font-size: clamp(32px, 4vw, 52px);
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -1.5px;
+      margin-bottom: 14px;
+    }
+    .sec-p {
+      font-size: 17px;
+      color: var(--fg-2);
+      line-height: 1.65;
+    }
+
+    /* ─── FEATURES ───────────────────────────── */
+    .feat-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1px;
+      background: rgba(168,85,247,.14);
+      border: 1px solid rgba(168,85,247,.14);
+      border-radius: var(--r3);
+      overflow: hidden;
+    }
+    .feat-card {
+      background: var(--card);
+      padding: 44px 40px;
+      position: relative;
+      transition: background .3s;
+    }
+    .feat-card:hover { background: hsl(276,45%,6%); }
+    .feat-card::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      width: 120px;
+      height: 120px;
+      background: radial-gradient(circle, rgba(168,85,247,.08), transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .feat-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 22px;
+      position: relative;
+    }
+    .feat-icon::before {
+      content: '';
+      position: absolute;
+      inset: -1px;
+      border-radius: 15px;
+      background: var(--grad-135);
+      z-index: -1;
+      opacity: .5;
+    }
+    .feat-icon-inner {
+      width: 100%;
+      height: 100%;
+      border-radius: 13px;
+      background: rgba(168,85,247,.12);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .feat-title {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 10px;
+      letter-spacing: -.3px;
+    }
+    .feat-desc {
+      font-size: 15px;
+      color: var(--fg-2);
+      line-height: 1.65;
+    }
+
+    /* ─── SDK / ENDPOINTS ────────────────────── */
+    .sdk-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 56px;
+      align-items: center;
+    }
+    .endpoints {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 32px;
+    }
+    .ep {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 18px;
+      background: rgba(168,85,247,.05);
+      border: 1px solid rgba(168,85,247,.15);
+      border-radius: var(--r);
+      transition: border-color .2s, background .2s;
+      cursor: default;
+    }
+    .ep:hover {
+      border-color: rgba(168,85,247,.4);
+      background: rgba(168,85,247,.1);
+    }
+    .ep-method {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 3px 9px;
+      border-radius: 5px;
+      background: rgba(168,85,247,.2);
+      color: var(--gp);
+      letter-spacing: .05em;
+      flex-shrink: 0;
+    }
+    .ep-path {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      color: var(--fg-2);
+      flex: 1;
+    }
+    .ep-path strong { color: #fff; font-weight: 500; }
+    .ep-tag {
+      font-size: 11px;
+      color: var(--fg-3);
+      flex-shrink: 0;
+    }
+
+    /* ─── PRICING TABLE ──────────────────────── */
+    .pt {
+      background: var(--card);
+      border: 1px solid rgba(168,85,247,.18);
+      border-radius: var(--r3);
+      overflow: hidden;
+    }
+    .pt-head {
+      display: grid;
+      grid-template-columns: 1fr 130px 130px;
+      padding: 14px 28px;
+      border-bottom: 1px solid rgba(168,85,247,.14);
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--fg-3);
+      text-transform: uppercase;
+      letter-spacing: .1em;
+    }
+    .pt-row {
+      display: grid;
+      grid-template-columns: 1fr 130px 130px;
+      padding: 18px 28px;
+      border-bottom: 1px solid rgba(168,85,247,.07);
+      transition: background .2s;
+      align-items: center;
+    }
+    .pt-row:hover { background: rgba(168,85,247,.05); }
+    .pt-row:last-child { border-bottom: none; }
+    .model-n {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .provider-tag {
+      font-family: 'Inter', sans-serif;
+      font-size: 11px;
+      color: var(--fg-3);
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.06);
+      border-radius: 4px;
+      padding: 2px 7px;
+    }
+    .p-in, .p-out {
+      font-size: 14px;
+      color: var(--fg-2);
+      font-weight: 500;
+    }
+
+    /* ─── CTA SECTION ────────────────────────── */
+    .cta-sec {
+      padding: 100px 0 120px;
+      text-align: center;
+    }
+    .cta-box {
+      position: relative;
+      padding: 90px 60px;
+      border-radius: var(--r3);
+      border: 1px solid rgba(168,85,247,.22);
+      overflow: hidden;
+    }
+    .cta-box::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 50% at 50% 110%, rgba(168,85,247,.22) 0%, transparent 70%),
+        var(--card);
+    }
+    /* gradient bottom edge */
+    .cta-box::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60%;
+      height: 2px;
+      background: var(--grad);
+      filter: blur(1px);
+    }
+    .cta-h {
+      font-size: clamp(34px, 5vw, 62px);
+      font-weight: 900;
+      line-height: 1.06;
+      letter-spacing: -2px;
+      margin-bottom: 18px;
+      position: relative;
+    }
+    .cta-p {
+      font-size: 18px;
+      color: var(--fg-2);
+      margin-bottom: 44px;
+      position: relative;
+      line-height: 1.6;
+    }
+    .cta-btns {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+      position: relative;
+    }
+
+    /* ─── FOOTER ─────────────────────────────── */
+    footer {
+      padding: 44px 0;
+      border-top: 1px solid rgba(168,85,247,.1);
+    }
+    .foot-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .foot-links {
+      display: flex;
+      gap: 24px;
+      list-style: none;
+    }
+    .foot-links a {
+      font-size: 14px;
+      color: var(--fg-3);
+      text-decoration: none;
+      transition: color .2s;
+    }
+    .foot-links a:hover { color: var(--fg-2); }
+    .foot-copy { font-size: 14px; color: var(--fg-3); }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .feat-grid  { grid-template-columns: 1fr; }
+      .sdk-grid   { grid-template-columns: 1fr; }
+      .foot-inner { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══ ANIMATED BACKGROUND ═══ -->
+<div id="bg-canvas">
+  <div class="orb-central"></div>
+  <div class="orb-tl"></div>
+  <div class="orb-br"></div>
+  <div class="grid-dots"></div>
+  <div class="vignette"></div>
+</div>
+
+<!-- ═══ NAVIGATION ═══ -->
+<nav>
+  <div class="wrap">
+    <div class="nav-inner">
+
+      <a href="#" class="logo">
+        <div class="logo-mark">J</div>
+        JBridge.ai
+      </a>
+
+      <ul class="nav-links">
+        <li><a href="#features">Features</a></li>
+        <li><a href="#pricing">Pricing</a></li>
+        <li><a href="#">Docs</a></li>
+      </ul>
+
+      <div class="nav-right">
+        <a href="#" class="btn-ghost">Log in</a>
+        <a href="#" class="btn-g">Get Started Free &rarr;</a>
+      </div>
+
+    </div>
+  </div>
+</nav>
+
+<!-- ═══ HERO ═══ -->
+<section class="hero">
+  <div class="wrap">
+
+    <div class="badge">
+      <span class="badge-dot"></span>
+      OpenAI &amp; Anthropic Compatible
+    </div>
+
+    <h1 class="hero-h1">
+      One API.<br>
+      <span class="g-text">Every Model.</span>
+    </h1>
+
+    <p class="hero-sub">
+      Access top AI models through a single unified endpoint.
+      Pay only for what you use — no subscriptions, no lock-in.
+    </p>
+
+    <div class="hero-btns">
+      <a href="#" class="btn-g-lg">Get Started Free &rarr;</a>
+      <a href="#" class="btn-o-lg">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        Read Docs
+      </a>
+    </div>
+
+    <div class="providers">
+      <span class="providers-label">Supported providers</span>
+      <div class="chip"><span class="chip-dot" style="background:#10a37f"></span>OpenAI</div>
+      <div class="chip"><span class="chip-dot" style="background:#d97706"></span>Anthropic</div>
+      <div class="chip"><span class="chip-dot" style="background:#3b82f6"></span>DeepSeek</div>
+      <div class="chip"><span class="chip-dot" style="background:#ef4444"></span>Grok</div>
+      <div class="chip"><span class="chip-dot" style="background:#8b5cf6"></span>Kimi</div>
+    </div>
+
+    <!-- Terminal hero visual -->
+    <div class="hero-visual">
+      <div class="term-card">
+        <div class="term-head">
+          <div class="wdots">
+            <div class="wd wd-r"></div>
+            <div class="wd wd-y"></div>
+            <div class="wd wd-g"></div>
+          </div>
+          <span class="term-label">POST &nbsp;/api/v1/chat/completions</span>
+        </div>
+        <div class="term-body">
+<span class="tc-dim">// Switch any model — zero code changes</span><br>
+<span class="tc-purple">import</span> <span class="tc-white">OpenAI</span> <span class="tc-purple">from</span> <span class="tc-str">'openai'</span><br>
+<br>
+<span class="tc-purple">const</span> <span class="tc-white">ai</span> <span class="tc-dim">=</span> <span class="tc-purple">new</span> <span class="tc-green">OpenAI</span><span class="tc-dim">({</span><br>
+&nbsp;&nbsp;<span class="tc-blue">apiKey</span><span class="tc-dim">:</span> <span class="tc-str">'jb-your-key'</span><span class="tc-dim">,</span><br>
+&nbsp;&nbsp;<span class="tc-blue">baseURL</span><span class="tc-dim">:</span> <span class="tc-str">'https://api.jbridge.ai/v1'</span><br>
+<span class="tc-dim">})</span><br>
+<br>
+<span class="tc-purple">const</span> <span class="tc-white">res</span> <span class="tc-dim">=</span> <span class="tc-purple">await</span> <span class="tc-white">ai</span><span class="tc-dim">.</span><span class="tc-orange">chat</span><span class="tc-dim">.</span><span class="tc-orange">completions</span><span class="tc-dim">.</span><span class="tc-green">create</span><span class="tc-dim">({</span><br>
+&nbsp;&nbsp;<span class="tc-blue">model</span><span class="tc-dim">:</span> <span class="tc-str">'claude-opus-4-5'</span><span class="tc-dim">,</span> &nbsp;<span class="tc-dim">// or gpt-5, deepseek-v3...</span><br>
+&nbsp;&nbsp;<span class="tc-blue">messages</span><span class="tc-dim">:</span> <span class="tc-dim">[{</span> <span class="tc-blue">role</span><span class="tc-dim">:</span> <span class="tc-str">'user'</span><span class="tc-dim">,</span> <span class="tc-blue">content</span><span class="tc-dim">:</span> <span class="tc-str">'Hello!'</span> <span class="tc-dim">}],</span><br>
+&nbsp;&nbsp;<span class="tc-blue">stream</span><span class="tc-dim">:</span> <span class="tc-purple">true</span><br>
+<span class="tc-dim">})</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══ STATS ═══ -->
+<div class="stats">
+  <div class="wrap">
+    <div class="stats-grid">
+      <div class="stat">
+        <div class="stat-n"><span class="g-text">18+</span></div>
+        <div class="stat-l">AI Models</div>
+      </div>
+      <div class="stat">
+        <div class="stat-n"><span class="g-text">5</span></div>
+        <div class="stat-l">Providers</div>
+      </div>
+      <div class="stat">
+        <div class="stat-n"><span class="g-text">&lt;50ms</span></div>
+        <div class="stat-l">Avg Latency</div>
+      </div>
+      <div class="stat">
+        <div class="stat-n"><span class="g-text">100%</span></div>
+        <div class="stat-l">OpenAI Compatible</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ FEATURES ═══ -->
+<section class="section" id="features">
+  <div class="wrap">
+
+    <div style="text-align:center; margin-bottom: 64px;">
+      <div class="sec-badge">Features</div>
+      <h2 class="sec-h">Everything you need<br>to <span class="g-text">ship faster</span></h2>
+      <p class="sec-p" style="max-width:480px; margin:0 auto;">One unified layer for all your AI model needs.<br>No vendor lock-in, full visibility.</p>
+    </div>
+
+    <div class="feat-grid">
+
+      <div class="feat-card">
+        <div class="feat-icon">
+          <div class="feat-icon-inner">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="url(#gi1)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <defs><linearGradient id="gi1" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#a855f7"/><stop offset="1" stop-color="#f472b6"/></linearGradient></defs>
+              <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
+            </svg>
+          </div>
+        </div>
+        <div class="feat-title">Unified API</div>
+        <div class="feat-desc">Compatible with OpenAI and Anthropic formats, supporting all major models. Switch providers without changing a line of code.</div>
+      </div>
+
+      <div class="feat-card">
+        <div class="feat-icon">
+          <div class="feat-icon-inner">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="url(#gi2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <defs><linearGradient id="gi2" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#a855f7"/><stop offset="1" stop-color="#fb923c"/></linearGradient></defs>
+              <path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/>
+            </svg>
+          </div>
+        </div>
+        <div class="feat-title">Usage Tracking</div>
+        <div class="feat-desc">Real-time monitoring of tokens, costs, and latency for every request. Understand exactly where your spend goes.</div>
+      </div>
+
+      <div class="feat-card">
+        <div class="feat-icon">
+          <div class="feat-icon-inner">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="url(#gi3)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <defs><linearGradient id="gi3" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f472b6"/><stop offset="1" stop-color="#fb923c"/></linearGradient></defs>
+              <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            </svg>
+          </div>
+        </div>
+        <div class="feat-title">Key Management</div>
+        <div class="feat-desc">Create multiple API keys with per-key model restrictions, rate limits, and granular spending caps per project.</div>
+      </div>
+
+      <div class="feat-card">
+        <div class="feat-icon">
+          <div class="feat-icon-inner">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="url(#gi4)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <defs><linearGradient id="gi4" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#a855f7"/><stop offset="1" stop-color="#f472b6"/></linearGradient></defs>
+              <path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/>
+            </svg>
+          </div>
+        </div>
+        <div class="feat-title">Streaming Support</div>
+        <div class="feat-desc">Full SSE streaming for chat completions. Low-latency, real-time token delivery across every supported model.</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<div class="g-line" style="margin: 0 28px;"></div>
+
+<!-- ═══ SDK / COMPATIBILITY ═══ -->
+<section class="section">
+  <div class="wrap">
+    <div class="sdk-grid">
+
+      <div>
+        <div class="sec-badge">Compatibility</div>
+        <h2 class="sec-h">Drop-in<br><span class="g-text">replacement</span></h2>
+        <p class="sec-p" style="margin-bottom: 0; max-width: 420px;">
+          Use your existing OpenAI or Anthropic SDK — just point the base URL to JBridge. No refactoring, no new libraries.
+        </p>
+        <div class="endpoints">
+          <div class="ep">
+            <span class="ep-method">POST</span>
+            <span class="ep-path"><strong>/api/v1/</strong>chat/completions</span>
+            <span class="ep-tag">OpenAI SDK</span>
+          </div>
+          <div class="ep">
+            <span class="ep-method">POST</span>
+            <span class="ep-path"><strong>/api/v1/</strong>messages</span>
+            <span class="ep-tag">Anthropic SDK</span>
+          </div>
+          <div class="ep">
+            <span class="ep-method">POST</span>
+            <span class="ep-path"><strong>/api/v1/</strong>responses</span>
+            <span class="ep-tag">Responses API</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="term-card">
+        <div class="term-head">
+          <div class="wdots">
+            <div class="wd wd-r"></div>
+            <div class="wd wd-y"></div>
+            <div class="wd wd-g"></div>
+          </div>
+          <span class="term-label">Python &middot; Anthropic SDK</span>
+        </div>
+        <div class="term-body">
+<span class="tc-purple">import</span> <span class="tc-white">anthropic</span><br>
+<br>
+<span class="tc-white">client</span> <span class="tc-dim">=</span> <span class="tc-green">anthropic</span><span class="tc-dim">.</span><span class="tc-pink">Anthropic</span><span class="tc-dim">(</span><br>
+&nbsp;&nbsp;<span class="tc-blue">api_key</span><span class="tc-dim">=</span><span class="tc-str">"jb-your-key"</span><span class="tc-dim">,</span><br>
+&nbsp;&nbsp;<span class="tc-blue">base_url</span><span class="tc-dim">=</span><span class="tc-str">"https://api.jbridge.ai"</span><br>
+<span class="tc-dim">)</span><br>
+<br>
+<span class="tc-white">msg</span> <span class="tc-dim">=</span> <span class="tc-white">client</span><span class="tc-dim">.</span><span class="tc-orange">messages</span><span class="tc-dim">.</span><span class="tc-green">create</span><span class="tc-dim">(</span><br>
+&nbsp;&nbsp;<span class="tc-blue">model</span><span class="tc-dim">=</span><span class="tc-str">"gpt-5"</span><span class="tc-dim">,</span> &nbsp;<span class="tc-dim"># any model</span><br>
+&nbsp;&nbsp;<span class="tc-blue">max_tokens</span><span class="tc-dim">=</span><span class="tc-orange">1024</span><span class="tc-dim">,</span><br>
+&nbsp;&nbsp;<span class="tc-blue">messages</span><span class="tc-dim">=[{</span><span class="tc-str">"role"</span><span class="tc-dim">:</span><span class="tc-str">"user"</span><span class="tc-dim">,</span> <span class="tc-str">"content"</span><span class="tc-dim">:</span><span class="tc-str">"Hi"</span><span class="tc-dim">}]</span><br>
+<span class="tc-dim">)</span><br>
+<br>
+<span class="tc-dim">print</span><span class="tc-dim">(</span><span class="tc-white">msg</span><span class="tc-dim">.</span><span class="tc-orange">content</span><span class="tc-dim">)</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<div class="g-line" style="margin: 0 28px;"></div>
+
+<!-- ═══ PRICING ═══ -->
+<section class="section" id="pricing">
+  <div class="wrap">
+
+    <div style="text-align:center; margin-bottom:56px;">
+      <div class="sec-badge">Pricing</div>
+      <h2 class="sec-h">Pay per token.<br><span class="g-text">No surprises.</span></h2>
+      <p class="sec-p" style="max-width:440px; margin:0 auto;">Token-level billing. No subscription. Start free — scale as you grow.</p>
+    </div>
+
+    <div class="pt">
+      <div class="pt-head">
+        <span>Model</span>
+        <span>Input / 1M tokens</span>
+        <span>Output / 1M tokens</span>
+      </div>
+      <div class="pt-row">
+        <span class="model-n">claude-haiku-4-5<span class="provider-tag">Anthropic</span></span>
+        <span class="p-in">$1.00</span>
+        <span class="p-out">$5.00</span>
+      </div>
+      <div class="pt-row">
+        <span class="model-n">gpt-5.4<span class="provider-tag">OpenAI</span></span>
+        <span class="p-in">$2.50</span>
+        <span class="p-out">$15.00</span>
+      </div>
+      <div class="pt-row">
+        <span class="model-n">deepseek-v3.2<span class="provider-tag">DeepSeek</span></span>
+        <span class="p-in">$0.58</span>
+        <span class="p-out">$1.68</span>
+      </div>
+      <div class="pt-row">
+        <span class="model-n">grok-3<span class="provider-tag">xAI</span></span>
+        <span class="p-in">$3.00</span>
+        <span class="p-out">$15.00</span>
+      </div>
+      <div class="pt-row">
+        <span class="model-n">kimi-k2<span class="provider-tag">Moonshot</span></span>
+        <span class="p-in">$0.60</span>
+        <span class="p-out">$2.50</span>
+      </div>
+    </div>
+
+    <p style="text-align:center; margin-top:22px; font-size:14px; color:var(--fg-3);">
+      More models in the dashboard &nbsp;&middot;&nbsp;
+      <a href="#" style="color:var(--gp); text-decoration:none; transition:opacity .2s;" onmouseover="this.style.opacity='.7'" onmouseout="this.style.opacity='1'">View full list &rarr;</a>
+    </p>
+
+  </div>
+</section>
+
+<!-- ═══ CTA ═══ -->
+<section class="cta-sec">
+  <div class="wrap">
+    <div class="cta-box">
+      <h2 class="cta-h">
+        Start building<br><span class="g-text">in seconds.</span>
+      </h2>
+      <p class="cta-p">
+        Create a free account and get your API key instantly.<br>
+        No credit card required.
+      </p>
+      <div class="cta-btns">
+        <a href="#" class="btn-g-lg" style="font-size:16px; padding:16px 44px;">Get Your Free API Key &rarr;</a>
+        <a href="#" class="btn-o-lg">Read the Docs</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ FOOTER ═══ -->
+<footer>
+  <div class="wrap">
+    <div class="foot-inner">
+      <a href="#" class="logo" style="color: var(--fg-3); font-size:15px;">
+        <div class="logo-mark" style="width:24px;height:24px;font-size:12px;border-radius:6px;">J</div>
+        JBridge.ai
+      </a>
+      <ul class="foot-links">
+        <li><a href="#">Docs</a></li>
+        <li><a href="#">Terms of Service</a></li>
+        <li><a href="#">Privacy Policy</a></li>
+        <li><a href="#">Refund Policy</a></li>
+      </ul>
+      <span class="foot-copy">&copy; 2025 JBridge.ai</span>
+    </div>
+  </div>
+</footer>
+
+<!-- Canvas particle shimmer effect -->
+<canvas id="particles" style="position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.5;"></canvas>
+<script>
+(function(){
+  const c = document.getElementById('particles');
+  const ctx = c.getContext('2d');
+  let W, H, pts = [];
+
+  function resize(){
+    W = c.width  = window.innerWidth;
+    H = c.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  // Sparse floating particles
+  const colors = ['168,85,247','244,114,182','251,146,60'];
+  for(let i=0;i<60;i++){
+    pts.push({
+      x: Math.random()*2000-500,
+      y: Math.random()*2000-500,
+      r: Math.random()*1.2+0.3,
+      a: Math.random()*Math.PI*2,
+      sp: (Math.random()*.4+.1),
+      col: colors[Math.floor(Math.random()*colors.length)],
+      op: Math.random()*.5+.1
+    });
+  }
+
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    for(const p of pts){
+      p.a += p.sp * 0.005;
+      p.x += Math.cos(p.a)*p.sp*0.3;
+      p.y += Math.sin(p.a)*p.sp*0.3;
+      // Wrap
+      if(p.x<-20) p.x=W+20;
+      if(p.x>W+20) p.x=-20;
+      if(p.y<-20) p.y=H+20;
+      if(p.y>H+20) p.y=-20;
+
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+      ctx.fillStyle = `rgba(${p.col},${p.op})`;
+      ctx.fill();
+    }
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+</script>
+
+</body>
+</html>

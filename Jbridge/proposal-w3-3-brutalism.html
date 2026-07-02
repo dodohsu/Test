@@ -1,0 +1,1183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JBridge.ai — One API. Every Model.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Space+Grotesk:wght@900&display=swap" rel="stylesheet" />
+  <style>
+    /* ─── RESET & BASE ─────────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:         #000000;
+      --surface:    #0A0A0A;
+      --border-dim: #1A1A1A;
+      --border-hi:  #FFFFFF;
+      --accent:     #ADFF2F;
+      --text:       #FFFFFF;
+      --text-2:     #666666;
+      --text-3:     #333333;
+      --code-bg:    #0D0D0D;
+      --mono:       'JetBrains Mono', 'Courier New', monospace;
+      --display:    'Space Grotesk', sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: 14px;
+      line-height: 1.6;
+      overflow-x: hidden;
+      /* CRT scanline overlay */
+      background-image:
+        repeating-linear-gradient(
+          to bottom,
+          transparent 0px,
+          transparent 3px,
+          rgba(255,255,255,0.012) 3px,
+          rgba(255,255,255,0.012) 4px
+        ),
+        linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
+      background-size: 100% 4px, 40px 40px, 40px 40px;
+      background-attachment: fixed;
+    }
+
+    /* ─── MATRIX CANVAS ────────────────────────────────────────────────────── */
+    #matrix-canvas {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.035;
+    }
+
+    /* ─── LAYOUT WRAPPER ───────────────────────────────────────────────────── */
+    .container {
+      position: relative;
+      z-index: 1;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 40px;
+    }
+
+    /* ─── NAVIGATION ───────────────────────────────────────────────────────── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      background: #000000;
+      border-bottom: 1px solid var(--border-dim);
+    }
+
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 56px;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 40px;
+    }
+
+    .nav-logo {
+      font-family: var(--mono);
+      font-weight: 700;
+      font-size: 15px;
+      color: var(--accent);
+      text-decoration: none;
+      letter-spacing: -0.02em;
+    }
+
+    .nav-logo span.bracket { color: var(--text-2); }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-family: var(--mono);
+      font-size: 13px;
+      color: var(--text-2);
+      text-decoration: none;
+      letter-spacing: 0;
+      transition: color 120ms ease;
+    }
+
+    .nav-links a:hover { color: var(--text); }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .nav-login {
+      font-family: var(--mono);
+      font-size: 13px;
+      color: var(--text-2);
+      text-decoration: none;
+      transition: color 120ms ease;
+    }
+
+    .nav-login:hover { color: var(--text); }
+
+    .btn-primary {
+      display: inline-block;
+      background: var(--accent);
+      color: #000000;
+      font-family: var(--mono);
+      font-weight: 700;
+      font-size: 12px;
+      padding: 8px 16px;
+      border-radius: 2px;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      transition: opacity 120ms ease;
+      letter-spacing: 0.02em;
+    }
+
+    .btn-primary:hover { opacity: 0.85; }
+
+    /* ─── SECTION DIVIDERS ─────────────────────────────────────────────────── */
+    section { border-top: 1px solid var(--border-dim); }
+
+    /* ─── HERO ─────────────────────────────────────────────────────────────── */
+    #hero {
+      padding: 160px 0 100px;
+      border-top: none;
+    }
+
+    .hero-label {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 24px;
+    }
+
+    .hero-label::before { content: '> '; }
+
+    h1.hero-headline {
+      font-family: var(--display);
+      font-weight: 900;
+      font-size: clamp(52px, 8vw, 88px);
+      line-height: 1.0;
+      letter-spacing: -0.03em;
+      color: var(--text);
+      margin-bottom: 28px;
+    }
+
+    h1.hero-headline .accent-line { color: var(--accent); display: block; }
+
+    .hero-sub {
+      font-family: var(--mono);
+      font-size: 15px;
+      color: var(--text-2);
+      max-width: 540px;
+      line-height: 1.7;
+      margin-bottom: 40px;
+    }
+
+    .hero-ctas {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      margin-bottom: 56px;
+    }
+
+    .btn-secondary {
+      display: inline-block;
+      border: 1px solid var(--text-3);
+      color: var(--text-2);
+      font-family: var(--mono);
+      font-size: 12px;
+      padding: 8px 16px;
+      border-radius: 2px;
+      text-decoration: none;
+      transition: border-color 120ms ease, color 120ms ease;
+      cursor: pointer;
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--text-2);
+      color: var(--text);
+    }
+
+    /* Provider chips */
+    .providers-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 48px;
+      flex-wrap: wrap;
+    }
+
+    .providers-label {
+      font-size: 11px;
+      color: var(--text-3);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      margin-right: 4px;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border: 1px solid var(--border-dim);
+      padding: 4px 12px;
+      border-radius: 2px;
+      font-size: 12px;
+      color: var(--text-2);
+      background: transparent;
+    }
+
+    .chip-sq {
+      display: inline-block;
+      width: 5px;
+      height: 5px;
+      background: var(--text-3);
+    }
+
+    /* Stats row */
+    .stats-row {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      margin-bottom: 56px;
+      border: 1px solid var(--border-dim);
+      width: fit-content;
+    }
+
+    .stat-item {
+      padding: 16px 28px;
+      border-right: 1px solid var(--border-dim);
+    }
+
+    .stat-item:last-child { border-right: none; }
+
+    .stat-num {
+      font-family: var(--mono);
+      font-weight: 700;
+      font-size: 22px;
+      color: var(--text);
+      display: block;
+      letter-spacing: -0.02em;
+    }
+
+    .stat-label {
+      font-size: 11px;
+      color: var(--text-3);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    /* Terminal code block */
+    .hero-terminal {
+      background: var(--code-bg);
+      border: 1px solid var(--border-dim);
+      border-radius: 2px;
+      padding: 20px 24px;
+      max-width: 640px;
+      font-family: var(--mono);
+      font-size: 13px;
+    }
+
+    .terminal-line {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 6px;
+      line-height: 1.5;
+    }
+
+    .terminal-line:last-child { margin-bottom: 0; }
+
+    .term-prompt { color: var(--accent); user-select: none; }
+    .term-cmd    { color: var(--text); }
+    .term-out    { color: var(--text-2); padding-left: 20px; }
+    .term-key    { color: var(--accent); }
+    .term-str    { color: #87CEEB; }
+    .term-comment { color: var(--text-3); }
+
+    /* ─── FEATURES ─────────────────────────────────────────────────────────── */
+    #features {
+      padding: 100px 0;
+    }
+
+    .section-header {
+      margin-bottom: 64px;
+    }
+
+    .section-tag {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+
+    .section-tag::before { content: '// '; color: var(--text-3); }
+
+    h2.section-title {
+      font-family: var(--display);
+      font-weight: 900;
+      font-size: clamp(30px, 4vw, 46px);
+      color: var(--text);
+      letter-spacing: -0.025em;
+      margin-bottom: 12px;
+    }
+
+    .section-sub {
+      font-family: var(--mono);
+      font-size: 13px;
+      color: var(--text-2);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1px;
+      border: 1px solid var(--border-dim);
+    }
+
+    .feature-card {
+      background: var(--bg);
+      padding: 36px 32px;
+      border: none;
+      position: relative;
+      transition: background 160ms ease;
+      outline: 1px solid transparent;
+      outline-offset: -1px;
+    }
+
+    .feature-card:hover {
+      background: var(--surface);
+      outline-color: var(--accent);
+    }
+
+    /* Inner borders via box-shadow for grid cells */
+    .feature-card:nth-child(1),
+    .feature-card:nth-child(2) {
+      border-bottom: 1px solid var(--border-dim);
+    }
+
+    .feature-card:nth-child(odd) {
+      border-right: 1px solid var(--border-dim);
+    }
+
+    .feat-num {
+      font-size: 11px;
+      color: var(--accent);
+      letter-spacing: 0.08em;
+      font-weight: 700;
+      margin-bottom: 20px;
+      display: block;
+    }
+
+    .feat-icon {
+      font-size: 20px;
+      margin-bottom: 16px;
+      display: block;
+      color: var(--text-2);
+      line-height: 1;
+    }
+
+    h3.feat-title {
+      font-family: var(--mono);
+      font-weight: 700;
+      font-size: 16px;
+      color: var(--text);
+      margin-bottom: 12px;
+      letter-spacing: -0.01em;
+    }
+
+    .feat-desc {
+      font-size: 13px;
+      color: var(--text-2);
+      line-height: 1.7;
+    }
+
+    /* ─── SDK SECTION ──────────────────────────────────────────────────────── */
+    #sdk {
+      padding: 100px 0;
+    }
+
+    .sdk-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.6fr;
+      gap: 60px;
+      align-items: start;
+    }
+
+    .sdk-endpoints {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .sdk-endpoint-item {
+      padding: 14px 16px;
+      border: 1px solid var(--border-dim);
+      border-radius: 2px;
+      cursor: pointer;
+      transition: border-color 120ms ease, background 120ms ease;
+    }
+
+    .sdk-endpoint-item:hover,
+    .sdk-endpoint-item.active {
+      border-color: var(--accent);
+      background: var(--surface);
+    }
+
+    .ep-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--text-3);
+      margin-bottom: 6px;
+    }
+
+    .ep-method {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--accent);
+      background: rgba(173,255,47,0.08);
+      padding: 2px 6px;
+      border-radius: 2px;
+      margin-right: 8px;
+      letter-spacing: 0.05em;
+    }
+
+    .ep-path {
+      font-size: 13px;
+      color: var(--text);
+    }
+
+    .ep-desc {
+      font-size: 12px;
+      color: var(--text-3);
+      margin-top: 4px;
+    }
+
+    .sdk-code-wrap {
+      position: relative;
+    }
+
+    .code-block {
+      background: var(--code-bg);
+      border: 1px solid var(--border-dim);
+      border-radius: 2px;
+      padding: 24px 28px;
+      overflow-x: auto;
+    }
+
+    .code-block pre {
+      font-family: var(--mono);
+      font-size: 12.5px;
+      line-height: 1.7;
+      color: var(--text);
+      white-space: pre;
+      margin: 0;
+    }
+
+    .c-comment { color: var(--text-3); }
+    .c-key     { color: var(--accent); }
+    .c-str     { color: #87CEEB; }
+    .c-num     { color: #FF9E64; }
+    .c-cmd     { color: #BB9AF7; }
+    .c-flag    { color: #7AA2F7; }
+
+    /* ─── PRICING ──────────────────────────────────────────────────────────── */
+    #pricing {
+      padding: 100px 0;
+    }
+
+    .pricing-note {
+      font-size: 12px;
+      color: var(--text-3);
+      margin-bottom: 32px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    .pricing-note::before { content: '// '; color: var(--text-3); }
+
+    .pricing-table-wrap {
+      overflow-x: auto;
+    }
+
+    table.pricing-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: var(--mono);
+      font-size: 13px;
+    }
+
+    table.pricing-table thead th {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--accent);
+      font-weight: 700;
+      padding: 12px 20px;
+      border: 1px solid var(--border-dim);
+      text-align: left;
+      white-space: nowrap;
+    }
+
+    table.pricing-table tbody tr {
+      transition: background 100ms ease;
+    }
+
+    table.pricing-table tbody tr:nth-child(odd)  { background: #000000; }
+    table.pricing-table tbody tr:nth-child(even) { background: #050505; }
+
+    table.pricing-table tbody tr:hover {
+      background: #0F0F0F;
+    }
+
+    table.pricing-table tbody tr:hover td:first-child {
+      border-left: 3px solid var(--accent);
+    }
+
+    table.pricing-table tbody td {
+      padding: 14px 20px;
+      border: 1px solid var(--border-dim);
+      color: var(--text);
+      white-space: nowrap;
+    }
+
+    table.pricing-table tbody td:first-child {
+      border-left: 3px solid transparent;
+      transition: border-left-color 100ms ease;
+    }
+
+    .model-provider-tag {
+      display: inline-block;
+      font-size: 10px;
+      color: var(--text-3);
+      margin-left: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .price-val {
+      color: var(--text);
+      font-weight: 700;
+    }
+
+    .price-unit {
+      color: var(--text-3);
+      font-size: 11px;
+      margin-left: 4px;
+    }
+
+    /* ─── CTA SECTION ──────────────────────────────────────────────────────── */
+    #cta {
+      padding: 100px 0;
+    }
+
+    .cta-box {
+      border: 1px solid var(--accent);
+      padding: 64px 56px;
+      border-radius: 2px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cta-box::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: var(--accent);
+      opacity: 0.3;
+    }
+
+    .cta-eyebrow {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--accent);
+      margin-bottom: 8px;
+    }
+
+    h2.cta-headline {
+      font-family: var(--display);
+      font-weight: 900;
+      font-size: clamp(28px, 4vw, 44px);
+      color: var(--text);
+      letter-spacing: -0.025em;
+      margin-bottom: 8px;
+      line-height: 1.05;
+    }
+
+    .cta-sub {
+      font-size: 13px;
+      color: var(--text-2);
+      margin-bottom: 32px;
+    }
+
+    .cta-actions {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+    }
+
+    .cta-mono-label {
+      position: absolute;
+      bottom: 24px;
+      right: 32px;
+      font-size: 11px;
+      color: var(--text-3);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    /* ─── FOOTER ───────────────────────────────────────────────────────────── */
+    footer {
+      border-top: 1px solid var(--border-dim);
+      padding: 32px 0;
+    }
+
+    .footer-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .footer-copy {
+      font-size: 12px;
+      color: var(--text-3);
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 28px;
+      list-style: none;
+    }
+
+    .footer-links a {
+      font-size: 12px;
+      color: var(--text-3);
+      text-decoration: none;
+      transition: color 120ms ease;
+    }
+
+    .footer-links a:hover { color: var(--text-2); }
+
+    /* ─── SCROLLBAR ────────────────────────────────────────────────────────── */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--text-3); border-radius: 0; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--text-2); }
+
+    /* ─── SELECTION ────────────────────────────────────────────────────────── */
+    ::selection { background: rgba(173,255,47,0.18); color: var(--text); }
+
+    /* ─── RESPONSIVE ───────────────────────────────────────────────────────── */
+    @media (max-width: 900px) {
+      .container { padding: 0 24px; }
+      .nav-inner { padding: 0 24px; }
+      .nav-links { display: none; }
+
+      .features-grid { grid-template-columns: 1fr; }
+      .feature-card:nth-child(odd) { border-right: none; }
+      .feature-card:nth-child(1),
+      .feature-card:nth-child(2),
+      .feature-card:nth-child(3) {
+        border-bottom: 1px solid var(--border-dim);
+      }
+      .feature-card:nth-child(4) { border-bottom: none; }
+
+      .sdk-grid { grid-template-columns: 1fr; }
+
+      .stats-row { width: 100%; }
+      .stat-item { flex: 1; }
+
+      .cta-box { padding: 40px 28px; }
+    }
+
+    @media (max-width: 600px) {
+      h1.hero-headline { font-size: 42px; }
+      .hero-ctas { flex-direction: column; align-items: flex-start; }
+      .stats-row { display: grid; grid-template-columns: 1fr 1fr; }
+      .stat-item:nth-child(2) { border-right: none; }
+      .stat-item:nth-child(3),
+      .stat-item:nth-child(4) { border-top: 1px solid var(--border-dim); }
+      .cta-actions { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ─── MATRIX BACKGROUND CANVAS ─────────────────────────────────────────── -->
+<canvas id="matrix-canvas" aria-hidden="true"></canvas>
+
+<!-- ─── NAVIGATION ────────────────────────────────────────────────────────── -->
+<nav role="navigation" aria-label="Main navigation">
+  <div class="nav-inner">
+    <a href="#" class="nav-logo" aria-label="JBridge.ai home">
+      <span class="bracket">[</span>JBridge.ai<span class="bracket">]</span>
+    </a>
+    <ul class="nav-links" role="list">
+      <li><a href="#features">features</a></li>
+      <li><a href="#pricing">pricing</a></li>
+      <li><a href="#sdk">docs</a></li>
+    </ul>
+    <div class="nav-actions">
+      <a href="#" class="nav-login">log in</a>
+      <a href="#" class="btn-primary">get started free</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ─── HERO ──────────────────────────────────────────────────────────────── -->
+<section id="hero" aria-labelledby="hero-headline">
+  <div class="container">
+
+    <p class="hero-label">unified model gateway</p>
+
+    <h1 class="hero-headline" id="hero-headline">
+      One API. Every
+      <span class="accent-line">Model.</span>
+    </h1>
+
+    <p class="hero-sub">
+      Compatible with OpenAI and Anthropic formats. Access top models, pay only for what you use.
+    </p>
+
+    <div class="hero-ctas">
+      <a href="#" class="btn-primary">$ get_started --free</a>
+      <a href="#sdk" class="btn-secondary">--read-docs</a>
+    </div>
+
+    <div class="providers-row" aria-label="Supported providers">
+      <span class="providers-label">providers</span>
+      <span class="chip"><span class="chip-sq" aria-hidden="true"></span>OpenAI</span>
+      <span class="chip"><span class="chip-sq" aria-hidden="true"></span>Anthropic</span>
+      <span class="chip"><span class="chip-sq" aria-hidden="true"></span>DeepSeek</span>
+      <span class="chip"><span class="chip-sq" aria-hidden="true"></span>Grok</span>
+      <span class="chip"><span class="chip-sq" aria-hidden="true"></span>Kimi</span>
+    </div>
+
+    <div class="stats-row" role="list" aria-label="Key metrics">
+      <div class="stat-item" role="listitem">
+        <span class="stat-num">5+</span>
+        <span class="stat-label">providers</span>
+      </div>
+      <div class="stat-item" role="listitem">
+        <span class="stat-num">3</span>
+        <span class="stat-label">API formats</span>
+      </div>
+      <div class="stat-item" role="listitem">
+        <span class="stat-num">&lt;50ms</span>
+        <span class="stat-label">latency</span>
+      </div>
+      <div class="stat-item" role="listitem">
+        <span class="stat-num">$0</span>
+        <span class="stat-label">to start</span>
+      </div>
+    </div>
+
+    <div class="hero-terminal" role="region" aria-label="Quick start example">
+      <div class="terminal-line">
+        <span class="term-prompt">$</span>
+        <span class="term-cmd">curl https://api.jbridge.ai/api/v1/chat/completions \</span>
+      </div>
+      <div class="terminal-line">
+        <span class="term-prompt" aria-hidden="true"> </span>
+        <span class="term-cmd">&nbsp;&nbsp;-H <span class="term-str">"Authorization: Bearer $JBRIDGE_KEY"</span> \</span>
+      </div>
+      <div class="terminal-line">
+        <span class="term-prompt" aria-hidden="true"> </span>
+        <span class="term-cmd">&nbsp;&nbsp;-d <span class="term-str">'{"model":"gpt-5.4","messages":[{"role":"user","content":"hello"}]}'</span></span>
+      </div>
+      <div class="terminal-line" style="margin-top:12px;">
+        <span class="term-prompt" aria-hidden="true">#</span>
+        <span class="term-comment">&nbsp;200 OK — streaming response in &lt;50ms</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ─── FEATURES ──────────────────────────────────────────────────────────── -->
+<section id="features" aria-labelledby="features-title">
+  <div class="container" style="padding-top:100px; padding-bottom:100px;">
+
+    <div class="section-header">
+      <p class="section-tag">capabilities</p>
+      <h2 class="section-title" id="features-title">Everything You Need</h2>
+      <p class="section-sub">Built for developers who want simplicity without compromise</p>
+    </div>
+
+    <div class="features-grid" role="list">
+
+      <!-- 01 -->
+      <div class="feature-card" role="listitem">
+        <span class="feat-num">01.</span>
+        <span class="feat-icon" aria-hidden="true">⇌</span>
+        <h3 class="feat-title">Unified API</h3>
+        <p class="feat-desc">
+          Compatible with OpenAI and Anthropic formats, supporting all major models.
+          Switch providers without changing a line of code.
+        </p>
+      </div>
+
+      <!-- 02 -->
+      <div class="feature-card" role="listitem">
+        <span class="feat-num">02.</span>
+        <span class="feat-icon" aria-hidden="true">◈</span>
+        <h3 class="feat-title">Usage Tracking</h3>
+        <p class="feat-desc">
+          Real-time monitoring of tokens, costs, and latency for every request.
+        </p>
+      </div>
+
+      <!-- 03 -->
+      <div class="feature-card" role="listitem">
+        <span class="feat-num">03.</span>
+        <span class="feat-icon" aria-hidden="true">⬡</span>
+        <h3 class="feat-title">Key Management</h3>
+        <p class="feat-desc">
+          Create multiple API keys with per-key model restrictions and rate limits.
+        </p>
+      </div>
+
+      <!-- 04 -->
+      <div class="feature-card" role="listitem">
+        <span class="feat-num">04.</span>
+        <span class="feat-icon" aria-hidden="true">⟶</span>
+        <h3 class="feat-title">Streaming Support</h3>
+        <p class="feat-desc">
+          Full SSE streaming support for chat completions. Low-latency, real-time responses.
+        </p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ─── SDK / DOCS ─────────────────────────────────────────────────────────── -->
+<section id="sdk" aria-labelledby="sdk-title">
+  <div class="container" style="padding-top:100px; padding-bottom:100px;">
+
+    <div class="section-header">
+      <p class="section-tag">integration</p>
+      <h2 class="section-title" id="sdk-title">Drop-In Compatible</h2>
+      <p class="section-sub">Three endpoint formats. Zero migration friction.</p>
+    </div>
+
+    <div class="sdk-grid">
+
+      <!-- Left: endpoint list -->
+      <div class="sdk-endpoints" role="list" aria-label="Available API endpoints">
+
+        <div class="sdk-endpoint-item active" role="listitem">
+          <p class="ep-label">OpenAI SDK</p>
+          <div>
+            <span class="ep-method">POST</span>
+            <span class="ep-path">/api/v1/chat/completions</span>
+          </div>
+          <p class="ep-desc">Drop-in replacement for the OpenAI Chat API</p>
+        </div>
+
+        <div class="sdk-endpoint-item" role="listitem">
+          <p class="ep-label">Anthropic SDK</p>
+          <div>
+            <span class="ep-method">POST</span>
+            <span class="ep-path">/api/v1/messages</span>
+          </div>
+          <p class="ep-desc">Drop-in replacement for the Anthropic Messages API</p>
+        </div>
+
+        <div class="sdk-endpoint-item" role="listitem">
+          <p class="ep-label">OpenAI Responses</p>
+          <div>
+            <span class="ep-method">POST</span>
+            <span class="ep-path">/api/v1/responses</span>
+          </div>
+          <p class="ep-desc">OpenAI Responses API compatible endpoint</p>
+        </div>
+
+      </div>
+
+      <!-- Right: code block -->
+      <div class="sdk-code-wrap">
+        <div class="code-block">
+          <pre><span class="c-comment"># OpenAI SDK — zero code change required</span>
+<span class="c-cmd">from</span> openai <span class="c-cmd">import</span> OpenAI
+
+client = OpenAI(
+    base_url=<span class="c-str">"https://api.jbridge.ai/api/v1"</span>,
+    api_key=<span class="c-str">"your-jbridge-key"</span>
+)
+
+response = client.chat.completions.create(
+    model=<span class="c-str">"gpt-5.4"</span>,
+    messages=[{<span class="c-str">"role"</span>: <span class="c-str">"user"</span>, <span class="c-str">"content"</span>: <span class="c-str">"Hello!"</span>}],
+    stream=<span class="c-key">True</span>
+)
+
+<span class="c-comment"># — or use cURL directly —</span>
+
+<span class="c-cmd">curl</span> <span class="c-flag">-X POST</span> https://api.jbridge.ai/api/v1/chat/completions \
+  <span class="c-flag">-H</span> <span class="c-str">"Content-Type: application/json"</span> \
+  <span class="c-flag">-H</span> <span class="c-str">"Authorization: Bearer $JBRIDGE_KEY"</span> \
+  <span class="c-flag">-d</span> <span class="c-str">'{
+    "model": "claude-opus-4-6",
+    "messages": [
+      { "role": "user", "content": "What is JBridge?" }
+    ],
+    "stream": true
+  }'</span></pre>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ─── PRICING ───────────────────────────────────────────────────────────── -->
+<section id="pricing" aria-labelledby="pricing-title">
+  <div class="container" style="padding-top:100px; padding-bottom:100px;">
+
+    <div class="section-header">
+      <p class="section-tag">pricing</p>
+      <h2 class="section-title" id="pricing-title">Pay Per Token</h2>
+      <p class="section-sub">No monthly minimums. No hidden fees.</p>
+    </div>
+
+    <p class="pricing-note">rates per 1,000,000 tokens (input / output)</p>
+
+    <div class="pricing-table-wrap">
+      <table class="pricing-table" aria-label="Model pricing per million tokens">
+        <thead>
+          <tr>
+            <th scope="col">model</th>
+            <th scope="col">provider</th>
+            <th scope="col">input / 1M</th>
+            <th scope="col">output / 1M</th>
+            <th scope="col">streaming</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>claude-haiku-4-5</td>
+            <td><span style="color:var(--text-3);font-size:12px;">Anthropic</span></td>
+            <td><span class="price-val">$1.00</span></td>
+            <td><span class="price-val">$5.00</span></td>
+            <td style="color:var(--accent);font-size:12px;">✓ SSE</td>
+          </tr>
+          <tr>
+            <td>claude-opus-4-6</td>
+            <td><span style="color:var(--text-3);font-size:12px;">Anthropic</span></td>
+            <td><span class="price-val">$5.00</span></td>
+            <td><span class="price-val">$25.00</span></td>
+            <td style="color:var(--accent);font-size:12px;">✓ SSE</td>
+          </tr>
+          <tr>
+            <td>deepseek-v3.2</td>
+            <td><span style="color:var(--text-3);font-size:12px;">DeepSeek</span></td>
+            <td><span class="price-val">$0.58</span></td>
+            <td><span class="price-val">$1.68</span></td>
+            <td style="color:var(--accent);font-size:12px;">✓ SSE</td>
+          </tr>
+          <tr>
+            <td>gpt-5.4</td>
+            <td><span style="color:var(--text-3);font-size:12px;">OpenAI</span></td>
+            <td><span class="price-val">$2.50</span></td>
+            <td><span class="price-val">$15.00</span></td>
+            <td style="color:var(--accent);font-size:12px;">✓ SSE</td>
+          </tr>
+          <tr>
+            <td>gpt-5.5</td>
+            <td><span style="color:var(--text-3);font-size:12px;">OpenAI</span></td>
+            <td><span class="price-val">$5.00</span></td>
+            <td><span class="price-val">$30.00</span></td>
+            <td style="color:var(--accent);font-size:12px;">✓ SSE</td>
+          </tr>
+          <tr>
+            <td>kimi-k2.5</td>
+            <td><span style="color:var(--text-3);font-size:12px;">Kimi</span></td>
+            <td><span class="price-val">$0.60</span></td>
+            <td><span class="price-val">$3.00</span></td>
+            <td style="color:var(--accent);font-size:12px;">✓ SSE</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+</section>
+
+<!-- ─── CTA ───────────────────────────────────────────────────────────────── -->
+<section id="cta">
+  <div class="container" style="padding-top:100px; padding-bottom:100px;">
+    <div class="cta-box" role="region" aria-labelledby="cta-headline">
+
+      <p class="cta-eyebrow">get started today</p>
+      <h2 class="cta-headline" id="cta-headline">Ready to get started?</h2>
+      <p class="cta-sub">
+        Free account. No credit card required. Access all models immediately.
+      </p>
+
+      <div class="cta-actions">
+        <a href="#" class="btn-primary" style="font-size:13px; padding:12px 24px;">
+          $ create_account --free
+        </a>
+        <a href="#sdk" class="btn-secondary" style="font-size:12px; padding:12px 20px;">
+          --read-docs
+        </a>
+      </div>
+
+      <span class="cta-mono-label" aria-hidden="true">CREATE FREE ACCOUNT</span>
+
+    </div>
+  </div>
+</section>
+
+<!-- ─── FOOTER ────────────────────────────────────────────────────────────── -->
+<footer role="contentinfo">
+  <div class="container">
+    <div class="footer-inner">
+      <span class="footer-copy">
+        &copy; 2026 KKCompany Technologies
+      </span>
+      <ul class="footer-links" role="list">
+        <li><a href="#sdk">Docs</a></li>
+        <li><a href="#">Terms of Service</a></li>
+        <li><a href="#">Privacy Policy</a></li>
+        <li><a href="#">Refund Policy</a></li>
+      </ul>
+    </div>
+  </div>
+</footer>
+
+<!-- ─── MATRIX RAIN CANVAS SCRIPT ─────────────────────────────────────────── -->
+<script>
+(function () {
+  'use strict';
+
+  const canvas = document.getElementById('matrix-canvas');
+  if (!canvas) return;
+
+  const ctx = canvas.getContext('2d');
+
+  // Resize to viewport
+  function resize() {
+    canvas.width  = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize, { passive: true });
+
+  // Each column tracks a drop
+  const CELL  = 20;          // px per character
+  const SPEED = 0.4;         // px per frame (very slow — ~1/50 speed)
+  const CHARS = ['0', '1'];
+
+  let cols = [];
+
+  function initCols() {
+    const numCols = Math.ceil(canvas.width / CELL);
+    cols = [];
+    for (let i = 0; i < numCols; i++) {
+      // randomise initial y position so drops stagger across viewport
+      cols.push({
+        x:     i * CELL,
+        y:     Math.random() * canvas.height,
+        speed: SPEED * (0.4 + Math.random() * 0.6),   // slight variation
+        char:  CHARS[Math.floor(Math.random() * CHARS.length)],
+        // swap character every N frames
+        swapAt: Math.floor(200 + Math.random() * 400),
+        frame:  0,
+      });
+    }
+  }
+  initCols();
+  window.addEventListener('resize', initCols, { passive: true });
+
+  ctx.font = `${CELL * 0.7}px 'JetBrains Mono', monospace`;
+
+  function tick() {
+    // Clear with fully transparent — we don't leave trails
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    ctx.fillStyle = '#ADFF2F';   // opacity is set on the canvas element itself (0.035)
+    ctx.font = `${CELL * 0.7}px 'JetBrains Mono', monospace`;
+
+    for (let i = 0; i < cols.length; i++) {
+      const c = cols[i];
+      ctx.fillText(c.char, c.x, c.y);
+
+      c.y += c.speed;
+      c.frame++;
+
+      // Swap character occasionally
+      if (c.frame >= c.swapAt) {
+        c.char = CHARS[Math.floor(Math.random() * CHARS.length)];
+        c.frame = 0;
+        c.swapAt = Math.floor(200 + Math.random() * 400);
+      }
+
+      // Reset to top when it falls off the bottom
+      if (c.y > canvas.height + CELL) {
+        c.y = -CELL;
+        c.x = i * CELL;   // re-lock to column
+      }
+    }
+
+    requestAnimationFrame(tick);
+  }
+
+  // Respect reduced-motion preference
+  const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+  if (!mq.matches) {
+    requestAnimationFrame(tick);
+  } else {
+    canvas.style.display = 'none';
+  }
+}());
+</script>
+
+<!-- ─── ENDPOINT CARD INTERACTION ─────────────────────────────────────────── -->
+<script>
+(function () {
+  'use strict';
+
+  const items = document.querySelectorAll('.sdk-endpoint-item');
+  items.forEach(function (item) {
+    item.addEventListener('click', function () {
+      items.forEach(function (el) { el.classList.remove('active'); });
+      item.classList.add('active');
+    });
+  });
+}());
+</script>
+
+</body>
+</html>

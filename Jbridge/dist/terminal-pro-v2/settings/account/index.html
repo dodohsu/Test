@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Account · Settings · JBridge.ai</title>
+<script>(function(){try{var t=localStorage.getItem('jb-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);var l=localStorage.getItem('jb-lang');if(l&&/^(en|zh-TW|zh-CN|ja|ko)$/.test(l))document.documentElement.setAttribute('lang',l);}catch(e){}}());</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../shared/dashboard.css">
+</head>
+<body>
+
+<header class="topnav">
+  <div class="topnav-inner">
+    <div class="topnav-left">
+      <button class="nav-hamburger" id="hamburger" aria-label="Toggle navigation" aria-expanded="false"><span></span><span></span><span></span></button>
+      <a href="../../../proposal-terminal-pro-v2.html" class="logo" aria-label="JBridge home">
+        <span class="logo-mark">J</span>
+        <span class="logo-wordmark">JBridge<span class="logo-ai">.ai</span></span>
+      </a>
+      <div class="topnav-crumb" aria-label="Breadcrumb">
+        <span>~/</span><span class="sep">›</span><span>settings</span><span class="sep">›</span><span class="cur">account</span>
+      </div>
+    </div>
+    <div class="topnav-right">
+      <span class="env-pill">production</span>
+      <a href="https://staging.jbridge.ai/docs" class="btn btn-ghost btn-sm" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        <span data-i18n="topnav.docs">Docs</span>
+      </a>
+      <button class="user-chip" aria-label="Account menu">
+        <span class="user-avatar">KK</span>
+        <span class="user-name">kk@jbridge.ai</span>
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<aside class="sidebar" id="sidebar" aria-label="Primary navigation">
+  <div class="side-group-label" data-i18n="nav.group.workspace">Workspace</div>
+  <a href="../../dashboard/index.html" class="side-link">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 12 12 3l9 9"/><path d="M5 10v10h14V10"/></svg>
+    <span data-i18n="nav.overview">Overview</span>
+  </a>
+  <a href="../../logs/index.html" class="side-link">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 4h16v4H4z"/><path d="M4 12h16v4H4z"/><path d="M4 20h10"/></svg>
+    <span data-i18n="nav.logs">Logs</span>
+  </a>
+  <a href="../../api-keys/index.html" class="side-link">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="7.5" cy="15.5" r="5.5"/><path d="m21 2-9.6 9.6"/><path d="m15.5 7.5 2.3 2.3a1 1 0 0 0 1.4 0l2.1-2.1a1 1 0 0 0 0-1.4L19 4"/></svg>
+    <span data-i18n="nav.api_keys">API Keys</span>
+  </a>
+  <a href="../../credits/index.html" class="side-link">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M2 10h20"/><path d="M6 14h4"/></svg>
+    <span data-i18n="nav.credits">Credits</span>
+  </a>
+  <a href="../../referral/index.html" class="side-link">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M17 11a4 4 0 1 0-3-7"/><path d="M3 11a4 4 0 1 1 3-7"/><circle cx="12" cy="14" r="4"/><path d="M8 20a4 4 0 0 1 8 0"/></svg>
+    <span data-i18n="nav.referral">Referral</span>
+  </a>
+
+  <div class="side-group-label" data-i18n="nav.group.get_started">Get started</div>
+  <a href="../../quickstart/index.html" class="side-link">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+    <span data-i18n="nav.quickstart">Quickstart</span>
+  </a>
+
+  <div class="side-group-label" data-i18n="nav.group.settings">Settings</div>
+  <a href="../account/index.html" class="side-link active" aria-current="page">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>
+    <span data-i18n="nav.account">Account</span>
+  </a>
+  <a href="../security/index.html" class="side-link">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 2 4 6v6c0 5 3.5 9.3 8 10 4.5-.7 8-5 8-10V6z"/></svg>
+    <span data-i18n="nav.security">Security</span>
+  </a>
+
+  <div class="side-footer">
+    <div class="side-actions" role="group" aria-label="Account actions">
+      <button type="button" class="side-action" data-theme-toggle aria-label="Toggle light or dark theme" aria-pressed="false">
+        <svg class="side-ic ic-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+        <svg class="side-ic ic-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        <span class="side-action-label" data-theme-label>淺色</span>
+      </button>
+      <div class="side-lang-wrap">
+        <button type="button" class="side-action" data-lang-toggle aria-haspopup="listbox" aria-expanded="false" aria-label="Switch language">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/></svg>
+          <span class="side-action-label" data-lang-label>English</span>
+          <svg class="side-action-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 15 6-6 6 6"/></svg>
+        </button>
+        <ul class="side-lang-menu" role="listbox" aria-label="Language" hidden>
+          <li role="option" data-lang="en" aria-selected="true"><svg class="side-lang-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span class="side-lang-name">English</span><span class="side-lang-tag">EN</span></li>
+          <li role="option" data-lang="zh-TW"><svg class="side-lang-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span class="side-lang-name">繁體中文</span><span class="side-lang-tag">ZH-TW</span></li>
+          <li role="option" data-lang="zh-CN"><svg class="side-lang-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span class="side-lang-name">简体中文</span><span class="side-lang-tag">ZH-CN</span></li>
+          <li role="option" data-lang="ja"><svg class="side-lang-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span class="side-lang-name">日本語</span><span class="side-lang-tag">JA</span></li>
+          <li role="option" data-lang="ko"><svg class="side-lang-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span class="side-lang-name">한국어</span><span class="side-lang-tag">KO</span></li>
+        </ul>
+      </div>
+      <a href="../../../proposal-terminal-pro-v2.html" class="side-action" aria-label="Home">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m3 12 9-9 9 9"/><path d="M5 10v10h14V10"/></svg>
+        <span class="side-action-label" data-i18n="side.home">首頁</span>
+      </a>
+      <button type="button" class="side-action danger" data-logout aria-label="Sign out">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>
+        <span class="side-action-label" data-i18n="side.logout">登出</span>
+      </button>
+    </div>
+    <div class="side-status">
+      <span class="status-dot"></span> <span data-i18n="side.status.ok">all systems operational</span> · <span class="dim">ap-northeast-1</span>
+    </div>
+  </div>
+</aside>
+<div class="sidebar-backdrop" id="sidebarBackdrop" aria-hidden="true"></div>
+
+<main class="app-main">
+  <div class="app-content">
+
+    <div class="page-head">
+      <div class="page-head-text">
+        <div class="section-mono-tag">settings · account</div>
+        <h1 class="page-title" data-i18n="page.account.title">Account</h1>
+        <p class="page-sub" data-i18n="page.account.sub">Your profile, contact email, and workspace preferences.</p>
+      </div>
+    </div>
+
+    <!-- Settings sub-tabs -->
+    <div class="tabs" role="tablist" style="max-width:360px;">
+      <a class="tab active" role="tab" aria-current="page" href="../account/index.html">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>
+        <span data-i18n="nav.account">Account</span>
+      </a>
+      <a class="tab" role="tab" href="../security/index.html">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 4 6v6c0 5 3.5 9.3 8 10 4.5-.7 8-5 8-10V6z"/></svg>
+        <span data-i18n="nav.security">Security</span>
+      </a>
+    </div>
+
+    <!-- Profile -->
+    <div class="card" style="margin-bottom:20px;">
+      <div class="card-head">
+        <div class="card-head-title"><span class="dot"></span> Profile</div>
+        <span class="card-head-sub">~/.jbridge/profile</span>
+      </div>
+      <div class="card-body">
+        <div class="hstack" style="gap:18px;margin-bottom:24px;flex-wrap:wrap;">
+          <span class="user-avatar" style="width:64px;height:64px;font-size:24px;">KK</span>
+          <div style="flex:1;min-width:200px;">
+            <div class="fg" style="font-weight:600;font-size:15px;">KK User</div>
+            <div class="muted mono" style="font-size:12.5px;margin-top:2px;">user_id: usr_jb_71ka9</div>
+            <div class="hstack" style="margin-top:10px;gap:8px;">
+              <button class="btn btn-secondary btn-sm">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5-5 5 5"/><path d="M12 5v12"/></svg>
+                Upload photo
+              </button>
+              <button class="btn btn-ghost btn-sm">Remove</button>
+            </div>
+          </div>
+        </div>
+
+        <form>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="firstName">First name</label>
+              <input id="firstName" class="input" type="text" value="KK" autocomplete="given-name">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="lastName">Last name</label>
+              <input id="lastName" class="input" type="text" value="User" autocomplete="family-name">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="email">Contact email <span class="req" aria-label="required">*</span></label>
+            <input id="email" class="input mono" type="email" value="kk@jbridge.ai" autocomplete="email" required>
+            <div class="form-hint">Used for billing receipts and security alerts. Verified ✓</div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="company">Company / handle</label>
+              <input id="company" class="input" type="text" value="KKCompany Technologies" autocomplete="organization">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="timezone">Timezone</label>
+              <select id="timezone" class="select">
+                <option>Asia/Taipei (UTC+8)</option>
+                <option>Asia/Tokyo (UTC+9)</option>
+                <option>America/Los_Angeles (UTC−8)</option>
+                <option>Europe/London (UTC+0)</option>
+              </select>
+            </div>
+          </div>
+          <div class="hstack" style="justify-content:flex-end;gap:8px;border-top:1px solid var(--border);padding-top:18px;">
+            <button type="button" class="btn btn-ghost">Discard</button>
+            <button type="submit" class="btn btn-primary">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6 9 17l-5-5"/></svg>
+              Save changes
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Notifications -->
+    <div class="card" style="margin-bottom:20px;">
+      <div class="card-head">
+        <div class="card-head-title"><span class="dot"></span> Notifications</div>
+        <span class="card-head-sub">jbridge.ai/notify</span>
+      </div>
+      <div class="card-body" style="padding:6px 0;">
+        <div class="hstack" style="padding:16px 20px;border-bottom:1px solid var(--border);gap:16px;">
+          <div style="flex:1;">
+            <div class="fg" style="font-weight:600;">Low credit balance</div>
+            <div class="muted" style="font-size:13px;line-height:1.55;">Email when balance falls below $10.</div>
+          </div>
+          <label class="toggle"><input type="checkbox" checked><span class="slider"></span></label>
+        </div>
+        <div class="hstack" style="padding:16px 20px;border-bottom:1px solid var(--border);gap:16px;">
+          <div style="flex:1;">
+            <div class="fg" style="font-weight:600;">Anomalous spend</div>
+            <div class="muted" style="font-size:13px;line-height:1.55;">Alert if hourly spend exceeds 3× the 7-day average.</div>
+          </div>
+          <label class="toggle"><input type="checkbox" checked><span class="slider"></span></label>
+        </div>
+        <div class="hstack" style="padding:16px 20px;border-bottom:1px solid var(--border);gap:16px;">
+          <div style="flex:1;">
+            <div class="fg" style="font-weight:600;">Provider outage</div>
+            <div class="muted" style="font-size:13px;line-height:1.55;">Notify when an upstream provider is degraded.</div>
+          </div>
+          <label class="toggle"><input type="checkbox" checked><span class="slider"></span></label>
+        </div>
+        <div class="hstack" style="padding:16px 20px;gap:16px;">
+          <div style="flex:1;">
+            <div class="fg" style="font-weight:600;">Product updates</div>
+            <div class="muted" style="font-size:13px;line-height:1.55;">Monthly digest of new models &amp; features.</div>
+          </div>
+          <label class="toggle"><input type="checkbox"><span class="slider"></span></label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Workspace -->
+    <div class="card" style="margin-bottom:20px;">
+      <div class="card-head">
+        <div class="card-head-title"><span class="dot"></span> Workspace</div>
+      </div>
+      <div class="card-body">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="wsName">Workspace name</label>
+            <input id="wsName" class="input" type="text" value="kk-prod">
+            <div class="form-hint">Used in API key prefixes and billing receipts.</div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="region">Default region</label>
+            <select id="region" class="select">
+              <option>ap-northeast-1 (Tokyo)</option>
+              <option>us-east-1 (Virginia)</option>
+              <option>eu-west-1 (Ireland)</option>
+            </select>
+          </div>
+        </div>
+        <div class="hstack" style="justify-content:flex-end;gap:8px;border-top:1px solid var(--border);padding-top:18px;">
+          <button type="button" class="btn btn-primary">Save workspace</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Danger zone -->
+    <div class="card" style="border-color:rgba(248,113,113,.25);">
+      <div class="card-head" style="background:var(--red-dim);">
+        <div class="card-head-title" style="color:var(--red);">
+          <span class="dot" style="background:var(--red);box-shadow:0 0 8px var(--red);"></span>
+          Danger zone
+        </div>
+        <span class="card-head-sub">irreversible</span>
+      </div>
+      <div class="card-body">
+        <div class="hstack-wrap" style="justify-content:space-between;gap:18px;">
+          <div style="flex:1;min-width:240px;">
+            <div class="fg" style="font-weight:600;margin-bottom:4px;">Delete account</div>
+            <div class="muted" style="font-size:13px;line-height:1.55;">Permanently delete your account, revoke all keys, and erase usage data. This cannot be undone.</div>
+          </div>
+          <button class="btn btn-danger">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg>
+            Delete account…
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<script src="../../shared/dashboard.js"></script>
+</body>
+</html>

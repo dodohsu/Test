@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>JBridge.ai — Terminal Pro v2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/* ─────────────────────────────────────────────
+   TERMINAL PRO v2
+   Base: proposal-3-terminal-pro
+   Added: fullscreen video hero bg + shimmer text
+   ───────────────────────────────────────────── */
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:        #0a0a0a;
+  --bg-card:   #111111;
+  --bg-lift:   #161616;
+  --border:    #242424;
+  --border-hi: #333333;
+  --fg:        #ededed;
+  --muted:     #888;
+  --dim:       #555;
+  --green:     #00d084;
+  --green-dim: rgba(0,208,132,.12);
+  --green-glo: rgba(0,208,132,.25);
+  --amber:     #f59e0b;
+  --red:       #f87171;
+  --blue:      #60a5fa;
+  --radius:    8px;
+  --font:      'Inter', system-ui, sans-serif;
+  --mono:      'JetBrains Mono', 'Courier New', monospace;
+}
+
+html { font-family: var(--font); background: var(--bg); color: var(--fg); scroll-behavior: smooth; }
+body { min-height: 100vh; overflow-x: hidden; }
+
+/* ── Dot-grid background (below hero, for rest of page) ── */
+body::before {
+  content: '';
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background-image: radial-gradient(rgba(255,255,255,.06) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+/* ── Green glow at top ── */
+body::after {
+  content: '';
+  position: fixed; top: -100px; left: 50%; transform: translateX(-50%);
+  width: 600px; height: 300px;
+  background: radial-gradient(ellipse, rgba(0,208,132,.08) 0%, transparent 70%);
+  pointer-events: none; z-index: 0;
+}
+
+.site { position: relative; z-index: 1; }
+
+/* ─── NAV ─── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+  padding: 0 28px;
+  border-bottom: 1px solid rgba(0,208,132,.10);
+  background: rgba(10,10,10,.78);
+  backdrop-filter: blur(24px) saturate(160%);
+  -webkit-backdrop-filter: blur(24px) saturate(160%);
+}
+.nav-inner {
+  max-width: 1140px; margin: 0 auto;
+  height: 60px; display: flex; align-items: center; justify-content: space-between;
+}
+
+/* ── Logo ── */
+.logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+.logo-mark {
+  width: 30px; height: 30px; border-radius: 8px; flex-shrink: 0;
+  background: linear-gradient(135deg, #00e5a0 0%, #00d084 45%, #00b4cc 100%);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Inter', sans-serif; font-size: 16px; font-weight: 900;
+  color: #031a10; letter-spacing: -.03em;
+}
+.logo-wordmark {
+  font-family: 'Inter', sans-serif; font-size: 17px; font-weight: 800;
+  letter-spacing: -.04em; color: var(--fg); line-height: 1;
+}
+.logo-wordmark .logo-ai {
+  background: linear-gradient(135deg, #00d084 0%, #00bcd4 100%);
+  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+/* ── Nav links ── */
+.nav-links { display: flex; align-items: center; gap: 28px; }
+.nav-links a {
+  font-size: 14px; font-weight: 500; color: var(--muted); text-decoration: none;
+  font-family: var(--font); transition: color .15s;
+}
+.nav-links a:hover { color: var(--fg); }
+
+/* ── Nav buttons ── */
+.nav-actions { display: flex; align-items: center; gap: 8px; }
+.btn-ghost {
+  padding: 7px 16px; border-radius: var(--radius); font-size: 13px; font-weight: 500;
+  color: var(--muted); border: 1px solid var(--border); background: transparent;
+  cursor: pointer; text-decoration: none; transition: all .15s; font-family: var(--font);
+}
+.btn-ghost:hover { color: var(--fg); border-color: var(--border-hi); background: var(--bg-lift); }
+.btn-primary {
+  padding: 7px 18px; border-radius: var(--radius); font-size: 13px; font-weight: 700;
+  background: linear-gradient(135deg, #00d084 0%, #00b4cc 100%);
+  color: #031a10; border: none; cursor: pointer; text-decoration: none;
+  font-family: var(--font); letter-spacing: -.01em;
+  box-shadow: 0 0 18px rgba(0,208,132,.28);
+  transition: all .2s cubic-bezier(.34,1.56,.64,1);
+}
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 32px rgba(0,208,132,.40), 0 6px 20px rgba(0,0,0,.4);
+}
+
+/* ═══════════════════════════════════════════════
+   HERO — fullscreen with video background
+═══════════════════════════════════════════════ */
+.hero {
+  min-height: 100vh;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+}
+
+/* ── Video background layer ── */
+.hero-video-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+.hero-video-layer video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scale(1.04); /* prevent black edges */
+  opacity: 0.60;
+}
+
+/* Dark overlay — CodeNest style: strong left, fades right */
+.hvo-dark {
+  position: absolute; inset: 0;
+  background: linear-gradient(
+    to right,
+    #070b0a          0%,
+    rgba(10,11,10,.85) 30%,
+    rgba(10,11,10,.40) 60%,
+    transparent      100%
+  );
+}
+
+/* Vertical grid lines — desktop only */
+.hero-grid-lines {
+  position: absolute; inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+.hero-grid-lines::before,
+.hero-grid-lines::after,
+.hero-grid-lines .grid-mid {
+  content: '';
+  position: absolute; top: 0; bottom: 0;
+  width: 1px;
+  background: linear-gradient(to bottom,
+    transparent 0%,
+    rgba(0,208,132,.12) 20%,
+    rgba(0,208,132,.12) 80%,
+    transparent 100%
+  );
+}
+.hero-grid-lines::before { left: 25%; }
+.hero-grid-lines::after  { left: 75%; }
+.hero-grid-lines .grid-mid { left: 50%; }
+
+@media (max-width: 767px) {
+  .hero-grid-lines { display: none; }
+}
+
+/* SVG ellipse glow — top-center */
+.hero-glow {
+  position: absolute; top: -60px; left: 50%; transform: translateX(-50%);
+  width: 700px; height: 340px;
+  pointer-events: none; z-index: 1;
+}
+
+/* Green brand tint */
+.hvo-green {
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 80% 50% at 50% 0%,
+    rgba(0,208,132,.10) 0%, transparent 65%);
+}
+
+/* Dot grid texture on top of video */
+.hvo-dots {
+  position: absolute; inset: 0;
+  background-image: radial-gradient(rgba(255,255,255,.055) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+/* Bottom fade — seamless blend to page bg */
+.hvo-fade {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  height: 220px;
+  background: linear-gradient(to bottom, transparent 0%, var(--bg) 100%);
+  pointer-events: none;
+}
+
+/* ── Hero content (above video) ── */
+.hero-content {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 1140px;
+  margin: 0 auto;
+  padding: 120px 0 90px;
+}
+
+/* ── Terminal prompt bar ── */
+.terminal-prompt-bar {
+  display: inline-flex; align-items: center; gap: 10px;
+  padding: 8px 16px; border-radius: var(--radius);
+  background: rgba(17,17,17,.85); border: 1px solid var(--border);
+  font-family: var(--mono); font-size: 12.5px; color: var(--muted);
+  margin-bottom: 40px;
+  backdrop-filter: blur(8px);
+}
+.prompt-dollar { color: var(--green); font-weight: 700; }
+.prompt-cmd { color: var(--fg); }
+.prompt-cursor-inline {
+  width: 7px; height: 14px; background: var(--green); border-radius: 1px;
+  animation: blink 1.2s step-end infinite;
+}
+
+/* ── Hero H1 ── */
+.hero-content h1 {
+  font-size: clamp(48px, 7vw, 88px); font-weight: 900;
+  letter-spacing: -.05em; line-height: .98;
+  color: var(--fg); margin-bottom: 28px;
+}
+.hero-content h1 .mono-word { font-family: var(--mono); font-size: .85em; }
+
+/* ════════════════════════════════════════
+   SHIMMER TEXT  — motionsites.ai inspired
+   Light sweep moves left→right through
+   the brand green, peak white at center
+════════════════════════════════════════ */
+@keyframes shimmer-sweep {
+  0%   { background-position:  220% center; }
+  100% { background-position: -220% center; }
+}
+
+.shimmer-green {
+  display: inline-block;      /* inline-block 防止文字被裁切 */
+  padding: 0.06em 0;          /* 給 background-clip 留足夠空間 */
+  line-height: 1;
+  background: linear-gradient(
+    90deg,
+    var(--green)              0%,
+    var(--green)             28%,
+    rgba(153,255,210, 0.90)  40%,
+    rgba(230,255,240, 0.98)  47%,
+    #ffffff                  50%,
+    rgba(230,255,240, 0.98)  53%,
+    rgba(153,255,210, 0.90)  60%,
+    var(--green)             72%,
+    var(--green)            100%
+  );
+  background-size: 260% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shimmer-sweep 3.4s ease-in-out infinite;
+}
+
+/* ── Hero sub & CTAs ── */
+.hero-content p {
+  font-size: 17px; color: var(--muted); line-height: 1.65;
+  max-width: 480px; margin-bottom: 40px;
+}
+.hero-ctas { display: flex; gap: 12px; flex-wrap: wrap; }
+.btn-hero-primary {
+  padding: 12px 26px; border-radius: var(--radius); font-size: 14px; font-weight: 700;
+  background: var(--green); color: #000; border: none; cursor: pointer; text-decoration: none;
+  font-family: var(--mono);
+  box-shadow: 0 0 24px var(--green-glo);
+  transition: all .25s cubic-bezier(.34,1.56,.64,1);
+  display: inline-flex; align-items: center; gap: 8px;
+}
+.btn-hero-primary:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 0 40px var(--green-glo), 0 10px 28px rgba(0,0,0,.4);
+}
+.btn-hero-secondary {
+  padding: 12px 24px; border-radius: var(--radius); font-size: 14px; font-weight: 500;
+  color: var(--fg); border: 1px solid var(--border-hi); background: rgba(17,17,17,.7);
+  cursor: pointer; text-decoration: none;
+  font-family: var(--mono);
+  transition: all .2s;
+  display: inline-flex; align-items: center; gap: 8px;
+  backdrop-filter: blur(8px);
+}
+.btn-hero-secondary:hover { border-color: var(--green); color: var(--green); background: var(--green-dim); }
+
+/* ── Provider chips ── */
+.providers-row {
+  display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 64px;
+}
+.providers-label {
+  font-family: var(--mono); font-size: 11px; color: var(--dim);
+  text-transform: uppercase; letter-spacing: .08em; margin-right: 4px;
+}
+.provider-chip {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 5px 14px; border-radius: 4px;
+  border: 1px solid var(--border); background: rgba(17,17,17,.75);
+  font-family: var(--mono); font-size: 12.5px; font-weight: 500; color: var(--muted);
+  cursor: default; transition: all .2s;
+  backdrop-filter: blur(6px);
+}
+.provider-chip:hover { border-color: var(--border-hi); color: var(--fg); }
+.chip-dot { width: 6px; height: 6px; border-radius: 50%; }
+
+/* ─── MAIN CONTENT GRID ─── */
+.main-grid-section { padding: 0 24px 80px; }
+.container { max-width: 1140px; margin: 0 auto; }
+
+.section-mono-tag {
+  font-family: var(--mono); font-size: 11px; color: var(--green);
+  text-transform: uppercase; letter-spacing: .1em; margin-bottom: 14px;
+  display: flex; align-items: center; gap: 8px;
+}
+.section-mono-tag::before { content: '//'; color: var(--dim); }
+.section-title {
+  font-size: clamp(26px, 3.5vw, 38px); font-weight: 800; letter-spacing: -.04em;
+  color: var(--fg); margin-bottom: 10px;
+}
+.section-sub { font-size: 15px; color: var(--muted); line-height: 1.6; max-width: 440px; }
+.section-head { margin-bottom: 48px; }
+
+/* Feature list */
+.feature-list { display: flex; flex-direction: column; gap: 0; }
+.feature-item {
+  display: flex; gap: 20px; align-items: flex-start;
+  padding: 24px 0; border-bottom: 1px solid var(--border);
+  transition: padding .2s;
+}
+.feature-item:last-child { border-bottom: none; }
+.feature-item:hover { padding-left: 8px; }
+.feature-num {
+  font-family: var(--mono); font-size: 11px; color: var(--dim);
+  padding-top: 3px; min-width: 24px; flex-shrink: 0;
+}
+.feature-icon {
+  width: 36px; height: 36px; border-radius: 6px;
+  border: 1px solid var(--border); background: var(--bg-card);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.feature-content {}
+.feature-title { font-size: 15px; font-weight: 700; color: var(--fg); margin-bottom: 5px; }
+.feature-desc { font-size: 13px; color: var(--muted); line-height: 1.6; }
+
+/* Main terminal window */
+.terminal-window {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 10px; overflow: hidden;
+  box-shadow: 0 0 0 1px rgba(255,255,255,.03), 0 24px 64px rgba(0,0,0,.5);
+}
+.terminal-topbar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 16px; border-bottom: 1px solid var(--border);
+  background: var(--bg-lift);
+}
+.terminal-dots { display: flex; gap: 6px; }
+.terminal-dots span { width: 11px; height: 11px; border-radius: 50%; }
+.terminal-dots .r { background: #ff5f57; }
+.terminal-dots .y { background: #ffbd2e; }
+.terminal-dots .g { background: #28c840; }
+.terminal-title-bar {
+  font-family: var(--mono); font-size: 11px; color: var(--dim);
+  position: absolute; left: 50%; transform: translateX(-50%);
+}
+.terminal-body { padding: 24px 20px; font-family: var(--mono); font-size: 13px; line-height: 1.9; }
+.t-prompt { color: var(--green); }
+.t-cmd2 { color: var(--fg); }
+.t-flag2 { color: var(--blue); }
+.t-str2 { color: var(--amber); }
+.t-key2 { color: #f9a8d4; }
+.t-comment2 { color: var(--dim); }
+.t-output { color: var(--muted); padding-left: 16px; }
+.t-output .success { color: var(--green); }
+.t-output .key { color: var(--amber); }
+.t-output .val { color: var(--blue); }
+.t-newline { display: block; height: 8px; }
+
+/* Two-column layout */
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: start; }
+
+/* ─── SDK TABS ─── */
+.sdk-section { padding: 0 24px 80px; }
+.sdk-tabs { display: flex; gap: 0; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; margin-bottom: 16px; }
+.sdk-tab {
+  flex: 1; padding: 10px 16px; text-align: center;
+  font-family: var(--mono); font-size: 12px; font-weight: 500; color: var(--muted);
+  background: var(--bg-card); border-right: 1px solid var(--border); cursor: pointer;
+  transition: all .15s;
+}
+.sdk-tab:last-child { border-right: none; }
+.sdk-tab.active { background: var(--green-dim); color: var(--green); border-bottom: none; }
+.sdk-tab:hover:not(.active) { background: var(--bg-lift); color: var(--fg); }
+
+.sdk-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; }
+.sdk-card {
+  background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 22px; transition: all .2s;
+  position: relative; overflow: hidden;
+}
+.sdk-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: var(--green); opacity: 0; transition: opacity .2s;
+}
+.sdk-card:hover::before { opacity: 1; }
+.sdk-card:hover { border-color: rgba(0,208,132,.2); background: rgba(0,208,132,.03); }
+.sdk-card-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+.sdk-card-name { font-size: 14px; font-weight: 700; color: var(--fg); }
+.sdk-method {
+  font-family: var(--mono); font-size: 10px; font-weight: 700;
+  color: var(--green); background: var(--green-dim);
+  padding: 2px 7px; border-radius: 4px; letter-spacing: .04em;
+}
+.sdk-path {
+  font-family: var(--mono); font-size: 11.5px; color: var(--blue);
+  display: block; margin-bottom: 12px; padding: 6px 10px;
+  background: rgba(96,165,250,.06); border-radius: 4px; border-left: 2px solid var(--blue);
+}
+.sdk-desc { font-size: 12.5px; color: var(--muted); line-height: 1.6; }
+
+/* ─── PRICING ─── */
+.pricing-section { padding: 0 24px 80px; }
+.pricing-terminal {
+  background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0,0,0,.3);
+}
+.pricing-terminal-bar {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 16px; border-bottom: 1px solid var(--border);
+  background: var(--bg-lift); position: relative;
+}
+.pricing-terminal-title {
+  position: absolute; left: 50%; transform: translateX(-50%);
+  font-family: var(--mono); font-size: 11px; color: var(--dim);
+}
+.pricing-head {
+  display: grid; grid-template-columns: 1fr 180px 180px;
+  padding: 10px 20px;
+  font-family: var(--mono); font-size: 10.5px; font-weight: 600; letter-spacing: .08em;
+  text-transform: uppercase; color: var(--dim);
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-lift);
+}
+.pricing-head .col-r { text-align: right; }
+.pricing-row {
+  display: grid; grid-template-columns: 1fr 180px 180px;
+  padding: 10px 20px;
+  border-bottom: 1px solid rgba(255,255,255,.04);
+  font-family: var(--mono); font-size: 12.5px;
+  transition: background .1s;
+}
+.pricing-row:last-child { border-bottom: none; }
+.pricing-row:hover { background: rgba(255,255,255,.02); }
+.pricing-row .model { color: var(--fg); display: flex; align-items: center; gap: 8px; }
+.pricing-row .model::before { content: '>'; color: var(--green); font-size: 10px; }
+.pricing-row .price { text-align: right; color: var(--muted); font-variant-numeric: tabular-nums; }
+.pricing-row .price.green { color: var(--green); }
+
+/* ─── CTA ─── */
+.cta-section {
+  padding: 90px 24px;
+  text-align: center; position: relative; overflow: hidden;
+}
+.cta-section::before {
+  content: '';
+  position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%);
+  width: 700px; height: 400px;
+  background: radial-gradient(ellipse, rgba(0,208,132,.07) 0%, transparent 70%);
+  pointer-events: none;
+}
+.cta-box {
+  max-width: 640px; margin: 0 auto;
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 12px; overflow: hidden;
+  box-shadow: 0 0 0 1px rgba(0,208,132,.1), 0 32px 80px rgba(0,0,0,.5);
+  position: relative;
+}
+.cta-box-bar {
+  display: flex; align-items: center; gap: 8px;
+  padding: 12px 16px; border-bottom: 1px solid var(--border);
+  background: var(--bg-lift);
+}
+.cta-box-body { padding: 48px 40px; }
+.cta-box h2 {
+  font-size: clamp(26px, 4vw, 38px); font-weight: 900; letter-spacing: -.04em;
+  color: var(--fg); margin-bottom: 12px;
+}
+.cta-box h2 .g { color: var(--green); }
+.cta-box p { font-size: 15px; color: var(--muted); margin-bottom: 32px; line-height: 1.6; }
+.btn-cta-main {
+  padding: 13px 32px; border-radius: var(--radius); font-size: 15px; font-weight: 700;
+  background: var(--green); color: #000; border: none; cursor: pointer; text-decoration: none;
+  font-family: var(--mono);
+  box-shadow: 0 0 24px var(--green-glo);
+  transition: all .25s cubic-bezier(.34,1.56,.64,1);
+  display: inline-flex; align-items: center; gap: 10px;
+}
+.btn-cta-main:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 0 48px var(--green-glo), 0 12px 32px rgba(0,0,0,.4);
+}
+
+/* ─── FOOTER ─── */
+footer {
+  border-top: 1px solid var(--border);
+  padding: 28px 24px;
+}
+.footer-inner {
+  max-width: 1140px; margin: 0 auto;
+  display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;
+}
+.footer-copy { font-family: var(--mono); font-size: 12px; color: var(--dim); }
+.footer-links { display: flex; gap: 24px; }
+.footer-links a { font-family: var(--mono); font-size: 12px; color: var(--dim); text-decoration: none; transition: color .15s; }
+.footer-links a:hover { color: var(--green); }
+
+/* ─── PROPOSAL LABEL ─── */
+.proposal-label {
+  position: fixed; bottom: 24px; right: 24px; z-index: 999;
+  background: var(--green); color: #000;
+  padding: 7px 16px; border-radius: 5px;
+  font-family: var(--mono); font-size: 12px; font-weight: 700;
+  box-shadow: 0 0 20px var(--green-glo);
+}
+</style>
+<!-- hls.js for HLS stream playback -->
+<script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.13/dist/hls.min.js"></script>
+</head>
+<body>
+<div class="site">
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <a href="#" class="logo">
+      <span class="logo-mark">J</span>
+      <span class="logo-wordmark">JBridge<span class="logo-ai">.ai</span></span>
+    </a>
+    <div class="nav-links">
+      <a href="#features">Features</a>
+      <a href="#pricing">Pricing</a>
+      <a href="https://staging.jbridge.ai/docs" target="_blank">Docs</a>
+    </div>
+    <div class="nav-actions">
+      <a href="#" class="btn-primary">Get Started Free</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ═══════════════════════════════════════════
+     HERO — fullscreen video background
+═══════════════════════════════════════════ -->
+<section class="hero">
+
+  <!-- Video background -->
+  <div class="hero-video-layer">
+    <video id="hero-video" autoplay muted loop playsinline></video>
+    <div class="hvo-dark"></div>
+    <div class="hvo-green"></div>
+    <div class="hvo-dots"></div>
+    <div class="hvo-fade"></div>
+  </div>
+
+  <!-- Vertical grid lines (desktop) -->
+  <div class="hero-grid-lines"><span class="grid-mid"></span></div>
+
+  <!-- SVG ellipse glow -->
+  <svg class="hero-glow" viewBox="0 0 700 340" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <defs>
+      <filter id="glow-blur" x="-30%" y="-30%" width="160%" height="160%">
+        <feGaussianBlur stdDeviation="25"/>
+      </filter>
+    </defs>
+    <ellipse cx="350" cy="120" rx="260" ry="110" fill="rgba(0,208,132,0.13)" filter="url(#glow-blur)"/>
+  </svg>
+
+  <!-- Foreground content -->
+  <div class="hero-content">
+    <div class="terminal-prompt-bar">
+      <span class="prompt-dollar">$</span>
+      <span class="prompt-cmd">curl -X POST api.jbridge.ai/v1/chat/completions</span>
+      <span class="prompt-cursor-inline"></span>
+    </div>
+
+    <h1>
+      <span class="shimmer-green">One API.</span><br>
+      Every Model.
+    </h1>
+
+    <p>Compatible with OpenAI and Anthropic formats. One endpoint to route between every major AI provider — pay only for what you use.</p>
+
+    <div class="hero-ctas">
+      <a href="#" class="btn-hero-primary">
+        <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+        $ get_started --free
+      </a>
+      <a href="#features" class="btn-hero-secondary">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 17l6-6-6-6M12 19h8"/></svg>
+        View Features →
+      </a>
+    </div>
+
+    <div class="providers-row">
+      <span class="providers-label">providers:</span>
+      <div class="provider-chip"><span class="chip-dot" style="background:#10A37F"></span>openai</div>
+      <div class="provider-chip"><span class="chip-dot" style="background:#D97757"></span>anthropic</div>
+      <div class="provider-chip"><span class="chip-dot" style="background:#3B82F6"></span>deepseek</div>
+      <div class="provider-chip"><span class="chip-dot" style="background:#9CA3AF"></span>grok</div>
+      <div class="provider-chip"><span class="chip-dot" style="background:#8B5CF6"></span>kimi</div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES + TERMINAL -->
+<section class="main-grid-section" id="features">
+  <div class="container">
+    <div class="two-col">
+      <!-- Features list -->
+      <div>
+        <div class="section-head">
+          <div class="section-mono-tag">features</div>
+          <h2 class="section-title">Everything You Need</h2>
+          <p class="section-sub">Built for developers who want simplicity without compromise.</p>
+        </div>
+        <div class="feature-list">
+          <div class="feature-item">
+            <span class="feature-num">01</span>
+            <div class="feature-icon">
+              <svg width="16" height="16" fill="none" stroke="#888" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/></svg>
+            </div>
+            <div class="feature-content">
+              <div class="feature-title">Unified API</div>
+              <div class="feature-desc">Compatible with OpenAI and Anthropic formats. Switch providers without changing a line of code.</div>
+            </div>
+          </div>
+          <div class="feature-item">
+            <span class="feature-num">02</span>
+            <div class="feature-icon">
+              <svg width="16" height="16" fill="none" stroke="#00d084" stroke-width="2" viewBox="0 0 24 24"><path d="M3 3v16a2 2 0 0 0 2 2h16M7 16h8m-8-5h12M7 6h3"/></svg>
+            </div>
+            <div class="feature-content">
+              <div class="feature-title">Usage Tracking</div>
+              <div class="feature-desc">Real-time monitoring of tokens, costs, and latency for every request. Full observability.</div>
+            </div>
+          </div>
+          <div class="feature-item">
+            <span class="feature-num">03</span>
+            <div class="feature-icon">
+              <svg width="16" height="16" fill="none" stroke="#60a5fa" stroke-width="2" viewBox="0 0 24 24"><path d="m15.5 7.5 2.3 2.3a1 1 0 0 0 1.4 0l2.1-2.1a1 1 0 0 0 0-1.4L19 4m2-2-9.6 9.6"/><circle cx="7.5" cy="15.5" r="5.5"/></svg>
+            </div>
+            <div class="feature-content">
+              <div class="feature-title">Key Management</div>
+              <div class="feature-desc">Multiple API keys with per-key model restrictions and rate limits. Full access control.</div>
+            </div>
+          </div>
+          <div class="feature-item">
+            <span class="feature-num">04</span>
+            <div class="feature-icon">
+              <svg width="16" height="16" fill="none" stroke="#f59e0b" stroke-width="2" viewBox="0 0 24 24"><path d="M4.9 16.1C1 12.2 1 5.8 4.9 1.9m2.9 2.8a6.14 6.14 0 0 0-.8 7.5"/><circle cx="12" cy="9" r="2"/><path d="M19.1 1.9a9.96 9.96 0 0 1 0 14.1"/></svg>
+            </div>
+            <div class="feature-content">
+              <div class="feature-title">Streaming Support</div>
+              <div class="feature-desc">Full SSE streaming for chat completions. Low-latency, real-time responses out of the box.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Terminal window -->
+      <div>
+        <div class="terminal-window" style="position:relative;">
+          <div class="terminal-topbar">
+            <div class="terminal-dots">
+              <span class="r"></span><span class="y"></span><span class="g"></span>
+            </div>
+            <span class="terminal-title-bar">jbridge — curl — 80×24</span>
+          </div>
+          <div class="terminal-body">
+<span><span class="t-prompt">❯</span> <span class="t-cmd2">curl</span> <span class="t-flag2">-X POST</span> <span class="t-flag2">\</span></span>
+<span>  <span class="t-str2">"https://api.jbridge.ai/v1/chat/completions"</span> <span class="t-flag2">\</span></span>
+<span>  <span class="t-flag2">-H</span> <span class="t-str2">"Authorization: Bearer <span class="t-key2">sk-jb-••••••••</span>"</span> <span class="t-flag2">\</span></span>
+<span>  <span class="t-flag2">-d</span> <span class="t-str2">'{</span></span>
+<span>    <span class="t-str2">"model"</span><span style="color:#ededed">:</span> <span class="t-str2">"gpt-5.4"</span><span style="color:#ededed">,</span></span>
+<span>    <span class="t-str2">"messages"</span><span style="color:#ededed">: [{</span></span>
+<span>      <span class="t-str2">"role"</span><span style="color:#ededed">:</span> <span class="t-str2">"user"</span><span style="color:#ededed">,</span></span>
+<span>      <span class="t-str2">"content"</span><span style="color:#ededed">:</span> <span class="t-str2">"Hello!"</span></span>
+<span>    <span style="color:#ededed">}]</span></span>
+<span>  <span class="t-str2">'}'</span></span>
+<span class="t-newline"></span>
+<span class="t-output"><span class="success">✓</span> 200 OK · <span class="key">model:</span> <span class="val">gpt-5.4</span> · <span class="key">tokens:</span> <span class="val">42</span> · <span class="key">latency:</span> <span class="val">312ms</span></span>
+<span class="t-output">{</span>
+<span class="t-output">  <span class="key">"id"</span>: <span class="val">"chatcmpl-jb-8f3a2c"</span>,</span>
+<span class="t-output">  <span class="key">"choices"</span>: [{</span>
+<span class="t-output">    <span class="key">"message"</span>: { <span class="key">"role"</span>: <span class="val">"assistant"</span>, <span class="key">"content"</span>: <span class="val">"Hello! How can I help?"</span> }</span>
+<span class="t-output">  }]</span>
+<span class="t-output">}</span>
+<span class="t-newline"></span>
+<span><span class="t-prompt">❯</span> <span style="opacity:.4">█</span></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SDK -->
+<section class="sdk-section">
+  <div class="container">
+    <div class="section-head">
+      <div class="section-mono-tag">sdks</div>
+      <h2 class="section-title">Works with Popular SDKs</h2>
+      <p class="section-sub">Change your base URL. That's it.</p>
+    </div>
+    <div class="sdk-grid">
+      <div class="sdk-card">
+        <div class="sdk-card-head">
+          <div class="sdk-card-name">OpenAI SDK</div>
+          <span class="sdk-method">POST</span>
+        </div>
+        <code class="sdk-path">/api/v1/chat/completions</code>
+        <p class="sdk-desc">Drop-in replacement for Python, Node.js, and any OpenAI-compatible SDK.</p>
+      </div>
+      <div class="sdk-card">
+        <div class="sdk-card-head">
+          <div class="sdk-card-name">Anthropic SDK</div>
+          <span class="sdk-method">POST</span>
+        </div>
+        <code class="sdk-path">/api/v1/messages</code>
+        <p class="sdk-desc">Compatible with the official Anthropic SDK and Claude Code LLM Gateway.</p>
+      </div>
+      <div class="sdk-card">
+        <div class="sdk-card-head">
+          <div class="sdk-card-name">OpenAI Responses</div>
+          <span class="sdk-method">POST</span>
+        </div>
+        <code class="sdk-path">/api/v1/responses</code>
+        <p class="sdk-desc">Supports the OpenAI Responses API format for Codex CLI and Agents SDK.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="pricing-section" id="pricing">
+  <div class="container">
+    <div class="section-head" style="text-align:center;">
+      <div class="section-mono-tag" style="justify-content:center;">pricing</div>
+      <h2 class="section-title">Transparent Pricing</h2>
+      <p class="section-sub" style="margin:0 auto; text-align:center;">Pay per token. No subscriptions, no contracts.</p>
+    </div>
+    <div class="pricing-terminal">
+      <div class="pricing-terminal-bar">
+        <div class="terminal-dots">
+          <span class="r"></span><span class="y"></span><span class="g"></span>
+        </div>
+        <span class="pricing-terminal-title">pricing.json — model rates</span>
+      </div>
+      <div class="pricing-head">
+        <span>model</span>
+        <span class="col-r">input / 1M tokens</span>
+        <span class="col-r">output / 1M tokens</span>
+      </div>
+      <div class="pricing-row"><span class="model">claude-haiku-4-5</span><span class="price">$1.00</span><span class="price">$5.00</span></div>
+      <div class="pricing-row"><span class="model">claude-opus-4-6</span><span class="price">$5.00</span><span class="price">$25.00</span></div>
+      <div class="pricing-row"><span class="model">deepseek-v3.2</span><span class="price green">$0.58</span><span class="price green">$1.68</span></div>
+      <div class="pricing-row"><span class="model">gpt-5.4</span><span class="price">$2.50</span><span class="price">$15.00</span></div>
+      <div class="pricing-row"><span class="model">gpt-5.5</span><span class="price">$5.00</span><span class="price">$30.00</span></div>
+      <div class="pricing-row"><span class="model">kimi-k2.5</span><span class="price green">$0.60</span><span class="price green">$3.00</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <div class="cta-box">
+    <div class="cta-box-bar">
+      <div class="terminal-dots">
+        <span class="r"></span><span class="y"></span><span class="g"></span>
+      </div>
+    </div>
+    <div class="cta-box-body">
+      <h2>Ready to <span class="g">build</span>?</h2>
+      <p>Create a free account and get your API key in seconds. No credit card required.</p>
+      <a href="#" class="btn-cta-main">
+        <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+        $ create_account --free
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <p class="footer-copy">// © 2026 KKCompany Technologies. All rights reserved.</p>
+  </div>
+</footer>
+
+</div><!-- /site -->
+<div class="proposal-label">Terminal Pro · v3</div>
+<script>
+(function () {
+  var video = document.getElementById('hero-video');
+  var src   = 'https://stream.mux.com/tLkHO1qZoaaQOUeVWo8hEBeGQfySP02EPS02BmnNFyXys.m3u8';
+
+  if (typeof Hls !== 'undefined' && Hls.isSupported()) {
+    var hls = new Hls({ enableWorker: false });
+    hls.loadSource(src);
+    hls.attachMedia(video);
+    hls.on(Hls.Events.MANIFEST_PARSED, function () {
+      video.play().catch(function () {});
+    });
+  } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+    /* Safari native HLS */
+    video.src = src;
+    video.addEventListener('loadedmetadata', function () {
+      video.play().catch(function () {});
+    });
+  }
+}());
+</script>
+</body>
+</html>

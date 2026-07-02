@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>JBridge.ai — CyberNeon</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/* ─────────────────────────────────────────────
+   JBRIDGE.AI · PROPOSAL W3-1 · CYBERNEON
+   Style: Cyberpunk Web3 · Electric Neon · Dark
+   References: Synthetix · dYdX · Flashbots · Alchemy
+   ───────────────────────────────────────────── */
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:          #020408;
+  --bg-card:     #060D1A;
+  --bg-elevated: #0A1628;
+  --neon-cyan:   #00D4FF;
+  --neon-pink:   #FF0080;
+  --neon-green:  #00FF94;
+  --fg:          #E8F4FF;
+  --muted:       #5A7A99;
+  --border:      rgba(0,212,255,0.2);
+  --border-lo:   rgba(0,212,255,0.08);
+  --border-hi:   rgba(0,212,255,0.5);
+  --glow-cyan:   rgba(0,212,255,0.25);
+  --glow-pink:   rgba(255,0,128,0.25);
+  --font:        'Space Grotesk', system-ui, sans-serif;
+  --mono:        'JetBrains Mono', 'Courier New', monospace;
+  --radius:      6px;
+  --radius-lg:   10px;
+}
+
+html {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--fg);
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+}
+body { min-height: 100vh; overflow-x: hidden; }
+
+/* ── Particle canvas ── */
+#particle-canvas {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+}
+
+/* ── Neon grid background ── */
+.grid-bg {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background-image:
+    linear-gradient(rgba(0,212,255,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,212,255,0.04) 1px, transparent 1px);
+  background-size: 60px 60px;
+  mask-image: radial-gradient(ellipse 100% 100% at 50% 0%, black 40%, transparent 100%);
+  -webkit-mask-image: radial-gradient(ellipse 100% 100% at 50% 0%, black 40%, transparent 100%);
+}
+
+/* ── Scan line animation ── */
+.scan-line {
+  position: fixed; top: 0; left: 0; right: 0;
+  height: 2px; z-index: 1; pointer-events: none;
+  background: linear-gradient(90deg, transparent 0%, var(--neon-cyan) 30%, var(--neon-cyan) 70%, transparent 100%);
+  box-shadow: 0 0 20px #00D4FF, 0 0 60px rgba(0,212,255,0.3);
+  animation: scan-line 15s linear infinite;
+  opacity: 0.6;
+}
+@keyframes scan-line {
+  0%   { transform: translateY(0); opacity: 0; }
+  2%   { opacity: 0.6; }
+  98%  { opacity: 0.6; }
+  100% { transform: translateY(100vh); opacity: 0; }
+}
+
+/* ── Corner glow orbs ── */
+.orb-tl {
+  position: fixed; top: -100px; left: -100px;
+  width: 500px; height: 500px; z-index: 0; pointer-events: none;
+  background: radial-gradient(circle, rgba(0,212,255,0.15) 0%, transparent 70%);
+  filter: blur(60px); opacity: 0.5;
+}
+.orb-br {
+  position: fixed; bottom: -100px; right: -100px;
+  width: 500px; height: 500px; z-index: 0; pointer-events: none;
+  background: radial-gradient(circle, rgba(255,0,128,0.15) 0%, transparent 70%);
+  filter: blur(60px); opacity: 0.5;
+}
+
+/* ── Neon pulse animation ── */
+@keyframes neon-pulse {
+  0%, 100% { box-shadow: 0 0 4px rgba(0,212,255,0.3), 0 0 10px rgba(0,212,255,0.1); }
+  50%       { box-shadow: 0 0 8px rgba(0,212,255,0.6), 0 0 20px rgba(0,212,255,0.2), 0 0 40px rgba(0,212,255,0.08); }
+}
+
+@keyframes neon-text-pulse {
+  0%, 100% { text-shadow: 0 0 6px rgba(0,212,255,0.6); }
+  50%       { text-shadow: 0 0 12px rgba(0,212,255,1), 0 0 24px rgba(0,212,255,0.5); }
+}
+
+@keyframes float-up {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.site { position: relative; z-index: 2; }
+
+/* ─────────────────────────────────────────────
+   NAV
+   ───────────────────────────────────────────── */
+nav {
+  position: sticky; top: 0; z-index: 100;
+  padding: 0 32px;
+  background: rgba(2,4,8,0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(0,212,255,0.15);
+}
+.nav-inner {
+  max-width: 1200px; margin: 0 auto;
+  height: 60px; display: flex; align-items: center; justify-content: space-between;
+}
+.logo {
+  font-family: var(--font); font-size: 16px; font-weight: 700;
+  color: var(--fg); text-decoration: none; letter-spacing: -0.02em;
+  display: flex; align-items: center; gap: 8px;
+}
+.logo-accent {
+  width: 10px; height: 10px;
+  background: var(--neon-cyan);
+  border-radius: 2px;
+  box-shadow: 0 0 8px var(--neon-cyan), 0 0 20px rgba(0,212,255,0.5);
+  flex-shrink: 0;
+  animation: neon-pulse 3s ease-in-out infinite;
+}
+.logo span { color: var(--neon-cyan); }
+
+.nav-links { display: flex; align-items: center; gap: 28px; }
+.nav-links a {
+  font-size: 14px; font-weight: 500; color: var(--muted); text-decoration: none;
+  transition: color 0.2s, text-shadow 0.2s;
+}
+.nav-links a:hover {
+  color: var(--neon-cyan);
+  text-shadow: 0 0 10px rgba(0,212,255,0.6);
+}
+
+.nav-actions { display: flex; align-items: center; gap: 10px; }
+.btn-ghost-nav {
+  padding: 7px 16px; border-radius: var(--radius);
+  font-size: 13px; font-weight: 500; font-family: var(--font);
+  color: var(--muted); border: none; background: transparent;
+  cursor: pointer; text-decoration: none;
+  transition: color 0.2s;
+}
+.btn-ghost-nav:hover { color: var(--fg); }
+
+.btn-nav-cta {
+  padding: 7px 18px; border-radius: var(--radius);
+  font-size: 13px; font-weight: 600; font-family: var(--font);
+  color: var(--neon-cyan);
+  border: 1px solid rgba(0,212,255,0.4);
+  background: rgba(0,212,255,0.05);
+  cursor: pointer; text-decoration: none;
+  transition: all 0.2s;
+}
+.btn-nav-cta:hover {
+  background: rgba(0,212,255,0.12);
+  border-color: var(--neon-cyan);
+  box-shadow: 0 0 20px rgba(0,212,255,0.5);
+  color: #fff;
+}
+
+/* ─────────────────────────────────────────────
+   HERO
+   ───────────────────────────────────────────── */
+.hero {
+  padding: 120px 32px 80px;
+  max-width: 1200px; margin: 0 auto;
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 64px; align-items: center;
+}
+@media (max-width: 900px) {
+  .hero { grid-template-columns: 1fr; gap: 48px; }
+}
+
+.hero-left { animation: float-up 0.8s ease both; }
+.hero-right { animation: float-up 0.8s 0.2s ease both; }
+
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 6px 14px; border-radius: 20px;
+  border: 1px solid rgba(0,212,255,0.25);
+  background: rgba(0,212,255,0.06);
+  font-size: 12px; font-weight: 500; color: var(--neon-cyan);
+  font-family: var(--mono); margin-bottom: 28px;
+  letter-spacing: 0.05em;
+}
+.hero-badge::before {
+  content: '';
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--neon-green);
+  box-shadow: 0 0 6px var(--neon-green);
+  animation: neon-pulse 2s ease-in-out infinite;
+}
+
+h1 {
+  font-size: clamp(52px, 7vw, 88px);
+  font-weight: 700;
+  line-height: 1.0;
+  letter-spacing: -2px;
+  margin-bottom: 24px;
+}
+.h1-white { color: #fff; }
+.h1-neon {
+  background: linear-gradient(90deg, #00D4FF 0%, #00FF94 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.hero-sub {
+  font-size: 17px; font-weight: 400; line-height: 1.65;
+  color: var(--muted); max-width: 440px; margin-bottom: 36px;
+}
+
+.hero-ctas { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 44px; }
+
+.btn-primary {
+  padding: 13px 28px; border-radius: var(--radius);
+  font-size: 14px; font-weight: 700; font-family: var(--font);
+  background: var(--neon-cyan); color: #000;
+  border: none; cursor: pointer; text-decoration: none;
+  transition: all 0.2s; display: inline-block;
+  letter-spacing: -0.01em;
+}
+.btn-primary:hover {
+  box-shadow: 0 0 24px rgba(0,212,255,0.6), 0 0 48px rgba(0,212,255,0.25);
+  transform: translateY(-1px);
+  background: #1FD9FF;
+}
+
+.btn-secondary {
+  padding: 12px 24px; border-radius: var(--radius);
+  font-size: 14px; font-weight: 600; font-family: var(--font);
+  color: var(--fg); background: transparent;
+  border: 1px solid rgba(0,212,255,0.3);
+  cursor: pointer; text-decoration: none;
+  transition: all 0.2s; display: inline-block;
+}
+.btn-secondary:hover {
+  border-color: rgba(0,212,255,0.6);
+  color: var(--neon-cyan);
+  box-shadow: 0 0 16px rgba(0,212,255,0.15);
+  background: rgba(0,212,255,0.05);
+}
+
+.providers-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.providers-label {
+  font-size: 12px; font-weight: 500; color: var(--muted);
+  margin-right: 4px; letter-spacing: 0.04em; text-transform: uppercase;
+}
+.provider-chip {
+  padding: 5px 12px; border-radius: 4px;
+  font-size: 12px; font-weight: 500; font-family: var(--mono);
+  color: var(--fg);
+  border: 1px solid rgba(0,212,255,0.25);
+  background: rgba(0,212,255,0.04);
+  transition: all 0.2s;
+}
+.provider-chip:hover {
+  border-color: rgba(0,212,255,0.5);
+  color: var(--neon-cyan);
+  background: rgba(0,212,255,0.08);
+}
+
+/* ── Hero terminal ── */
+.terminal-card {
+  background: var(--bg-elevated);
+  border: 1px solid rgba(0,212,255,0.2);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: 0 0 60px rgba(0,212,255,0.06), inset 0 1px 0 rgba(0,212,255,0.1);
+  animation: neon-pulse 4s ease-in-out infinite;
+}
+.terminal-bar {
+  display: flex; align-items: center; gap: 8px;
+  padding: 12px 16px;
+  background: rgba(0,212,255,0.06);
+  border-bottom: 1px solid rgba(0,212,255,0.15);
+}
+.term-dot {
+  width: 10px; height: 10px; border-radius: 50%;
+  transition: opacity 0.2s;
+}
+.term-dot-r { background: #FF5F57; box-shadow: 0 0 6px rgba(255,95,87,0.6); }
+.term-dot-y { background: #FEBC2E; box-shadow: 0 0 6px rgba(254,188,46,0.6); }
+.term-dot-g { background: #28C840; box-shadow: 0 0 6px rgba(40,200,64,0.6); }
+.terminal-title {
+  font-family: var(--mono); font-size: 11px; color: var(--muted);
+  margin-left: auto; margin-right: auto; padding-right: 30px;
+  letter-spacing: 0.04em;
+}
+.terminal-body { padding: 24px; font-family: var(--mono); font-size: 13px; line-height: 1.8; }
+.tok-comment { color: #3A5A72; }
+.tok-keyword { color: var(--neon-pink); }
+.tok-string  { color: var(--neon-green); }
+.tok-var     { color: var(--neon-cyan); }
+.tok-fn      { color: #BD93F9; }
+.tok-num     { color: #F1FA8C; }
+.tok-punct   { color: #6272A4; }
+.tok-obj     { color: #FFB86C; }
+
+/* ─────────────────────────────────────────────
+   FEATURES
+   ───────────────────────────────────────────── */
+.section { padding: 96px 32px; max-width: 1200px; margin: 0 auto; }
+
+.section-label {
+  font-size: 12px; font-weight: 600; font-family: var(--mono);
+  color: var(--neon-cyan); letter-spacing: 0.12em;
+  text-transform: uppercase; margin-bottom: 16px;
+  display: flex; align-items: center; gap: 8px;
+}
+.section-label::before {
+  content: '//'; color: rgba(0,212,255,0.4); margin-right: 2px;
+}
+.section-title {
+  font-size: clamp(32px, 4vw, 48px); font-weight: 700;
+  letter-spacing: -1px; margin-bottom: 16px;
+  color: var(--fg);
+}
+.section-sub {
+  font-size: 16px; color: var(--muted); line-height: 1.65;
+  max-width: 520px; margin-bottom: 56px;
+}
+
+.features-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  background: rgba(0,212,255,0.08);
+  border: 1px solid rgba(0,212,255,0.12);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+@media (max-width: 700px) {
+  .features-grid { grid-template-columns: 1fr; }
+}
+
+.feature-card {
+  background: var(--bg-card);
+  padding: 36px 32px;
+  border: 1px solid transparent;
+  transition: all 0.25s;
+  cursor: default; position: relative; overflow: hidden;
+}
+.feature-card::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(circle at 20% 20%, rgba(0,212,255,0.04) 0%, transparent 60%);
+  opacity: 0; transition: opacity 0.3s;
+}
+.feature-card:hover {
+  background: var(--bg-elevated);
+  border-color: rgba(0,212,255,0.5);
+  box-shadow: 0 0 30px rgba(0,212,255,0.08);
+}
+.feature-card:hover::before { opacity: 1; }
+
+.feature-icon-wrap {
+  width: 44px; height: 44px;
+  background: var(--bg-elevated);
+  border: 1px solid rgba(0,212,255,0.25);
+  border-radius: var(--radius);
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 20px;
+  transition: all 0.25s;
+}
+.feature-card:hover .feature-icon-wrap {
+  border-color: rgba(0,212,255,0.6);
+  box-shadow: 0 0 16px rgba(0,212,255,0.2);
+}
+.feature-icon-wrap svg { color: var(--neon-cyan); }
+
+.feature-name {
+  font-size: 16px; font-weight: 600; margin-bottom: 10px;
+  letter-spacing: -0.02em;
+}
+.feature-desc { font-size: 14px; color: var(--muted); line-height: 1.65; }
+
+/* ─────────────────────────────────────────────
+   SDK SECTION
+   ───────────────────────────────────────────── */
+.sdk-section {
+  padding: 96px 32px;
+  background: linear-gradient(180deg, transparent 0%, rgba(0,212,255,0.02) 50%, transparent 100%);
+  border-top: 1px solid var(--border-lo);
+  border-bottom: 1px solid var(--border-lo);
+}
+.sdk-inner { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center; }
+@media (max-width: 900px) {
+  .sdk-inner { grid-template-columns: 1fr; }
+}
+
+.sdk-endpoints { display: flex; flex-direction: column; gap: 12px; margin-top: 32px; }
+.endpoint-row {
+  display: flex; align-items: center; gap: 12px;
+  padding: 14px 16px;
+  background: var(--bg-card);
+  border: 1px solid rgba(0,212,255,0.12);
+  border-radius: var(--radius);
+  transition: all 0.2s;
+}
+.endpoint-row:hover {
+  border-color: rgba(0,212,255,0.35);
+  background: var(--bg-elevated);
+}
+.badge-post {
+  font-family: var(--mono); font-size: 10px; font-weight: 700;
+  color: var(--neon-green); background: rgba(0,255,148,0.1);
+  border: 1px solid rgba(0,255,148,0.25);
+  padding: 3px 8px; border-radius: 3px; letter-spacing: 0.06em;
+  white-space: nowrap; flex-shrink: 0;
+}
+.endpoint-name { font-size: 12px; font-weight: 500; color: var(--muted); flex-shrink: 0; }
+.endpoint-path { font-family: var(--mono); font-size: 12px; color: var(--neon-cyan); margin-left: auto; }
+
+/* ─────────────────────────────────────────────
+   PRICING
+   ───────────────────────────────────────────── */
+.pricing-section { padding: 96px 32px; max-width: 1200px; margin: 0 auto; }
+
+.pricing-table-wrap {
+  background: var(--bg-card);
+  border: 1px solid rgba(0,212,255,0.15);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: 0 0 40px rgba(0,212,255,0.04);
+}
+
+table { width: 100%; border-collapse: collapse; }
+thead tr {
+  border-bottom: 1px solid rgba(0,212,255,0.25);
+  background: rgba(0,212,255,0.04);
+  position: relative;
+}
+thead tr::after {
+  content: '';
+  position: absolute; bottom: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--neon-cyan), transparent);
+}
+thead th {
+  padding: 16px 24px; text-align: left;
+  font-size: 11px; font-weight: 600; color: var(--neon-cyan);
+  font-family: var(--mono); letter-spacing: 0.1em; text-transform: uppercase;
+}
+thead th:not(:first-child) { text-align: right; }
+
+tbody tr {
+  border-bottom: 1px solid rgba(0,212,255,0.06);
+  transition: all 0.2s; position: relative;
+}
+tbody tr:last-child { border-bottom: none; }
+tbody tr::before {
+  content: '';
+  position: absolute; left: 0; top: 0; bottom: 0;
+  width: 0; background: var(--neon-cyan);
+  transition: width 0.2s;
+}
+tbody tr:hover::before { width: 2px; }
+tbody tr:hover { background: rgba(0,212,255,0.03); }
+
+td {
+  padding: 18px 24px;
+  font-size: 13px; font-weight: 400;
+}
+td:not(:first-child) { text-align: right; }
+.td-model { font-family: var(--mono); font-size: 13px; color: var(--fg); font-weight: 500; }
+.td-price { font-family: var(--mono); color: var(--fg); }
+.td-price-in  { color: var(--neon-green); }
+.td-price-out { color: var(--muted); }
+
+.provider-badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 11px; font-weight: 600; font-family: var(--mono);
+  padding: 3px 10px; border-radius: 3px; letter-spacing: 0.04em;
+}
+.badge-anthropic {
+  color: #C87940; background: rgba(200,121,64,0.1);
+  border: 1px solid rgba(200,121,64,0.25);
+}
+.badge-openai {
+  color: #10A37F; background: rgba(16,163,127,0.1);
+  border: 1px solid rgba(16,163,127,0.25);
+}
+.badge-deepseek {
+  color: #4A9EFF; background: rgba(74,158,255,0.1);
+  border: 1px solid rgba(74,158,255,0.25);
+}
+.badge-grok {
+  color: #9B59FF; background: rgba(155,89,255,0.1);
+  border: 1px solid rgba(155,89,255,0.25);
+}
+.badge-kimi {
+  color: #FF6B9D; background: rgba(255,107,157,0.1);
+  border: 1px solid rgba(255,107,157,0.25);
+}
+
+.pricing-note {
+  font-size: 12px; color: var(--muted); font-family: var(--mono);
+  padding: 14px 24px;
+  border-top: 1px solid rgba(0,212,255,0.06);
+  background: rgba(0,212,255,0.02);
+}
+
+/* ─────────────────────────────────────────────
+   CTA SECTION
+   ───────────────────────────────────────────── */
+.cta-section {
+  padding: 100px 32px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  border-top: 1px solid var(--border-lo);
+}
+.cta-glow {
+  position: absolute; bottom: -80px; left: 50%; transform: translateX(-50%);
+  width: 600px; height: 300px;
+  background: radial-gradient(ellipse, rgba(255,0,128,0.15) 0%, transparent 70%);
+  filter: blur(40px); pointer-events: none; z-index: 0;
+}
+.cta-glow-top {
+  position: absolute; top: -60px; left: 50%; transform: translateX(-50%);
+  width: 400px; height: 200px;
+  background: radial-gradient(ellipse, rgba(0,212,255,0.08) 0%, transparent 70%);
+  filter: blur(40px); pointer-events: none; z-index: 0;
+}
+.cta-inner { position: relative; z-index: 1; max-width: 640px; margin: 0 auto; }
+.cta-eyebrow {
+  font-family: var(--mono); font-size: 12px; font-weight: 600;
+  color: var(--neon-pink); letter-spacing: 0.12em; text-transform: uppercase;
+  margin-bottom: 20px;
+}
+.cta-h2 {
+  font-size: clamp(36px, 5vw, 56px); font-weight: 700;
+  letter-spacing: -1.5px; margin-bottom: 20px; line-height: 1.05;
+}
+.cta-h2-grad {
+  background: linear-gradient(90deg, #FF0080 0%, #00D4FF 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.cta-sub { font-size: 16px; color: var(--muted); line-height: 1.65; margin-bottom: 40px; }
+.btn-cta-primary {
+  padding: 15px 36px; border-radius: var(--radius);
+  font-size: 15px; font-weight: 700; font-family: var(--font);
+  background: var(--neon-cyan); color: #000;
+  border: none; cursor: pointer; text-decoration: none;
+  display: inline-block; letter-spacing: -0.01em;
+  transition: all 0.2s;
+}
+.btn-cta-primary:hover {
+  box-shadow: 0 0 32px rgba(0,212,255,0.7), 0 0 64px rgba(0,212,255,0.3);
+  transform: translateY(-2px);
+  background: #1FD9FF;
+}
+
+/* ─────────────────────────────────────────────
+   FOOTER
+   ───────────────────────────────────────────── */
+footer {
+  padding: 28px 32px;
+  border-top: 1px solid var(--border-lo);
+  background: rgba(2,4,8,0.9);
+}
+.footer-inner {
+  max-width: 1200px; margin: 0 auto;
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 12px;
+}
+.footer-copy { font-size: 13px; color: var(--muted); }
+.footer-links { display: flex; align-items: center; gap: 20px; }
+.footer-links a {
+  font-size: 12px; color: var(--muted); text-decoration: none;
+  transition: color 0.2s;
+}
+.footer-links a:hover { color: var(--neon-cyan); }
+
+/* ─────────────────────────────────────────────
+   SCROLLBAR
+   ───────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb {
+  background: rgba(0,212,255,0.2); border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover { background: rgba(0,212,255,0.4); }
+
+/* ─────────────────────────────────────────────
+   DIVIDER
+   ───────────────────────────────────────────── */
+.neon-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, rgba(0,212,255,0.2) 30%, rgba(0,212,255,0.2) 70%, transparent 100%);
+  max-width: 1200px; margin: 0 auto;
+}
+
+/* ─────────────────────────────────────────────
+   RESPONSIVE
+   ───────────────────────────────────────────── */
+@media (max-width: 768px) {
+  nav { padding: 0 20px; }
+  .nav-links { display: none; }
+  .hero { padding: 80px 20px 60px; }
+  .section { padding: 72px 20px; }
+  .pricing-section { padding: 72px 20px; }
+  .sdk-section { padding: 72px 20px; }
+  .cta-section { padding: 72px 20px; }
+  footer { padding: 24px 20px; }
+  thead th, td { padding: 14px 16px; }
+  .footer-inner { flex-direction: column; align-items: flex-start; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+}
+</style>
+</head>
+<body>
+
+<!-- Fixed background layers -->
+<canvas id="particle-canvas" aria-hidden="true"></canvas>
+<div class="grid-bg" aria-hidden="true"></div>
+<div class="scan-line" aria-hidden="true"></div>
+<div class="orb-tl" aria-hidden="true"></div>
+<div class="orb-br" aria-hidden="true"></div>
+
+<div class="site">
+
+  <!-- ── NAV ── -->
+  <nav role="navigation" aria-label="Main navigation">
+    <div class="nav-inner">
+      <a href="#" class="logo" aria-label="JBridge.ai home">
+        <div class="logo-accent" aria-hidden="true"></div>
+        JBridge<span>.ai</span>
+      </a>
+      <div class="nav-links" role="list">
+        <a href="#features" role="listitem">Features</a>
+        <a href="#pricing" role="listitem">Pricing</a>
+        <a href="#" role="listitem">Docs</a>
+      </div>
+      <div class="nav-actions">
+        <a href="#" class="btn-ghost-nav">Log in</a>
+        <a href="#" class="btn-nav-cta">Get Started Free</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ── HERO ── -->
+  <section class="hero" aria-label="Hero">
+    <div class="hero-left">
+      <div class="hero-badge" aria-label="Status: Live API">LIVE API</div>
+      <h1>
+        <span class="h1-white">One API.</span><br>
+        <span class="h1-neon">Every Model.</span>
+      </h1>
+      <p class="hero-sub">
+        Compatible with OpenAI and Anthropic formats. Access top models, pay only for what you use.
+      </p>
+      <div class="hero-ctas">
+        <a href="#" class="btn-primary">Get Started Free</a>
+        <a href="#" class="btn-secondary">Read Docs</a>
+      </div>
+      <div class="providers-row" aria-label="Supported providers">
+        <span class="providers-label">Providers</span>
+        <span class="provider-chip">OpenAI</span>
+        <span class="provider-chip">Anthropic</span>
+        <span class="provider-chip">DeepSeek</span>
+        <span class="provider-chip">Grok</span>
+        <span class="provider-chip">Kimi</span>
+      </div>
+    </div>
+    <div class="hero-right">
+      <div class="terminal-card" role="region" aria-label="Code example">
+        <div class="terminal-bar">
+          <div class="term-dot term-dot-r" aria-hidden="true"></div>
+          <div class="term-dot term-dot-y" aria-hidden="true"></div>
+          <div class="term-dot term-dot-g" aria-hidden="true"></div>
+          <span class="terminal-title">chat.py</span>
+        </div>
+        <div class="terminal-body" aria-label="Python code sample">
+<span class="tok-keyword">from</span> <span class="tok-obj">openai</span> <span class="tok-keyword">import</span> <span class="tok-var">OpenAI</span>
+
+<span class="tok-var">client</span> <span class="tok-punct">=</span> <span class="tok-var">OpenAI</span><span class="tok-punct">(</span>
+  <span class="tok-var">api_key</span><span class="tok-punct">=</span><span class="tok-string">"jb-••••••••••••••••"</span><span class="tok-punct">,</span>
+  <span class="tok-var">base_url</span><span class="tok-punct">=</span><span class="tok-string">"https://api.jbridge.ai"</span>
+<span class="tok-punct">)</span>
+
+<span class="tok-var">response</span> <span class="tok-punct">=</span> <span class="tok-var">client</span><span class="tok-punct">.</span><span class="tok-fn">chat</span><span class="tok-punct">.</span><span class="tok-fn">completions</span><span class="tok-punct">.</span><span class="tok-fn">create</span><span class="tok-punct">(</span>
+  <span class="tok-var">model</span><span class="tok-punct">=</span><span class="tok-string">"claude-opus-4-6"</span><span class="tok-punct">,</span>
+  <span class="tok-var">messages</span><span class="tok-punct">=[{</span>
+    <span class="tok-string">"role"</span><span class="tok-punct">:</span>    <span class="tok-string">"user"</span><span class="tok-punct">,</span>
+    <span class="tok-string">"content"</span><span class="tok-punct">:</span> <span class="tok-string">"Hello, JBridge!"</span>
+  <span class="tok-punct">}]</span>
+<span class="tok-punct">)</span>
+
+<span class="tok-fn">print</span><span class="tok-punct">(</span><span class="tok-var">response</span><span class="tok-punct">.</span><span class="tok-var">choices</span><span class="tok-punct">[</span><span class="tok-num">0</span><span class="tok-punct">].</span><span class="tok-var">message</span><span class="tok-punct">.</span><span class="tok-var">content</span><span class="tok-punct">)</span>
+<span class="tok-comment"># Works with ANY supported model</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="neon-divider" aria-hidden="true"></div>
+
+  <!-- ── FEATURES ── -->
+  <section class="section" id="features" aria-label="Features">
+    <div class="section-label" aria-hidden="true">CAPABILITIES</div>
+    <h2 class="section-title">Everything You Need</h2>
+    <p class="section-sub">Built for developers who want simplicity without compromise</p>
+    <div class="features-grid" role="list">
+
+      <!-- Feature 1 -->
+      <div class="feature-card" role="listitem">
+        <div class="feature-icon-wrap" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
+          </svg>
+        </div>
+        <div class="feature-name">Unified API</div>
+        <p class="feature-desc">Compatible with OpenAI and Anthropic formats, supporting all major models. Switch providers without changing a line of code.</p>
+      </div>
+
+      <!-- Feature 2 -->
+      <div class="feature-card" role="listitem">
+        <div class="feature-icon-wrap" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+          </svg>
+        </div>
+        <div class="feature-name">Usage Tracking</div>
+        <p class="feature-desc">Real-time monitoring of tokens, costs, and latency for every request.</p>
+      </div>
+
+      <!-- Feature 3 -->
+      <div class="feature-card" role="listitem">
+        <div class="feature-icon-wrap" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+          </svg>
+        </div>
+        <div class="feature-name">Key Management</div>
+        <p class="feature-desc">Create multiple API keys with per-key model restrictions and rate limits.</p>
+      </div>
+
+      <!-- Feature 4 -->
+      <div class="feature-card" role="listitem">
+        <div class="feature-icon-wrap" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <polyline points="13 17 18 12 13 7"/>
+            <polyline points="6 17 11 12 6 7"/>
+          </svg>
+        </div>
+        <div class="feature-name">Streaming Support</div>
+        <p class="feature-desc">Full SSE streaming support for chat completions. Low-latency, real-time responses.</p>
+      </div>
+
+    </div>
+  </section>
+
+  <div class="neon-divider" aria-hidden="true"></div>
+
+  <!-- ── SDK SECTION ── -->
+  <div class="sdk-section" id="sdk" aria-label="SDK and API endpoints">
+    <div class="sdk-inner">
+      <div>
+        <div class="section-label" aria-hidden="true">COMPATIBILITY</div>
+        <h2 class="section-title">Drop-in Compatible</h2>
+        <p class="section-sub">Use your existing SDK. Just swap the base URL and API key. No code changes required.</p>
+        <div class="sdk-endpoints" role="list" aria-label="API endpoints">
+          <div class="endpoint-row" role="listitem">
+            <span class="badge-post" aria-label="HTTP method">POST</span>
+            <span class="endpoint-name">OpenAI SDK</span>
+            <span class="endpoint-path">/api/v1/chat/completions</span>
+          </div>
+          <div class="endpoint-row" role="listitem">
+            <span class="badge-post" aria-label="HTTP method">POST</span>
+            <span class="endpoint-name">Anthropic SDK</span>
+            <span class="endpoint-path">/api/v1/messages</span>
+          </div>
+          <div class="endpoint-row" role="listitem">
+            <span class="badge-post" aria-label="HTTP method">POST</span>
+            <span class="endpoint-name">OpenAI Responses</span>
+            <span class="endpoint-path">/api/v1/responses</span>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="terminal-card" role="region" aria-label="Anthropic SDK code example">
+          <div class="terminal-bar">
+            <div class="term-dot term-dot-r" aria-hidden="true"></div>
+            <div class="term-dot term-dot-y" aria-hidden="true"></div>
+            <div class="term-dot term-dot-g" aria-hidden="true"></div>
+            <span class="terminal-title">anthropic_sdk.py</span>
+          </div>
+          <div class="terminal-body">
+<span class="tok-keyword">import</span> <span class="tok-obj">anthropic</span>
+
+<span class="tok-var">client</span> <span class="tok-punct">=</span> <span class="tok-var">anthropic</span><span class="tok-punct">.</span><span class="tok-fn">Anthropic</span><span class="tok-punct">(</span>
+  <span class="tok-var">api_key</span><span class="tok-punct">=</span><span class="tok-string">"jb-••••••••••••••••"</span><span class="tok-punct">,</span>
+  <span class="tok-var">base_url</span><span class="tok-punct">=</span><span class="tok-string">"https://api.jbridge.ai"</span>
+<span class="tok-punct">)</span>
+
+<span class="tok-var">msg</span> <span class="tok-punct">=</span> <span class="tok-var">client</span><span class="tok-punct">.</span><span class="tok-fn">messages</span><span class="tok-punct">.</span><span class="tok-fn">create</span><span class="tok-punct">(</span>
+  <span class="tok-var">model</span><span class="tok-punct">=</span><span class="tok-string">"gpt-5.4"</span><span class="tok-punct">,</span>
+  <span class="tok-var">max_tokens</span><span class="tok-punct">=</span><span class="tok-num">1024</span><span class="tok-punct">,</span>
+  <span class="tok-var">messages</span><span class="tok-punct">=[{</span>
+    <span class="tok-string">"role"</span><span class="tok-punct">:</span>    <span class="tok-string">"user"</span><span class="tok-punct">,</span>
+    <span class="tok-string">"content"</span><span class="tok-punct">:</span> <span class="tok-string">"Hello, JBridge!"</span>
+  <span class="tok-punct">}]</span>
+<span class="tok-punct">)</span>
+<span class="tok-fn">print</span><span class="tok-punct">(</span><span class="tok-var">msg</span><span class="tok-punct">.</span><span class="tok-var">content</span><span class="tok-punct">)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── PRICING ── -->
+  <section class="pricing-section" id="pricing" aria-label="Pricing">
+    <div class="section-label" aria-hidden="true">PRICING</div>
+    <h2 class="section-title">Pay Per Token</h2>
+    <p class="section-sub">No subscriptions. No minimums. Prices per 1M tokens.</p>
+
+    <div class="pricing-table-wrap" role="region" aria-label="Model pricing table">
+      <table aria-label="Pricing per 1M tokens">
+        <thead>
+          <tr>
+            <th scope="col">Model</th>
+            <th scope="col">Provider</th>
+            <th scope="col">Input</th>
+            <th scope="col">Output</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="td-model">claude-haiku-4-5</td>
+            <td><span class="provider-badge badge-anthropic">Anthropic</span></td>
+            <td class="td-price td-price-in">$1.00</td>
+            <td class="td-price td-price-out">$5.00</td>
+          </tr>
+          <tr>
+            <td class="td-model">claude-opus-4-6</td>
+            <td><span class="provider-badge badge-anthropic">Anthropic</span></td>
+            <td class="td-price td-price-in">$5.00</td>
+            <td class="td-price td-price-out">$25.00</td>
+          </tr>
+          <tr>
+            <td class="td-model">deepseek-v3.2</td>
+            <td><span class="provider-badge badge-deepseek">DeepSeek</span></td>
+            <td class="td-price td-price-in">$0.58</td>
+            <td class="td-price td-price-out">$1.68</td>
+          </tr>
+          <tr>
+            <td class="td-model">gpt-5.4</td>
+            <td><span class="provider-badge badge-openai">OpenAI</span></td>
+            <td class="td-price td-price-in">$2.50</td>
+            <td class="td-price td-price-out">$15.00</td>
+          </tr>
+          <tr>
+            <td class="td-model">gpt-5.5</td>
+            <td><span class="provider-badge badge-openai">OpenAI</span></td>
+            <td class="td-price td-price-in">$5.00</td>
+            <td class="td-price td-price-out">$30.00</td>
+          </tr>
+          <tr>
+            <td class="td-model">kimi-k2.5</td>
+            <td><span class="provider-badge badge-kimi">Kimi</span></td>
+            <td class="td-price td-price-in">$0.60</td>
+            <td class="td-price td-price-out">$3.00</td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="pricing-note">All prices are per 1M tokens. Billed only for actual usage.</p>
+    </div>
+  </section>
+
+  <div class="neon-divider" aria-hidden="true"></div>
+
+  <!-- ── CTA SECTION ── -->
+  <section class="cta-section" aria-label="Call to action">
+    <div class="cta-glow" aria-hidden="true"></div>
+    <div class="cta-glow-top" aria-hidden="true"></div>
+    <div class="cta-inner">
+      <div class="cta-eyebrow">GET STARTED</div>
+      <h2 class="cta-h2">
+        <span class="cta-h2-grad">Ready to get started?</span>
+      </h2>
+      <p class="cta-sub">Join developers already building with JBridge. No credit card required.</p>
+      <a href="#" class="btn-cta-primary">Create Free Account</a>
+    </div>
+  </section>
+
+  <!-- ── FOOTER ── -->
+  <footer role="contentinfo">
+    <div class="footer-inner">
+      <span class="footer-copy">© 2026 KKCompany Technologies</span>
+      <nav class="footer-links" aria-label="Footer navigation">
+        <a href="#">Docs</a>
+        <a href="#">Terms of Service</a>
+        <a href="#">Privacy Policy</a>
+        <a href="#">Refund Policy</a>
+      </nav>
+    </div>
+  </footer>
+
+</div><!-- .site -->
+
+<script>
+/* ──────────────────────────────────────────
+   Particle canvas — ~50 floating neon dots
+   ────────────────────────────────────────── */
+(function () {
+  const canvas = document.getElementById('particle-canvas');
+  const ctx = canvas.getContext('2d');
+  const COLORS = ['#00D4FF', '#FF0080', '#00FF94', '#00D4FF', '#00D4FF'];
+  const COUNT = 52;
+
+  let W, H;
+  function resize() {
+    W = canvas.width  = window.innerWidth;
+    H = canvas.height = document.documentElement.scrollHeight;
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  // Also resize when page content changes height
+  window.addEventListener('load', resize);
+
+  const particles = Array.from({ length: COUNT }, () => ({
+    x:  Math.random() * W,
+    y:  Math.random() * H,
+    r:  Math.random() * 1.5 + 0.5,
+    vx: (Math.random() - 0.5) * 0.3,
+    vy: (Math.random() - 0.5) * 0.2,
+    color: COLORS[Math.floor(Math.random() * COLORS.length)],
+    alpha: Math.random() * 0.5 + 0.15,
+  }));
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    for (const p of particles) {
+      ctx.save();
+      ctx.globalAlpha = p.alpha;
+      ctx.fillStyle = p.color;
+      ctx.shadowBlur = 8;
+      ctx.shadowColor = p.color;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+
+      p.x += p.vx;
+      p.y += p.vy;
+
+      if (p.x < -10) p.x = W + 10;
+      if (p.x > W + 10) p.x = -10;
+      if (p.y < -10) p.y = H + 10;
+      if (p.y > H + 10) p.y = -10;
+    }
+    requestAnimationFrame(draw);
+  }
+
+  // Only start animation if reduced-motion is not requested
+  if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    draw();
+  }
+})();
+</script>
+
+</body>
+</html>

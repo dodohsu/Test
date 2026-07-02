@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quickstart · JBridge.ai</title>
+<script>(function(){try{var t=localStorage.getItem('jb-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);var l=localStorage.getItem('jb-lang');if(l&&/^(en|zh-TW|zh-CN|ja|ko)$/.test(l))document.documentElement.setAttribute('lang',l);}catch(e){}}());</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared/dashboard.css">
+</head>
+<body>
+
+<header class="topnav">
+  <div class="topnav-inner">
+    <div class="topnav-left">
+      <button class="nav-hamburger" id="hamburger" aria-label="Toggle navigation" aria-expanded="false"><span></span><span></span><span></span></button>
+      <a href="../../proposal-terminal-pro-v2.html" class="logo" aria-label="JBridge home">
+        <span class="logo-mark">J</span>
+        <span class="logo-wordmark">JBridge<span class="logo-ai">.ai</span></span>
+      </a>
+      <div class="topnav-crumb" aria-label="Breadcrumb">
+        <span>~/</span><span class="sep">›</span><span class="cur">quickstart</span>
+      </div>
+    </div>
+    <div class="topnav-right">
+      <span class="env-pill">production</span>
+      <a href="https://staging.jbridge.ai/docs" class="btn btn-ghost btn-sm" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        <span data-i18n="topnav.docs">Docs</span>
+      </a>
+      <button class="user-chip" aria-label="Account menu">
+        <span class="user-avatar">KK</span>
+        <span class="user-name">kk@jbridge.ai</span>
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<aside class="sidebar" id="sidebar" aria-label="Primary navigation">
+  <div class="side-group-label" data-i18n="nav.group.workspace">Workspace</div>
+  <a href="../dashboard/index.html" class="side-link">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 12 12 3l9 9"/><path d="M5 10v10h14V10"/></svg>
+    <span data-i18n="nav.overview">Overview</span>
+  </a>
+  <a href="../logs/index.html" class="side-link">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 4h16v4H4z"/><path d="M4 12h16v4H4z"/><path d="M4 20h10"/></svg>
+    <span data-i18n="nav.logs">Logs</span>
+  </a>
+  <a href="../api-keys/index.html" class="side-link">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="7.5" cy="15.5" r="5.5"/><path d="m21 2-9.6 9.6"/><path d="m15.5 7.5 2.3 2.3a1 1 0 0 0 1.4 0l2.1-2.1a1 1 0 0 0 0-1.4L19 4"/></svg>
+    <span data-i18n="nav.api_keys">API Keys</span>
+  </a>
+  <a href="../credits/index.html" class="side-link">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M2 10h20"/><path d="M6 14h4"/></svg>
+    <span data-i18n="nav.credits">Credits</span>
+  </a>
+  <a href="../referral/index.html" class="side-link">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M17 11a4 4 0 1 0-3-7"/><path d="M3 11a4 4 0 1 1 3-7"/><circle cx="12" cy="14" r="4"/><path d="M8 20a4 4 0 0 1 8 0"/></svg>
+    <span data-i18n="nav.referral">Referral</span>
+  </a>
+
+  <div class="side-group-label" data-i18n="nav.group.get_started">Get started</div>
+  <a href="../quickstart/index.html" class="side-link active" aria-current="page">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+    <span data-i18n="nav.quickstart">Quickstart</span>
+  </a>
+
+  <div class="side-group-label" data-i18n="nav.group.settings">Settings</div>
+  <a href="../settings/account/index.html" class="side-link">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>
+    <span data-i18n="nav.account">Account</span>
+  </a>
+  <a href="../settings/security/index.html" class="side-link">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 2 4 6v6c0 5 3.5 9.3 8 10 4.5-.7 8-5 8-10V6z"/></svg>
+    <span data-i18n="nav.security">Security</span>
+  </a>
+
+  <div class="side-footer">
+    <div class="side-actions" role="group" aria-label="Account actions">
+      <button type="button" class="side-action" data-theme-toggle aria-label="Toggle light or dark theme" aria-pressed="false">
+        <svg class="side-ic ic-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+        <svg class="side-ic ic-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        <span class="side-action-label" data-theme-label>淺色</span>
+      </button>
+      <div class="side-lang-wrap">
+        <button type="button" class="side-action" data-lang-toggle aria-haspopup="listbox" aria-expanded="false" aria-label="Switch language">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/></svg>
+          <span class="side-action-label" data-lang-label>English</span>
+          <svg class="side-action-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 15 6-6 6 6"/></svg>
+        </button>
+        <ul class="side-lang-menu" role="listbox" aria-label="Language" hidden>
+          <li role="option" data-lang="en" aria-selected="true"><svg class="side-lang-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span class="side-lang-name">English</span><span class="side-lang-tag">EN</span></li>
+          <li role="option" data-lang="zh-TW"><svg class="side-lang-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span class="side-lang-name">繁體中文</span><span class="side-lang-tag">ZH-TW</span></li>
+          <li role="option" data-lang="zh-CN"><svg class="side-lang-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span class="side-lang-name">简体中文</span><span class="side-lang-tag">ZH-CN</span></li>
+          <li role="option" data-lang="ja"><svg class="side-lang-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span class="side-lang-name">日本語</span><span class="side-lang-tag">JA</span></li>
+          <li role="option" data-lang="ko"><svg class="side-lang-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span class="side-lang-name">한국어</span><span class="side-lang-tag">KO</span></li>
+        </ul>
+      </div>
+      <a href="../../proposal-terminal-pro-v2.html" class="side-action" aria-label="Home">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m3 12 9-9 9 9"/><path d="M5 10v10h14V10"/></svg>
+        <span class="side-action-label" data-i18n="side.home">首頁</span>
+      </a>
+      <button type="button" class="side-action danger" data-logout aria-label="Sign out">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>
+        <span class="side-action-label" data-i18n="side.logout">登出</span>
+      </button>
+    </div>
+    <div class="side-status">
+      <span class="status-dot"></span> <span data-i18n="side.status.ok">all systems operational</span> · <span class="dim">ap-northeast-1</span>
+    </div>
+  </div>
+</aside>
+<div class="sidebar-backdrop" id="sidebarBackdrop" aria-hidden="true"></div>
+
+<main class="app-main">
+  <div class="app-content">
+
+    <div class="page-head">
+      <div class="page-head-text">
+        <div class="section-mono-tag">quickstart</div>
+        <h1 class="page-title"><span data-i18n="page.quickstart.title.prefix">Ship your first request in</span> <span class="shimmer-green" data-i18n="page.quickstart.title.shimmer">60 seconds</span></h1>
+        <p class="page-sub" data-i18n="page.quickstart.sub">Drop-in compatible with OpenAI and Anthropic SDKs. Change your base URL — that's it.</p>
+      </div>
+      <div class="page-actions">
+        <a href="https://staging.jbridge.ai/docs" class="btn btn-secondary" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+          Full docs
+        </a>
+      </div>
+    </div>
+
+    <!-- Progress checklist -->
+    <div class="card" style="margin-bottom:24px;">
+      <div class="card-head">
+        <div class="card-head-title"><span class="dot"></span> Setup checklist</div>
+        <span class="card-head-sub">2 / 4 complete</span>
+      </div>
+      <div class="card-body" style="padding:6px 0;">
+        <ol style="list-style:none;padding:0;margin:0;">
+          <li class="hstack" style="padding:14px 20px;border-bottom:1px solid var(--border);gap:12px;">
+            <span style="width:24px;height:24px;border-radius:50%;background:var(--green);display:inline-flex;align-items:center;justify-content:center;color:#001a0e;font-weight:900;font-size:12px;flex-shrink:0;">✓</span>
+            <div style="flex:1;">
+              <div class="fg" style="font-weight:600;">Create account</div>
+              <div class="muted" style="font-size:12.5px;">Signed in as kk@jbridge.ai</div>
+            </div>
+            <span class="pill pill-ok"><span class="pdot"></span>done</span>
+          </li>
+          <li class="hstack" style="padding:14px 20px;border-bottom:1px solid var(--border);gap:12px;">
+            <span style="width:24px;height:24px;border-radius:50%;background:var(--green);display:inline-flex;align-items:center;justify-content:center;color:#001a0e;font-weight:900;font-size:12px;flex-shrink:0;">✓</span>
+            <div style="flex:1;">
+              <div class="fg" style="font-weight:600;">Generate an API key</div>
+              <div class="muted" style="font-size:12.5px;">3 keys active</div>
+            </div>
+            <a class="btn btn-ghost btn-sm" href="../api-keys/index.html">Manage</a>
+          </li>
+          <li class="hstack" style="padding:14px 20px;border-bottom:1px solid var(--border);gap:12px;">
+            <span class="mono" style="width:24px;height:24px;border-radius:50%;border:1px solid var(--border-hi);display:inline-flex;align-items:center;justify-content:center;color:var(--muted);font-size:12px;flex-shrink:0;">3</span>
+            <div style="flex:1;">
+              <div class="fg" style="font-weight:600;">Send your first request</div>
+              <div class="muted" style="font-size:12.5px;">Use a snippet below to test connectivity</div>
+            </div>
+            <span class="pill pill-warn"><span class="pdot"></span>pending</span>
+          </li>
+          <li class="hstack" style="padding:14px 20px;gap:12px;">
+            <span class="mono" style="width:24px;height:24px;border-radius:50%;border:1px solid var(--border-hi);display:inline-flex;align-items:center;justify-content:center;color:var(--muted);font-size:12px;flex-shrink:0;">4</span>
+            <div style="flex:1;">
+              <div class="fg" style="font-weight:600;">Add credits</div>
+              <div class="muted" style="font-size:12.5px;">Pay-as-you-go. $5 minimum.</div>
+            </div>
+            <a class="btn btn-ghost btn-sm" href="../credits/index.html">Top up</a>
+          </li>
+        </ol>
+      </div>
+    </div>
+
+    <!-- SDK tabs + code -->
+    <div class="card" data-tab-group>
+      <div class="card-head" style="padding:0;">
+        <div class="tabs" style="margin:0;border:none;border-bottom:1px solid var(--border);border-radius:0;flex:1;">
+          <button class="tab active" data-tab="curl" type="button">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+            curl
+          </button>
+          <button class="tab" data-tab="node" type="button">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M11.998 24c-.321 0-.641-.084-.922-.247l-2.936-1.737c-.438-.245-.224-.332-.08-.383.585-.203.703-.25 1.328-.604.065-.037.151-.023.218.017l2.256 1.339c.082.045.197.045.272 0l8.795-5.076c.082-.047.135-.141.135-.241v-10.15c0-.103-.052-.196-.137-.243l-8.79-5.072a.27.27 0 0 0-.27 0L3.075 6.673c-.084.046-.137.142-.137.243v10.15c0 .1.053.193.137.239l2.408 1.391c1.308.654 2.108-.116 2.108-.89V7.787c0-.143.114-.253.257-.253h1.115c.139 0 .256.11.256.253v10.019c0 1.745-.95 2.745-2.604 2.745-.508 0-.909 0-2.026-.551L2.28 18.675a1.852 1.852 0 0 1-.922-1.601V6.929c0-.661.353-1.279.922-1.605L11.075.235a1.94 1.94 0 0 1 1.85 0l8.795 5.084c.57.329.922.945.922 1.605v10.15c0 .66-.353 1.276-.922 1.605l-8.795 5.078c-.282.16-.6.243-.927.243z"/></svg>
+            Node.js
+          </button>
+          <button class="tab" data-tab="python" type="button">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M14.25.18l.9.2.73.26.59.3.45.32.34.34.25.34.16.33.1.3.04.26.02.2-.01.13V8.5l-.05.63-.13.55-.21.46-.26.38-.3.31-.33.25-.35.19-.35.14-.33.1-.3.07-.26.04-.21.02H8.77l-.69.05-.59.14-.5.22-.41.27-.33.32-.27.35-.2.36-.15.37-.1.35-.07.32-.04.27-.02.21v3.06H3.17l-.21-.03-.28-.07-.32-.12-.35-.18-.36-.26-.36-.36-.35-.46-.32-.59-.28-.73-.21-.88-.14-1.05-.05-1.23.06-1.22.16-1.04.24-.87.32-.71.36-.57.4-.44.42-.33.42-.24.4-.16.36-.1.32-.05.24-.01h.16l.06.01h8.16v-.83H6.18l-.01-2.75-.02-.37.05-.34.11-.31.17-.28.25-.26.31-.23.38-.2.44-.18.51-.15.58-.12.64-.1.71-.06.77-.04.84-.02 1.27.05zm-6.3 1.98l-.23.33-.08.41.08.41.23.34.33.22.41.09.41-.09.33-.22.23-.34.08-.41-.08-.41-.23-.33-.33-.22-.41-.09-.41.09zm13.09 3.95l.28.06.32.12.35.18.36.27.36.35.35.47.32.59.28.73.21.88.14 1.04.05 1.23-.06 1.23-.16 1.04-.24.86-.32.71-.36.57-.4.45-.42.33-.42.24-.4.16-.36.09-.32.05-.24.02-.16-.01h-8.22v.82h5.84l.01 2.76.02.36-.05.34-.11.31-.17.29-.25.25-.31.24-.38.2-.44.17-.51.15-.58.13-.64.09-.71.07-.77.04-.84.01-1.27-.04-1.07-.14-.9-.2-.73-.25-.59-.3-.45-.33-.34-.34-.25-.34-.16-.33-.1-.3-.04-.25-.02-.2.01-.13v-5.34l.05-.64.13-.54.21-.46.26-.38.3-.32.33-.24.35-.2.35-.14.33-.1.3-.06.26-.04.21-.02.13-.01h5.84l.69-.05.59-.14.5-.21.41-.28.33-.32.27-.35.2-.36.15-.36.1-.35.07-.32.04-.28.02-.21V6.07h2.09l.14.01zm-6.47 14.25l-.23.33-.08.41.08.41.23.33.33.23.41.08.41-.08.33-.23.23-.33.08-.41-.08-.41-.23-.33-.33-.23-.41-.08-.41.08z"/></svg>
+            Python
+          </button>
+          <button class="tab" data-tab="anthropic" type="button">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M16.5 3h3.5l-7.5 18h-3.5zM4 21l7.5-18h3l-7.5 18z"/></svg>
+            Anthropic
+          </button>
+        </div>
+        <div class="hstack" style="padding-right:14px;">
+          <button class="btn btn-ghost btn-sm" id="copyActive" data-copy-target="#snippet-curl">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            Copy
+          </button>
+        </div>
+      </div>
+      <div class="card-body" style="padding:0;">
+        <!-- curl panel -->
+        <div class="terminal-body" data-tab-panel="curl" id="snippet-curl"><span><span class="t-prompt">❯</span> curl <span class="t-flag">-X POST</span> https://api.jbridge.ai/v1/chat/completions \</span>
+<span>     <span class="t-flag">-H</span> <span class="t-str">"Authorization: Bearer $JBRIDGE_API_KEY"</span> \</span>
+<span>     <span class="t-flag">-H</span> <span class="t-str">"Content-Type: application/json"</span> \</span>
+<span>     <span class="t-flag">-d</span> <span class="t-str">'{</span></span>
+<span>       <span class="t-str">"model": "gpt-5.4",</span></span>
+<span>       <span class="t-str">"messages": [{ "role": "user", "content": "Hello, JBridge!" }]</span></span>
+<span>     <span class="t-str">}'</span></span>
+<span class="t-newline"></span>
+<span class="t-output"><span class="ok">✓</span> 200 OK · <span class="info">tokens=42</span> · <span class="info">latency=312ms</span></span>
+        </div>
+        <!-- Node panel -->
+        <div class="terminal-body" data-tab-panel="node" id="snippet-node" hidden><span><span class="t-comment">// npm i openai</span></span>
+<span><span class="t-key">import</span> OpenAI <span class="t-key">from</span> <span class="t-str">"openai"</span>;</span>
+<span class="t-newline"></span>
+<span><span class="t-key">const</span> client = <span class="t-key">new</span> OpenAI({</span>
+<span>  apiKey: process.env.<span class="t-flag">JBRIDGE_API_KEY</span>,</span>
+<span>  baseURL: <span class="t-str">"https://api.jbridge.ai/v1"</span>,</span>
+<span>});</span>
+<span class="t-newline"></span>
+<span><span class="t-key">const</span> res = <span class="t-key">await</span> client.chat.completions.create({</span>
+<span>  model: <span class="t-str">"gpt-5.4"</span>,</span>
+<span>  messages: [{ role: <span class="t-str">"user"</span>, content: <span class="t-str">"Hello, JBridge!"</span> }],</span>
+<span>});</span>
+<span class="t-newline"></span>
+<span>console.log(res.choices[0].message.content);</span>
+        </div>
+        <!-- Python panel -->
+        <div class="terminal-body" data-tab-panel="python" id="snippet-python" hidden><span><span class="t-comment"># pip install openai</span></span>
+<span><span class="t-key">from</span> openai <span class="t-key">import</span> OpenAI</span>
+<span class="t-newline"></span>
+<span>client = OpenAI(</span>
+<span>    api_key=os.environ[<span class="t-str">"JBRIDGE_API_KEY"</span>],</span>
+<span>    base_url=<span class="t-str">"https://api.jbridge.ai/v1"</span>,</span>
+<span>)</span>
+<span class="t-newline"></span>
+<span>resp = client.chat.completions.create(</span>
+<span>    model=<span class="t-str">"gpt-5.4"</span>,</span>
+<span>    messages=[{<span class="t-str">"role"</span>: <span class="t-str">"user"</span>, <span class="t-str">"content"</span>: <span class="t-str">"Hello, JBridge!"</span>}],</span>
+<span>)</span>
+<span>print(resp.choices[0].message.content)</span>
+        </div>
+        <!-- Anthropic panel -->
+        <div class="terminal-body" data-tab-panel="anthropic" id="snippet-anthropic" hidden><span><span class="t-comment"># pip install anthropic</span></span>
+<span><span class="t-key">from</span> anthropic <span class="t-key">import</span> Anthropic</span>
+<span class="t-newline"></span>
+<span>client = Anthropic(</span>
+<span>    api_key=os.environ[<span class="t-str">"JBRIDGE_API_KEY"</span>],</span>
+<span>    base_url=<span class="t-str">"https://api.jbridge.ai"</span>,</span>
+<span>)</span>
+<span class="t-newline"></span>
+<span>msg = client.messages.create(</span>
+<span>    model=<span class="t-str">"claude-opus-4-6"</span>,</span>
+<span>    max_tokens=1024,</span>
+<span>    messages=[{<span class="t-str">"role"</span>: <span class="t-str">"user"</span>, <span class="t-str">"content"</span>: <span class="t-str">"Hello, JBridge!"</span>}],</span>
+<span>)</span>
+<span>print(msg.content[0].text)</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Next steps -->
+    <section style="margin-top:32px;">
+      <div class="section-mono-tag">next steps</div>
+      <h2 style="font-size:22px;font-weight:800;letter-spacing:-.02em;margin-bottom:18px;">Explore the gateway</h2>
+      <div class="grid-3">
+        <a href="https://staging.jbridge.ai/docs/streaming" class="card" style="display:block;text-decoration:none;color:inherit;transition:all .2s;" target="_blank" rel="noopener">
+          <div class="card-body">
+            <div class="hstack" style="margin-bottom:10px;">
+              <span style="width:34px;height:34px;border-radius:8px;background:var(--blue-dim);border:1px solid rgba(96,165,250,.25);display:inline-flex;align-items:center;justify-content:center;color:var(--blue);">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4.9 16.1C1 12.2 1 5.8 4.9 1.9m2.9 2.8a6.14 6.14 0 0 0-.8 7.5"/><circle cx="12" cy="9" r="2"/><path d="M19.1 1.9a9.96 9.96 0 0 1 0 14.1"/></svg>
+              </span>
+              <h3 class="fg" style="font-size:14px;font-weight:700;">Enable streaming</h3>
+            </div>
+            <p class="muted" style="font-size:13px;line-height:1.55;">Stream tokens with SSE for sub-second perceived latency.</p>
+          </div>
+        </a>
+        <a href="../api-keys/index.html" class="card" style="display:block;text-decoration:none;color:inherit;transition:all .2s;">
+          <div class="card-body">
+            <div class="hstack" style="margin-bottom:10px;">
+              <span style="width:34px;height:34px;border-radius:8px;background:var(--green-dim);border:1px solid rgba(0,208,132,.25);display:inline-flex;align-items:center;justify-content:center;color:var(--green);">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="7.5" cy="15.5" r="5.5"/><path d="m21 2-9.6 9.6"/></svg>
+              </span>
+              <h3 class="fg" style="font-size:14px;font-weight:700;">Scope keys per environment</h3>
+            </div>
+            <p class="muted" style="font-size:13px;line-height:1.55;">Restrict each key to specific models &amp; rate limits.</p>
+          </div>
+        </a>
+        <a href="../logs/index.html" class="card" style="display:block;text-decoration:none;color:inherit;transition:all .2s;">
+          <div class="card-body">
+            <div class="hstack" style="margin-bottom:10px;">
+              <span style="width:34px;height:34px;border-radius:8px;background:var(--amber-dim);border:1px solid rgba(245,158,11,.25);display:inline-flex;align-items:center;justify-content:center;color:var(--amber);">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v16a2 2 0 0 0 2 2h16M7 16h8m-8-5h12M7 6h3"/></svg>
+              </span>
+              <h3 class="fg" style="font-size:14px;font-weight:700;">Inspect every request</h3>
+            </div>
+            <p class="muted" style="font-size:13px;line-height:1.55;">Full request/response logs with tokens, cost &amp; latency.</p>
+          </div>
+        </a>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<script src="../shared/dashboard.js"></script>
+<script>
+  // Bind copy button to the active tab's snippet
+  (function () {
+    var copyBtn = document.getElementById('copyActive');
+    var group = document.querySelector('[data-tab-group]');
+    if (!copyBtn || !group) return;
+    group.addEventListener('click', function (e) {
+      var t = e.target.closest('[data-tab]');
+      if (!t) return;
+      copyBtn.setAttribute('data-copy-target', '#snippet-' + t.getAttribute('data-tab'));
+    });
+  }());
+</script>
+</body>
+</html>

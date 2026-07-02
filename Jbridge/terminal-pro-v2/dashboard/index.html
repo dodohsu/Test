@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dashboard · JBridge.ai</title>
+<script>(function(){try{var t=localStorage.getItem('jb-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);var l=localStorage.getItem('jb-lang');if(l&&/^(en|zh-TW|zh-CN|ja|ko)$/.test(l))document.documentElement.setAttribute('lang',l);}catch(e){}}());</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared/dashboard.css">
+<script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.13/dist/hls.min.js"></script>
+</head>
+<body>
+
+<!-- TOP NAV -->
+<header class="topnav">
+  <div class="topnav-inner">
+    <div class="topnav-left">
+      <button class="nav-hamburger" id="hamburger" aria-label="Toggle navigation" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+      <a href="../../proposal-terminal-pro-v2.html" class="logo" aria-label="JBridge home">
+        <span class="logo-mark">J</span>
+        <span class="logo-wordmark">JBridge<span class="logo-ai">.ai</span></span>
+      </a>
+      <div class="topnav-crumb" aria-label="Breadcrumb">
+        <span>~/</span><span class="sep">›</span><span class="cur">dashboard</span>
+      </div>
+    </div>
+    <div class="topnav-right">
+      <span class="env-pill">production</span>
+      <a href="https://staging.jbridge.ai/docs" class="btn btn-ghost btn-sm" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        <span data-i18n="topnav.docs">Docs</span>
+      </a>
+      <button class="user-chip" aria-label="Account menu">
+        <span class="user-avatar">KK</span>
+        <span class="user-name">kk@jbridge.ai</span>
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar" aria-label="Primary navigation">
+  <div class="side-group-label" data-i18n="nav.group.workspace">Workspace</div>
+  <a href="../dashboard/index.html" class="side-link active" aria-current="page">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 12 12 3l9 9"/><path d="M5 10v10h14V10"/></svg>
+    <span data-i18n="nav.overview">Overview</span>
+  </a>
+  <a href="../logs/index.html" class="side-link">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 4h16v4H4z"/><path d="M4 12h16v4H4z"/><path d="M4 20h10"/></svg>
+    <span data-i18n="nav.logs">Logs</span>
+  </a>
+  <a href="../api-keys/index.html" class="side-link">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="7.5" cy="15.5" r="5.5"/><path d="m21 2-9.6 9.6"/><path d="m15.5 7.5 2.3 2.3a1 1 0 0 0 1.4 0l2.1-2.1a1 1 0 0 0 0-1.4L19 4"/></svg>
+    <span data-i18n="nav.api_keys">API Keys</span>
+  </a>
+  <a href="../credits/index.html" class="side-link">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M2 10h20"/><path d="M6 14h4"/></svg>
+    <span data-i18n="nav.credits">Credits</span>
+    <span class="side-badge">+$5</span>
+  </a>
+  <a href="../referral/index.html" class="side-link">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M17 11a4 4 0 1 0-3-7"/><path d="M3 11a4 4 0 1 1 3-7"/><circle cx="12" cy="14" r="4"/><path d="M8 20a4 4 0 0 1 8 0"/></svg>
+    <span data-i18n="nav.referral">Referral</span>
+  </a>
+
+  <div class="side-group-label" data-i18n="nav.group.get_started">Get started</div>
+  <a href="../quickstart/index.html" class="side-link">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+    <span data-i18n="nav.quickstart">Quickstart</span>
+  </a>
+
+  <div class="side-group-label" data-i18n="nav.group.settings">Settings</div>
+  <a href="../settings/account/index.html" class="side-link">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>
+    <span data-i18n="nav.account">Account</span>
+  </a>
+  <a href="../settings/security/index.html" class="side-link">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 2 4 6v6c0 5 3.5 9.3 8 10 4.5-.7 8-5 8-10V6z"/></svg>
+    <span data-i18n="nav.security">Security</span>
+  </a>
+
+  <div class="side-footer">
+    <div class="side-actions" role="group" aria-label="Account actions">
+      <button type="button" class="side-action" data-theme-toggle aria-label="Toggle light or dark theme" aria-pressed="false">
+        <svg class="side-ic ic-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+        <svg class="side-ic ic-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        <span class="side-action-label" data-theme-label>淺色</span>
+      </button>
+      <div class="side-lang-wrap">
+        <button type="button" class="side-action" data-lang-toggle aria-haspopup="listbox" aria-expanded="false" aria-label="Switch language">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/></svg>
+          <span class="side-action-label" data-lang-label>English</span>
+          <svg class="side-action-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 15 6-6 6 6"/></svg>
+        </button>
+        <ul class="side-lang-menu" role="listbox" aria-label="Language" hidden>
+          <li role="option" data-lang="en" aria-selected="true"><svg class="side-lang-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span class="side-lang-name">English</span><span class="side-lang-tag">EN</span></li>
+          <li role="option" data-lang="zh-TW"><svg class="side-lang-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span class="side-lang-name">繁體中文</span><span class="side-lang-tag">ZH-TW</span></li>
+          <li role="option" data-lang="zh-CN"><svg class="side-lang-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span class="side-lang-name">简体中文</span><span class="side-lang-tag">ZH-CN</span></li>
+          <li role="option" data-lang="ja"><svg class="side-lang-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span class="side-lang-name">日本語</span><span class="side-lang-tag">JA</span></li>
+          <li role="option" data-lang="ko"><svg class="side-lang-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span class="side-lang-name">한국어</span><span class="side-lang-tag">KO</span></li>
+        </ul>
+      </div>
+      <a href="../../proposal-terminal-pro-v2.html" class="side-action" aria-label="Home">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m3 12 9-9 9 9"/><path d="M5 10v10h14V10"/></svg>
+        <span class="side-action-label" data-i18n="side.home">首頁</span>
+      </a>
+      <button type="button" class="side-action danger" data-logout aria-label="Sign out">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>
+        <span class="side-action-label" data-i18n="side.logout">登出</span>
+      </button>
+    </div>
+    <div class="side-status">
+      <span class="status-dot"></span> <span data-i18n="side.status.ok">all systems operational</span> · <span class="dim">ap-northeast-1</span>
+    </div>
+  </div>
+</aside>
+<div class="sidebar-backdrop" id="sidebarBackdrop" aria-hidden="true"></div>
+
+<!-- MAIN -->
+<main class="app-main">
+  <div class="app-content">
+
+    <!-- HERO BANNER with video bg -->
+    <section class="hero-banner" aria-label="Welcome">
+      <div class="hero-banner-video" aria-hidden="true">
+        <video id="hero-video" autoplay muted loop playsinline></video>
+      </div>
+      <div class="hero-banner-fade" aria-hidden="true"></div>
+      <div class="hero-banner-inner">
+        <div class="hero-prompt">
+          <span class="prompt-dollar">$</span>
+          <span class="prompt-cmd">jbridge status --workspace kk-prod</span>
+          <span class="prompt-cursor" aria-hidden="true"></span>
+        </div>
+        <h1><span data-i18n="page.dashboard.welcome">Welcome back, </span><span class="shimmer-green">KK User</span></h1>
+        <p>Your gateway is healthy. <span class="mono fg">$24.86</span> of credits remaining · last request <span class="mono fg">12 sec ago</span>.</p>
+        <div class="hero-banner-ctas">
+          <a href="../api-keys/index.html" class="btn btn-primary">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+            Create API key
+          </a>
+          <a href="../quickstart/index.html" class="btn btn-secondary">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 17l6-6-6-6"/><path d="M12 19h8"/></svg>
+            View quickstart
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- KPI ROW -->
+    <section aria-label="Usage at a glance">
+      <div class="kpi-grid">
+        <div class="kpi">
+          <div class="kpi-label"><span class="lk">//</span> credits balance</div>
+          <div class="kpi-value">$24.86</div>
+          <div class="kpi-delta up">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 15 6-6 6 6"/></svg>
+            +$5.00 added today
+          </div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-label"><span class="lk">//</span> requests · 24h</div>
+          <div class="kpi-value">1,284</div>
+          <div class="kpi-delta up">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 15 6-6 6 6"/></svg>
+            +18.2% vs prev day
+          </div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-label"><span class="lk">//</span> tokens · 24h</div>
+          <div class="kpi-value">2.41<span class="unit">M</span></div>
+          <div class="kpi-delta flat">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14"/></svg>
+            ±2% steady
+          </div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-label"><span class="lk">//</span> avg latency</div>
+          <div class="kpi-value">312<span class="unit">ms</span></div>
+          <div class="kpi-delta down">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
+            −42ms vs last week
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- USAGE + TERMINAL ROW -->
+    <section class="grid-12-8" aria-label="Activity">
+      <!-- Usage chart card -->
+      <div class="card">
+        <div class="card-head">
+          <div class="card-head-title"><span class="dot"></span> Request volume · 7d</div>
+          <div class="hstack">
+            <select class="select btn-sm" style="min-height:32px;padding:6px 28px 6px 10px;font-size:12px;" aria-label="Range">
+              <option>7 days</option>
+              <option>30 days</option>
+              <option>90 days</option>
+            </select>
+          </div>
+        </div>
+        <div class="card-body">
+          <!-- Inline SVG sparkline / area chart -->
+          <svg viewBox="0 0 600 220" width="100%" height="220" role="img" aria-label="Request volume over 7 days, ranging from 142 to 1,284 requests per day, trending upward.">
+            <defs>
+              <linearGradient id="areaG" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#00d084" stop-opacity=".45"/>
+                <stop offset="100%" stop-color="#00d084" stop-opacity="0"/>
+              </linearGradient>
+            </defs>
+            <!-- Gridlines -->
+            <g stroke="#242424" stroke-width="1">
+              <line x1="40" y1="40"  x2="590" y2="40"/>
+              <line x1="40" y1="90"  x2="590" y2="90"/>
+              <line x1="40" y1="140" x2="590" y2="140"/>
+              <line x1="40" y1="190" x2="590" y2="190"/>
+            </g>
+            <!-- Y labels -->
+            <g font-family="JetBrains Mono, monospace" font-size="10" fill="#555">
+              <text x="32" y="44"  text-anchor="end">1500</text>
+              <text x="32" y="94"  text-anchor="end">1000</text>
+              <text x="32" y="144" text-anchor="end">500</text>
+              <text x="32" y="194" text-anchor="end">0</text>
+            </g>
+            <!-- X labels -->
+            <g font-family="JetBrains Mono, monospace" font-size="10" fill="#555" text-anchor="middle">
+              <text x="80"  y="210">Mon</text>
+              <text x="160" y="210">Tue</text>
+              <text x="240" y="210">Wed</text>
+              <text x="320" y="210">Thu</text>
+              <text x="400" y="210">Fri</text>
+              <text x="480" y="210">Sat</text>
+              <text x="560" y="210">Sun</text>
+            </g>
+            <!-- Area -->
+            <path d="M40 190 L80 175 L160 162 L240 150 L320 110 L400 92 L480 75 L560 58 L590 50 L590 190 Z"
+                  fill="url(#areaG)"/>
+            <!-- Line -->
+            <path d="M40 190 L80 175 L160 162 L240 150 L320 110 L400 92 L480 75 L560 58 L590 50"
+                  fill="none" stroke="#00d084" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+            <!-- Today marker -->
+            <circle cx="560" cy="58" r="4.5" fill="#00d084"/>
+            <circle cx="560" cy="58" r="9" fill="none" stroke="#00d084" stroke-opacity=".35" stroke-width="1.5"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Status terminal -->
+      <div class="terminal">
+        <div class="terminal-bar">
+          <div class="terminal-dots"><span class="r"></span><span class="y"></span><span class="g"></span></div>
+          <span class="terminal-title">status · live</span>
+        </div>
+        <div class="terminal-body">
+          <span><span class="t-prompt">❯</span> jbridge ping --all</span>
+          <span class="t-newline"></span>
+          <span class="t-output"><span class="ok">✓</span> openai      <span class="info">→ 248ms</span></span>
+          <span class="t-output"><span class="ok">✓</span> anthropic   <span class="info">→ 312ms</span></span>
+          <span class="t-output"><span class="ok">✓</span> deepseek    <span class="info">→ 196ms</span></span>
+          <span class="t-output"><span class="warn">!</span> grok        <span class="warn">→ 1.04s (slow)</span></span>
+          <span class="t-output"><span class="ok">✓</span> kimi        <span class="info">→ 284ms</span></span>
+          <span class="t-newline"></span>
+          <span><span class="t-prompt">❯</span> jbridge keys --count</span>
+          <span class="t-output">active: <span class="info">3</span> · revoked: <span class="warn">1</span></span>
+          <span class="t-newline"></span>
+          <span><span class="t-prompt">❯</span> <span style="opacity:.4">█</span></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- RECENT REQUESTS -->
+    <section style="margin-top:24px;" aria-label="Recent requests">
+      <div class="card">
+        <div class="card-head">
+          <div class="card-head-title"><span class="dot"></span> Recent requests</div>
+          <a href="../logs/index.html" class="btn btn-ghost btn-sm">
+            View all logs
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+        <div class="card-body card-body--flush">
+          <div class="tbl-wrap">
+            <table class="tbl">
+              <thead>
+                <tr>
+                  <th>Time</th>
+                  <th>Method</th>
+                  <th>Model</th>
+                  <th>Status</th>
+                  <th class="r">Tokens</th>
+                  <th class="r">Cost</th>
+                  <th class="r">Latency</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="fg">12:48:21</td>
+                  <td><span class="method method-post">POST</span></td>
+                  <td class="fg mono-strong">gpt-5.4</td>
+                  <td><span class="pill pill-ok"><span class="pdot"></span>200</span></td>
+                  <td class="r">1,284</td>
+                  <td class="r">$0.0042</td>
+                  <td class="r">312ms</td>
+                </tr>
+                <tr>
+                  <td class="fg">12:48:14</td>
+                  <td><span class="method method-post">POST</span></td>
+                  <td class="fg mono-strong">claude-opus-4-6</td>
+                  <td><span class="pill pill-ok"><span class="pdot"></span>200</span></td>
+                  <td class="r">2,140</td>
+                  <td class="r">$0.0540</td>
+                  <td class="r">624ms</td>
+                </tr>
+                <tr>
+                  <td class="fg">12:47:55</td>
+                  <td><span class="method method-post">POST</span></td>
+                  <td class="fg mono-strong">deepseek-v3.2</td>
+                  <td><span class="pill pill-warn"><span class="pdot"></span>429</span></td>
+                  <td class="r">—</td>
+                  <td class="r">$0.0000</td>
+                  <td class="r">82ms</td>
+                </tr>
+                <tr>
+                  <td class="fg">12:47:30</td>
+                  <td><span class="method method-post">POST</span></td>
+                  <td class="fg mono-strong">claude-haiku-4-5</td>
+                  <td><span class="pill pill-ok"><span class="pdot"></span>200</span></td>
+                  <td class="r">512</td>
+                  <td class="r">$0.0028</td>
+                  <td class="r">186ms</td>
+                </tr>
+                <tr>
+                  <td class="fg">12:46:58</td>
+                  <td><span class="method method-post">POST</span></td>
+                  <td class="fg mono-strong">gpt-5.5</td>
+                  <td><span class="pill pill-err"><span class="pdot"></span>500</span></td>
+                  <td class="r">—</td>
+                  <td class="r">$0.0000</td>
+                  <td class="r">2.4s</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<script src="../shared/dashboard.js"></script>
+</body>
+</html>

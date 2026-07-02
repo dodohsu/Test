@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Logs · JBridge.ai</title>
+<script>(function(){try{var t=localStorage.getItem('jb-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);var l=localStorage.getItem('jb-lang');if(l&&/^(en|zh-TW|zh-CN|ja|ko)$/.test(l))document.documentElement.setAttribute('lang',l);}catch(e){}}());</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared/dashboard.css">
+</head>
+<body>
+
+<header class="topnav">
+  <div class="topnav-inner">
+    <div class="topnav-left">
+      <button class="nav-hamburger" id="hamburger" aria-label="Toggle navigation" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+      <a href="../../proposal-terminal-pro-v2.html" class="logo" aria-label="JBridge home">
+        <span class="logo-mark">J</span>
+        <span class="logo-wordmark">JBridge<span class="logo-ai">.ai</span></span>
+      </a>
+      <div class="topnav-crumb" aria-label="Breadcrumb">
+        <span>~/</span><span class="sep">›</span><span class="cur">logs</span>
+      </div>
+    </div>
+    <div class="topnav-right">
+      <span class="env-pill">production</span>
+      <a href="https://staging.jbridge.ai/docs" class="btn btn-ghost btn-sm" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        <span data-i18n="topnav.docs">Docs</span>
+      </a>
+      <button class="user-chip" aria-label="Account menu">
+        <span class="user-avatar">KK</span>
+        <span class="user-name">kk@jbridge.ai</span>
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<aside class="sidebar" id="sidebar" aria-label="Primary navigation">
+  <div class="side-group-label" data-i18n="nav.group.workspace">Workspace</div>
+  <a href="../dashboard/index.html" class="side-link">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 12 12 3l9 9"/><path d="M5 10v10h14V10"/></svg>
+    <span data-i18n="nav.overview">Overview</span>
+  </a>
+  <a href="../logs/index.html" class="side-link active" aria-current="page">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 4h16v4H4z"/><path d="M4 12h16v4H4z"/><path d="M4 20h10"/></svg>
+    <span data-i18n="nav.logs">Logs</span>
+  </a>
+  <a href="../api-keys/index.html" class="side-link">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="7.5" cy="15.5" r="5.5"/><path d="m21 2-9.6 9.6"/><path d="m15.5 7.5 2.3 2.3a1 1 0 0 0 1.4 0l2.1-2.1a1 1 0 0 0 0-1.4L19 4"/></svg>
+    <span data-i18n="nav.api_keys">API Keys</span>
+  </a>
+  <a href="../credits/index.html" class="side-link">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M2 10h20"/><path d="M6 14h4"/></svg>
+    <span data-i18n="nav.credits">Credits</span>
+  </a>
+  <a href="../referral/index.html" class="side-link">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M17 11a4 4 0 1 0-3-7"/><path d="M3 11a4 4 0 1 1 3-7"/><circle cx="12" cy="14" r="4"/><path d="M8 20a4 4 0 0 1 8 0"/></svg>
+    <span data-i18n="nav.referral">Referral</span>
+  </a>
+
+  <div class="side-group-label" data-i18n="nav.group.get_started">Get started</div>
+  <a href="../quickstart/index.html" class="side-link">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+    <span data-i18n="nav.quickstart">Quickstart</span>
+  </a>
+
+  <div class="side-group-label" data-i18n="nav.group.settings">Settings</div>
+  <a href="../settings/account/index.html" class="side-link">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>
+    <span data-i18n="nav.account">Account</span>
+  </a>
+  <a href="../settings/security/index.html" class="side-link">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 2 4 6v6c0 5 3.5 9.3 8 10 4.5-.7 8-5 8-10V6z"/></svg>
+    <span data-i18n="nav.security">Security</span>
+  </a>
+
+  <div class="side-footer">
+    <div class="side-actions" role="group" aria-label="Account actions">
+      <button type="button" class="side-action" data-theme-toggle aria-label="Toggle light or dark theme" aria-pressed="false">
+        <svg class="side-ic ic-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+        <svg class="side-ic ic-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        <span class="side-action-label" data-theme-label>淺色</span>
+      </button>
+      <div class="side-lang-wrap">
+        <button type="button" class="side-action" data-lang-toggle aria-haspopup="listbox" aria-expanded="false" aria-label="Switch language">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/></svg>
+          <span class="side-action-label" data-lang-label>English</span>
+          <svg class="side-action-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 15 6-6 6 6"/></svg>
+        </button>
+        <ul class="side-lang-menu" role="listbox" aria-label="Language" hidden>
+          <li role="option" data-lang="en" aria-selected="true"><svg class="side-lang-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span class="side-lang-name">English</span><span class="side-lang-tag">EN</span></li>
+          <li role="option" data-lang="zh-TW"><svg class="side-lang-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span class="side-lang-name">繁體中文</span><span class="side-lang-tag">ZH-TW</span></li>
+          <li role="option" data-lang="zh-CN"><svg class="side-lang-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span class="side-lang-name">简体中文</span><span class="side-lang-tag">ZH-CN</span></li>
+          <li role="option" data-lang="ja"><svg class="side-lang-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span class="side-lang-name">日本語</span><span class="side-lang-tag">JA</span></li>
+          <li role="option" data-lang="ko"><svg class="side-lang-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span class="side-lang-name">한국어</span><span class="side-lang-tag">KO</span></li>
+        </ul>
+      </div>
+      <a href="../../proposal-terminal-pro-v2.html" class="side-action" aria-label="Home">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m3 12 9-9 9 9"/><path d="M5 10v10h14V10"/></svg>
+        <span class="side-action-label" data-i18n="side.home">首頁</span>
+      </a>
+      <button type="button" class="side-action danger" data-logout aria-label="Sign out">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>
+        <span class="side-action-label" data-i18n="side.logout">登出</span>
+      </button>
+    </div>
+    <div class="side-status">
+      <span class="status-dot"></span> <span data-i18n="side.status.ok">all systems operational</span> · <span class="dim">ap-northeast-1</span>
+    </div>
+  </div>
+</aside>
+<div class="sidebar-backdrop" id="sidebarBackdrop" aria-hidden="true"></div>
+
+<main class="app-main">
+  <div class="app-content">
+
+    <div class="page-head">
+      <div class="page-head-text">
+        <div class="section-mono-tag">logs</div>
+        <h1 class="page-title" data-i18n="page.logs.title">Request logs</h1>
+        <p class="page-sub" data-i18n="page.logs.sub">Live stream of every request routed through your gateway. Retained for 30 days.</p>
+      </div>
+      <div class="page-actions">
+        <button class="btn btn-secondary" id="liveTail" aria-pressed="true">
+          <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);"></span>
+          Live
+        </button>
+        <button class="btn btn-ghost">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>
+          Export CSV
+        </button>
+      </div>
+    </div>
+
+    <!-- KPI -->
+    <div class="kpi-grid">
+      <div class="kpi">
+        <div class="kpi-label"><span class="lk">//</span> requests · 24h</div>
+        <div class="kpi-value">1,284</div>
+        <div class="kpi-delta up">+18.2%</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label"><span class="lk">//</span> error rate</div>
+        <div class="kpi-value">1.4<span class="unit">%</span></div>
+        <div class="kpi-delta down">−0.3%</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label"><span class="lk">//</span> p95 latency</div>
+        <div class="kpi-value">684<span class="unit">ms</span></div>
+        <div class="kpi-delta flat">±2%</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label"><span class="lk">//</span> spend · 24h</div>
+        <div class="kpi-value">$4.32</div>
+        <div class="kpi-delta up">+$0.61</div>
+      </div>
+    </div>
+
+    <!-- Filter bar -->
+    <div class="card" style="margin-bottom:20px;">
+      <div class="card-body" style="padding:14px 18px;">
+        <div class="hstack-wrap" role="search" aria-label="Filter logs">
+          <label class="sr-only" for="logSearch">Search requests</label>
+          <div style="position:relative;flex:1;min-width:220px;">
+            <svg style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--dim);" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+            <input id="logSearch" class="input mono" type="search" placeholder="request_id, model, key prefix…" style="padding-left:36px;">
+          </div>
+          <label class="sr-only" for="filterStatus">Status</label>
+          <select id="filterStatus" class="select" style="max-width:160px;">
+            <option>All status</option>
+            <option>2xx success</option>
+            <option>4xx client</option>
+            <option>5xx server</option>
+          </select>
+          <label class="sr-only" for="filterModel">Model</label>
+          <select id="filterModel" class="select" style="max-width:180px;">
+            <option>All models</option>
+            <option>gpt-5.4</option>
+            <option>gpt-5.5</option>
+            <option>claude-opus-4-6</option>
+            <option>claude-haiku-4-5</option>
+            <option>deepseek-v3.2</option>
+            <option>kimi-k2.5</option>
+          </select>
+          <label class="sr-only" for="filterRange">Time range</label>
+          <select id="filterRange" class="select" style="max-width:160px;">
+            <option>Last 1 hour</option>
+            <option>Last 24 hours</option>
+            <option>Last 7 days</option>
+            <option>Custom…</option>
+          </select>
+          <button class="btn btn-ghost btn-sm" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M6 12h12M10 18h4"/></svg>
+            Reset
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Logs table -->
+    <div class="card">
+      <div class="card-head">
+        <div class="card-head-title"><span class="dot"></span> Stream</div>
+        <span class="card-head-sub">tail -f api-gateway.log</span>
+      </div>
+      <div class="card-body card-body--flush">
+        <div class="tbl-wrap">
+          <table class="tbl">
+            <thead>
+              <tr>
+                <th>Timestamp</th>
+                <th>Request ID</th>
+                <th>Method</th>
+                <th>Model</th>
+                <th>Key</th>
+                <th>Status</th>
+                <th class="r">Tokens</th>
+                <th class="r">Cost</th>
+                <th class="r">Latency</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>2026-05-18 12:48:21</td>
+                <td class="fg">req_jb_8f3a2c</td>
+                <td><span class="method method-post">POST</span></td>
+                <td class="fg mono-strong">gpt-5.4</td>
+                <td>sk-jb-•••a3f</td>
+                <td><span class="pill pill-ok"><span class="pdot"></span>200</span></td>
+                <td class="r">1,284</td>
+                <td class="r">$0.0042</td>
+                <td class="r">312ms</td>
+                <td class="r"><button class="btn btn-ghost btn-sm" aria-label="View request req_jb_8f3a2c"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 5l7 7-7 7"/></svg></button></td>
+              </tr>
+              <tr>
+                <td>2026-05-18 12:48:14</td>
+                <td class="fg">req_jb_8f3a2b</td>
+                <td><span class="method method-post">POST</span></td>
+                <td class="fg mono-strong">claude-opus-4-6</td>
+                <td>sk-jb-•••a3f</td>
+                <td><span class="pill pill-ok"><span class="pdot"></span>200</span></td>
+                <td class="r">2,140</td>
+                <td class="r">$0.0540</td>
+                <td class="r">624ms</td>
+                <td class="r"><button class="btn btn-ghost btn-sm" aria-label="View request req_jb_8f3a2b"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 5l7 7-7 7"/></svg></button></td>
+              </tr>
+              <tr>
+                <td>2026-05-18 12:47:55</td>
+                <td class="fg">req_jb_8f3a2a</td>
+                <td><span class="method method-post">POST</span></td>
+                <td class="fg mono-strong">deepseek-v3.2</td>
+                <td>sk-jb-•••a3f</td>
+                <td><span class="pill pill-warn"><span class="pdot"></span>429</span></td>
+                <td class="r">—</td>
+                <td class="r">$0.0000</td>
+                <td class="r">82ms</td>
+                <td class="r"><button class="btn btn-ghost btn-sm" aria-label="View request req_jb_8f3a2a"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 5l7 7-7 7"/></svg></button></td>
+              </tr>
+              <tr>
+                <td>2026-05-18 12:47:30</td>
+                <td class="fg">req_jb_8f3a29</td>
+                <td><span class="method method-post">POST</span></td>
+                <td class="fg mono-strong">claude-haiku-4-5</td>
+                <td>sk-jb-•••b7c</td>
+                <td><span class="pill pill-ok"><span class="pdot"></span>200</span></td>
+                <td class="r">512</td>
+                <td class="r">$0.0028</td>
+                <td class="r">186ms</td>
+                <td class="r"><button class="btn btn-ghost btn-sm" aria-label="View request req_jb_8f3a29"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 5l7 7-7 7"/></svg></button></td>
+              </tr>
+              <tr>
+                <td>2026-05-18 12:46:58</td>
+                <td class="fg">req_jb_8f3a28</td>
+                <td><span class="method method-post">POST</span></td>
+                <td class="fg mono-strong">gpt-5.5</td>
+                <td>sk-jb-•••a3f</td>
+                <td><span class="pill pill-err"><span class="pdot"></span>500</span></td>
+                <td class="r">—</td>
+                <td class="r">$0.0000</td>
+                <td class="r">2.4s</td>
+                <td class="r"><button class="btn btn-ghost btn-sm" aria-label="View request req_jb_8f3a28"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 5l7 7-7 7"/></svg></button></td>
+              </tr>
+              <tr>
+                <td>2026-05-18 12:46:21</td>
+                <td class="fg">req_jb_8f3a27</td>
+                <td><span class="method method-post">POST</span></td>
+                <td class="fg mono-strong">kimi-k2.5</td>
+                <td>sk-jb-•••b7c</td>
+                <td><span class="pill pill-ok"><span class="pdot"></span>200</span></td>
+                <td class="r">3,820</td>
+                <td class="r">$0.0114</td>
+                <td class="r">412ms</td>
+                <td class="r"><button class="btn btn-ghost btn-sm" aria-label="View request req_jb_8f3a27"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 5l7 7-7 7"/></svg></button></td>
+              </tr>
+              <tr>
+                <td>2026-05-18 12:45:48</td>
+                <td class="fg">req_jb_8f3a26</td>
+                <td><span class="method method-get">GET</span></td>
+                <td class="fg mono-strong">models.list</td>
+                <td>sk-jb-•••a3f</td>
+                <td><span class="pill pill-ok"><span class="pdot"></span>200</span></td>
+                <td class="r">—</td>
+                <td class="r">$0.0000</td>
+                <td class="r">38ms</td>
+                <td class="r"><button class="btn btn-ghost btn-sm" aria-label="View request req_jb_8f3a26"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 5l7 7-7 7"/></svg></button></td>
+              </tr>
+              <tr>
+                <td>2026-05-18 12:45:02</td>
+                <td class="fg">req_jb_8f3a25</td>
+                <td><span class="method method-post">POST</span></td>
+                <td class="fg mono-strong">claude-opus-4-6</td>
+                <td>sk-jb-•••c0d</td>
+                <td><span class="pill pill-err"><span class="pdot"></span>401</span></td>
+                <td class="r">—</td>
+                <td class="r">$0.0000</td>
+                <td class="r">22ms</td>
+                <td class="r"><button class="btn btn-ghost btn-sm" aria-label="View request req_jb_8f3a25"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 5l7 7-7 7"/></svg></button></td>
+              </tr>
+              <tr>
+                <td>2026-05-18 12:44:11</td>
+                <td class="fg">req_jb_8f3a24</td>
+                <td><span class="method method-post">POST</span></td>
+                <td class="fg mono-strong">gpt-5.4</td>
+                <td>sk-jb-•••a3f</td>
+                <td><span class="pill pill-ok"><span class="pdot"></span>200</span></td>
+                <td class="r">948</td>
+                <td class="r">$0.0031</td>
+                <td class="r">298ms</td>
+                <td class="r"><button class="btn btn-ghost btn-sm" aria-label="View request req_jb_8f3a24"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 5l7 7-7 7"/></svg></button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="hstack" style="padding:14px 18px;border-top:1px solid var(--border);justify-content:space-between;">
+          <span class="dim mono" style="font-size:11px;">Showing 1–9 of 1,284 requests</span>
+          <div class="hstack">
+            <button class="btn btn-ghost btn-sm" disabled>← Previous</button>
+            <button class="btn btn-secondary btn-sm">Next →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<script src="../shared/dashboard.js"></script>
+</body>
+</html>

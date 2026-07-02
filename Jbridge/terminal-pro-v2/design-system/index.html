@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Design System · JBridge.ai</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<script>(function(){try{var t=localStorage.getItem('jb-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);var l=localStorage.getItem('jb-lang');if(l&&/^(en|zh-TW|zh-CN|ja|ko)$/.test(l))document.documentElement.setAttribute('lang',l);}catch(e){}}());</script>
+<link rel="stylesheet" href="../shared/dashboard.css">
+<style>
+  /* Design-system-only helpers */
+  .ds-main { max-width: 1180px; margin: 0 auto; padding: 28px 32px 96px; }
+  .ds-hero {
+    border-bottom: 1px solid var(--border); padding-bottom: 28px; margin-bottom: 36px;
+  }
+  .ds-hero h1 {
+    font-size: clamp(36px, 5vw, 56px); font-weight: 900; letter-spacing: -.04em;
+    line-height: 1.04; margin-bottom: 10px;
+  }
+  .ds-hero p { font-size: 16px; color: var(--muted); line-height: 1.6; max-width: 640px; }
+
+  /* TOC */
+  .ds-toc {
+    display: flex; flex-wrap: wrap; gap: 6px;
+    margin-top: 22px;
+  }
+  .ds-toc a {
+    font-family: var(--mono); font-size: 11.5px; color: var(--muted);
+    padding: 6px 10px; border-radius: 6px; border: 1px solid var(--border);
+    text-decoration: none; transition: all .15s; background: var(--bg-card);
+  }
+  .ds-toc a:hover { color: var(--green); border-color: rgba(0,208,132,.30); background: var(--green-dim); }
+
+  /* Section */
+  .ds-section { margin-top: 56px; scroll-margin-top: 80px; }
+  .ds-section > header { margin-bottom: 22px; }
+  .ds-section h2 {
+    font-size: 24px; font-weight: 800; letter-spacing: -.02em; margin-bottom: 6px;
+  }
+  .ds-section header p { color: var(--muted); font-size: 13.5px; line-height: 1.6; max-width: 720px; }
+
+  /* Block — labelled component sample */
+  .ds-block {
+    background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px;
+    overflow: hidden; margin-bottom: 18px;
+  }
+  .ds-block-head {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    padding: 11px 16px; border-bottom: 1px solid var(--border); background: var(--bg-lift);
+    font-family: var(--mono); font-size: 11px; color: var(--dim); letter-spacing: .06em;
+    text-transform: uppercase;
+  }
+  .ds-block-head code {
+    font-family: var(--mono); font-size: 11px; color: var(--green);
+    text-transform: none; letter-spacing: 0;
+  }
+  .ds-block-body { padding: 22px; display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-start; }
+  .ds-block-body.col { flex-direction: column; align-items: stretch; }
+  .ds-block-body.grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px;
+  }
+  .ds-block-body.center { justify-content: center; }
+
+  /* Swatch */
+  .ds-swatch {
+    border: 1px solid var(--border); border-radius: 8px;
+    overflow: hidden; background: var(--bg-card);
+  }
+  .ds-swatch-color { height: 72px; }
+  .ds-swatch-meta { padding: 10px 12px; font-family: var(--mono); font-size: 11.5px; line-height: 1.5; }
+  .ds-swatch-meta .name { color: var(--fg); font-weight: 600; }
+  .ds-swatch-meta .val { color: var(--muted); }
+
+  /* Type sample */
+  .ds-type { display: flex; flex-direction: column; gap: 14px; }
+  .ds-type .row { display: grid; grid-template-columns: 140px 1fr; gap: 16px; align-items: baseline; }
+  .ds-type .meta { font-family: var(--mono); font-size: 11px; color: var(--dim); }
+
+  /* Spacing scale */
+  .ds-spacing { display: flex; align-items: flex-end; gap: 14px; flex-wrap: wrap; }
+  .ds-spacing div { background: var(--green-dim); border: 1px solid rgba(0,208,132,.30); border-radius: 4px; }
+  .ds-spacing .lbl { font-family: var(--mono); font-size: 10.5px; color: var(--dim); margin-top: 6px; text-align: center; }
+
+  /* Radius */
+  .ds-radius { display: flex; gap: 18px; align-items: flex-end; flex-wrap: wrap; }
+  .ds-radius .r {
+    width: 80px; height: 80px;
+    background: var(--bg-lift); border: 1px solid var(--border-hi);
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--mono); font-size: 11px; color: var(--muted);
+  }
+
+  /* Icon grid */
+  .ds-icons {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 8px;
+  }
+  .ds-icons div {
+    aspect-ratio: 1.4; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 6px; padding: 10px;
+    border: 1px solid var(--border); border-radius: 6px; background: var(--bg-card);
+    color: var(--muted); transition: all .15s;
+  }
+  .ds-icons div:hover { color: var(--fg); border-color: var(--border-hi); background: var(--bg-lift); }
+  .ds-icons div svg { width: 18px; height: 18px; stroke-width: 1.8; }
+  .ds-icons div span { font-family: var(--mono); font-size: 10px; color: var(--dim); }
+
+  /* Sidebar nav showcase (mini) */
+  .ds-mini-sidebar {
+    width: 240px; padding: 14px;
+    border: 1px solid var(--border); border-radius: 10px; background: var(--bg-card);
+  }
+  .ds-mini-sidebar .side-link { font-size: 13px; padding: 8px 10px; min-height: auto; }
+  .ds-mini-sidebar .side-group-label { padding: 14px 8px 6px; font-size: 9.5px; }
+
+  /* Footnote / meta */
+  .ds-note {
+    font-family: var(--mono); font-size: 11px; color: var(--dim);
+    padding: 8px 0;
+  }
+  .ds-note code {
+    color: var(--green); background: var(--green-dim); border: 1px solid rgba(0,208,132,.18);
+    padding: 1px 6px; border-radius: 3px; margin: 0 1px;
+  }
+  .ds-note kbd {
+    font-family: var(--mono); font-size: 10.5px;
+    color: var(--fg); background: var(--bg-lift); border: 1px solid var(--border-hi);
+    padding: 2px 6px; border-radius: 3px;
+  }
+
+  @media (max-width: 900px) {
+    .ds-main { padding: 22px 20px 60px; }
+    .ds-type .row { grid-template-columns: 1fr; gap: 4px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- TOPNAV (no sidebar on this reference page) -->
+<header class="topnav">
+  <div class="topnav-inner">
+    <div class="topnav-left">
+      <a href="../../proposal-terminal-pro-v2.html" class="logo" aria-label="JBridge home">
+        <span class="logo-mark">J</span>
+        <span class="logo-wordmark">JBridge<span class="logo-ai">.ai</span></span>
+      </a>
+      <div class="topnav-crumb" aria-label="Breadcrumb">
+        <span>~/</span><span class="sep">›</span><span class="cur">design-system</span>
+      </div>
+    </div>
+    <div class="topnav-right">
+      <span class="env-pill">v2.4.1</span>
+      <a href="../dashboard/index.html" class="btn btn-ghost btn-sm">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12 12 3l9 9"/><path d="M5 10v10h14V10"/></svg>
+        Back to dashboard
+      </a>
+      <button type="button" class="btn btn-ghost btn-sm" data-theme-toggle aria-label="Toggle theme" aria-pressed="false">
+        <svg class="side-ic ic-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+        <svg class="side-ic ic-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        <span data-theme-label>Light</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main class="ds-main" style="margin-top:60px;">
+
+  <!-- HERO -->
+  <section class="ds-hero">
+    <div class="section-mono-tag">tokens · components · patterns</div>
+    <h1>JBridge <span class="shimmer-green">Design System</span></h1>
+    <p>Living reference for the Terminal Pro v2 design language. All tokens and components live in <code class="code">terminal-pro-v2/shared/dashboard.css</code> and can be used in any new page.</p>
+    <nav class="ds-toc" aria-label="Table of contents">
+      <a href="#brand">// brand</a>
+      <a href="#color">// color</a>
+      <a href="#type">// typography</a>
+      <a href="#spacing">// spacing</a>
+      <a href="#radius">// radius</a>
+      <a href="#buttons">// buttons</a>
+      <a href="#forms">// forms</a>
+      <a href="#pills">// pills</a>
+      <a href="#cards">// cards</a>
+      <a href="#terminal">// terminal</a>
+      <a href="#kpi">// kpi</a>
+      <a href="#tables">// tables</a>
+      <a href="#tabs">// tabs</a>
+      <a href="#nav">// sidebar nav</a>
+      <a href="#banners">// banners</a>
+      <a href="#icons">// icons</a>
+      <a href="#animation">// animation</a>
+    </nav>
+  </section>
+
+  <!-- BRAND -->
+  <section class="ds-section" id="brand">
+    <header>
+      <div class="section-mono-tag">brand</div>
+      <h2>Logo &amp; mark</h2>
+      <p>The mark is a green-to-cyan gradient on the "J", paired with the wordmark "JBridge.ai" where ".ai" gets the same gradient.</p>
+    </header>
+    <div class="ds-block">
+      <div class="ds-block-head"><span>logo</span><code>.logo / .logo-mark / .logo-wordmark</code></div>
+      <div class="ds-block-body" style="gap:48px;align-items:center;">
+        <a href="#" class="logo" style="font-size:28px;">
+          <span class="logo-mark" style="width:48px;height:48px;font-size:24px;border-radius:12px;">J</span>
+          <span class="logo-wordmark" style="font-size:24px;">JBridge<span class="logo-ai">.ai</span></span>
+        </a>
+        <a href="#" class="logo">
+          <span class="logo-mark">J</span>
+          <span class="logo-wordmark">JBridge<span class="logo-ai">.ai</span></span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- COLOR -->
+  <section class="ds-section" id="color">
+    <header>
+      <div class="section-mono-tag">color</div>
+      <h2>Color tokens</h2>
+      <p>All colors come from CSS variables. Switch the theme to see light-mode equivalents instantly.</p>
+    </header>
+
+    <div class="ds-block">
+      <div class="ds-block-head"><span>brand</span><code>--green / --green-dim / --green-glo</code></div>
+      <div class="ds-block-body grid">
+        <div class="ds-swatch"><div class="ds-swatch-color" style="background:var(--green);"></div><div class="ds-swatch-meta"><div class="name">--green</div><div class="val">primary brand</div></div></div>
+        <div class="ds-swatch"><div class="ds-swatch-color" style="background:var(--green-dim);"></div><div class="ds-swatch-meta"><div class="name">--green-dim</div><div class="val">soft fill</div></div></div>
+        <div class="ds-swatch"><div class="ds-swatch-color" style="background:var(--green-glo);"></div><div class="ds-swatch-meta"><div class="name">--green-glo</div><div class="val">shadow / glow</div></div></div>
+        <div class="ds-swatch"><div class="ds-swatch-color" style="background:linear-gradient(135deg,#00e5a0 0%,#00d084 45%,#00b4cc 100%);"></div><div class="ds-swatch-meta"><div class="name">brand gradient</div><div class="val">logo mark</div></div></div>
+      </div>
+    </div>
+
+    <div class="ds-block">
+      <div class="ds-block-head"><span>surface</span><code>--bg / --bg-card / --bg-lift / --bg-input</code></div>
+      <div class="ds-block-body grid">
+        <div class="ds-swatch"><div class="ds-swatch-color" style="background:var(--bg);"></div><div class="ds-swatch-meta"><div class="name">--bg</div><div class="val">page background</div></div></div>
+        <div class="ds-swatch"><div class="ds-swatch-color" style="background:var(--bg-card);"></div><div class="ds-swatch-meta"><div class="name">--bg-card</div><div class="val">card / terminal</div></div></div>
+        <div class="ds-swatch"><div class="ds-swatch-color" style="background:var(--bg-lift);"></div><div class="ds-swatch-meta"><div class="name">--bg-lift</div><div class="val">card head / hover</div></div></div>
+        <div class="ds-swatch"><div class="ds-swatch-color" style="background:var(--bg-input);"></div><div class="ds-swatch-meta"><div class="name">--bg-input</div><div class="val">input field</div></div></div>
+      </div>
+    </div>
+
+    <div class="ds-block">
+      <div class="ds-block-head"><span>border</span><code>--border / --border-hi</code></div>
+      <div class="ds-block-body grid">
+        <div class="ds-swatch"><div class="ds-swatch-color" style="background:var(--border);"></div><div class="ds-swatch-meta"><div class="name">--border</div><div class="val">default outline</div></div></div>
+        <div class="ds-swatch"><div class="ds-swatch-color" style="background:var(--border-hi);"></div><div class="ds-swatch-meta"><div class="name">--border-hi</div><div class="val">hover / strong</div></div></div>
+      </div>
+    </div>
+
+    <div class="ds-block">
+      <div class="ds-block-head"><span>text</span><code>--fg / --muted / --dim</code></div>
+      <div class="ds-block-body" style="gap:32px;">
+        <div style="font-size:18px;color:var(--fg);">Primary <span class="mono dim" style="font-size:12px;">--fg</span></div>
+        <div style="font-size:18px;color:var(--muted);">Muted <span class="mono dim" style="font-size:12px;">--muted</span></div>
+        <div style="font-size:18px;color:var(--dim);">Dim <span class="mono dim" style="font-size:12px;">--dim</span></div>
+      </div>
+    </div>
+
+    <div class="ds-block">
+      <div class="ds-block-head"><span>semantic</span><code>--amber / --red / --blue / --pink</code></div>
+      <div class="ds-block-body grid">
+        <div class="ds-swatch"><div class="ds-swatch-color" style="background:var(--amber);"></div><div class="ds-swatch-meta"><div class="name">--amber</div><div class="val">warn</div></div></div>
+        <div class="ds-swatch"><div class="ds-swatch-color" style="background:var(--red);"></div><div class="ds-swatch-meta"><div class="name">--red</div><div class="val">error / danger</div></div></div>
+        <div class="ds-swatch"><div class="ds-swatch-color" style="background:var(--blue);"></div><div class="ds-swatch-meta"><div class="name">--blue</div><div class="val">info</div></div></div>
+        <div class="ds-swatch"><div class="ds-swatch-color" style="background:var(--pink);"></div><div class="ds-swatch-meta"><div class="name">--pink</div><div class="val">syntax key</div></div></div>
+      </div>
+    </div>
+
+    <div class="ds-note">Use <code>var(--token)</code> in CSS — never hardcoded hex. Toggle theme via header button to verify both modes.</div>
+  </section>
+
+  <!-- TYPOGRAPHY -->
+  <section class="ds-section" id="type">
+    <header>
+      <div class="section-mono-tag">typography</div>
+      <h2>Typography</h2>
+      <p>Two families: <code class="code">Inter</code> for UI, <code class="code">JetBrains Mono</code> for code, numbers, labels and terminal text.</p>
+    </header>
+
+    <div class="ds-block">
+      <div class="ds-block-head"><span>inter — display &amp; UI</span><code>--font</code></div>
+      <div class="ds-block-body col">
+        <div class="ds-type">
+          <div class="row"><span class="meta">88 · 900</span><span style="font-size:88px;font-weight:900;letter-spacing:-.05em;line-height:.98;">One API</span></div>
+          <div class="row"><span class="meta">38 · 800</span><span class="page-title">Section title</span></div>
+          <div class="row"><span class="meta">24 · 800</span><span style="font-size:24px;font-weight:800;letter-spacing:-.02em;">Card heading</span></div>
+          <div class="row"><span class="meta">17 · 500</span><span style="font-size:17px;font-weight:500;">Subhead / lead text</span></div>
+          <div class="row"><span class="meta">14 · 400</span><span style="font-size:14px;">Body — the default UI text size.</span></div>
+          <div class="row"><span class="meta">13 · 500</span><span style="font-size:13px;font-weight:500;">Small UI labels &amp; buttons.</span></div>
+          <div class="row"><span class="meta">12 · 500</span><span style="font-size:12px;color:var(--muted);">Caption text in muted color.</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ds-block">
+      <div class="ds-block-head"><span>jetbrains mono — code &amp; numerics</span><code>--mono</code></div>
+      <div class="ds-block-body col">
+        <div class="ds-type">
+          <div class="row"><span class="meta">28 · 700</span><span class="mono tnum" style="font-size:28px;font-weight:700;">$24.86</span></div>
+          <div class="row"><span class="meta">13 · 500</span><span class="mono" style="font-size:13px;">curl -X POST api.jbridge.ai/v1/chat</span></div>
+          <div class="row"><span class="meta">12 · 400</span><span class="mono" style="font-size:12px;color:var(--muted);">req_jb_8f3a2c · 312ms · 200 OK</span></div>
+          <div class="row"><span class="meta">11 · 600 UC</span><span class="mono" style="font-size:11px;color:var(--dim);text-transform:uppercase;letter-spacing:.1em;">section header tag</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ds-block">
+      <div class="ds-block-head"><span>shimmer text</span><code>.shimmer-green</code></div>
+      <div class="ds-block-body" style="font-size:48px;font-weight:900;letter-spacing:-.04em;">
+        Welcome back, <span class="shimmer-green">KK User</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- SPACING -->
+  <section class="ds-section" id="spacing">
+    <header>
+      <div class="section-mono-tag">spacing</div>
+      <h2>Spacing scale (4 / 8 grid)</h2>
+      <p>Every gap, padding and margin should be a multiple of 4. Most commonly: 4, 8, 12, 16, 20, 24, 32, 48.</p>
+    </header>
+    <div class="ds-block">
+      <div class="ds-block-body">
+        <div class="ds-spacing">
+          <div><div style="width:4px;height:48px;"></div><div class="lbl">4</div></div>
+          <div><div style="width:8px;height:48px;"></div><div class="lbl">8</div></div>
+          <div><div style="width:12px;height:48px;"></div><div class="lbl">12</div></div>
+          <div><div style="width:16px;height:48px;"></div><div class="lbl">16</div></div>
+          <div><div style="width:20px;height:48px;"></div><div class="lbl">20</div></div>
+          <div><div style="width:24px;height:48px;"></div><div class="lbl">24</div></div>
+          <div><div style="width:32px;height:48px;"></div><div class="lbl">32</div></div>
+          <div><div style="width:48px;height:48px;"></div><div class="lbl">48</div></div>
+          <div><div style="width:64px;height:48px;"></div><div class="lbl">64</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- RADIUS -->
+  <section class="ds-section" id="radius">
+    <header>
+      <div class="section-mono-tag">radius</div>
+      <h2>Corner radius</h2>
+    </header>
+    <div class="ds-block">
+      <div class="ds-block-body" style="gap:24px;align-items:flex-end;">
+        <div style="text-align:center;"><div class="r" style="width:80px;height:80px;background:var(--bg-lift);border:1px solid var(--border-hi);border-radius:4px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:11px;color:var(--muted);">4</div><div class="lbl mono dim" style="font-size:10.5px;margin-top:6px;">pills / badges</div></div>
+        <div style="text-align:center;"><div class="r" style="width:80px;height:80px;background:var(--bg-lift);border:1px solid var(--border-hi);border-radius:6px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:11px;color:var(--muted);">6</div><div class="lbl mono dim" style="font-size:10.5px;margin-top:6px;">--radius-sm</div></div>
+        <div style="text-align:center;"><div class="r" style="width:80px;height:80px;background:var(--bg-lift);border:1px solid var(--border-hi);border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:11px;color:var(--muted);">8</div><div class="lbl mono dim" style="font-size:10.5px;margin-top:6px;">--radius (buttons / inputs)</div></div>
+        <div style="text-align:center;"><div class="r" style="width:80px;height:80px;background:var(--bg-lift);border:1px solid var(--border-hi);border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:11px;color:var(--muted);">10</div><div class="lbl mono dim" style="font-size:10.5px;margin-top:6px;">cards / terminal</div></div>
+        <div style="text-align:center;"><div class="r" style="width:80px;height:80px;background:var(--bg-lift);border:1px solid var(--border-hi);border-radius:999px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:11px;color:var(--muted);">∞</div><div class="lbl mono dim" style="font-size:10.5px;margin-top:6px;">pills / avatar</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BUTTONS -->
+  <section class="ds-section" id="buttons">
+    <header>
+      <div class="section-mono-tag">buttons</div>
+      <h2>Buttons</h2>
+      <p>Touch targets ≥ 38px. Use <code class="code">.btn-primary</code> for the page's main action — never more than one per view.</p>
+    </header>
+
+    <div class="ds-block">
+      <div class="ds-block-head"><span>primary action</span><code>.btn.btn-primary</code></div>
+      <div class="ds-block-body">
+        <button class="btn btn-primary"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg> Create API key</button>
+        <button class="btn btn-primary btn-sm">Add credits</button>
+        <button class="btn btn-primary" disabled>Disabled</button>
+      </div>
+    </div>
+
+    <div class="ds-block">
+      <div class="ds-block-head"><span>secondary / ghost / danger</span><code>.btn-secondary / .btn-ghost / .btn-danger</code></div>
+      <div class="ds-block-body">
+        <button class="btn btn-secondary"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg> Export CSV</button>
+        <button class="btn btn-ghost">View docs →</button>
+        <button class="btn btn-danger"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/></svg> Revoke</button>
+        <button class="btn btn-icon btn-ghost" aria-label="Settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
+      </div>
+    </div>
+  </section>
+
+  <!-- FORMS -->
+  <section class="ds-section" id="forms">
+    <header>
+      <div class="section-mono-tag">forms</div>
+      <h2>Form elements</h2>
+      <p>Labels are always visible. Inputs are 40px tall to satisfy touch targets. Validate on blur, error message replaces hint.</p>
+    </header>
+
+    <div class="ds-block">
+      <div class="ds-block-head"><span>text input</span><code>.input / .input.mono</code></div>
+      <div class="ds-block-body grid">
+        <div class="form-group" style="margin:0;">
+          <label class="form-label" for="ds-i1">Email <span class="req">*</span></label>
+          <input id="ds-i1" class="input" type="email" placeholder="you@company.com">
+          <div class="form-hint">We'll never share this.</div>
+        </div>
+        <div class="form-group" style="margin:0;">
+          <label class="form-label" for="ds-i2">API key name</label>
+          <input id="ds-i2" class="input mono" type="text" value="production-server">
+          <div class="form-hint">Used as the key's display prefix.</div>
+        </div>
+        <div class="form-group" style="margin:0;">
+          <label class="form-label" for="ds-i3">Model</label>
+          <select id="ds-i3" class="select">
+            <option>gpt-5.4</option>
+            <option>claude-opus-4-6</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="ds-block">
+      <div class="ds-block-head"><span>checkbox / toggle</span><code>.checkbox / .toggle</code></div>
+      <div class="ds-block-body" style="gap:32px;">
+        <label class="checkbox"><input type="checkbox" checked> Auto-refill when balance < $10</label>
+        <label class="checkbox"><input type="checkbox"> Email me weekly digest</label>
+        <label class="toggle"><input type="checkbox" checked><span class="slider"></span></label>
+        <label class="toggle"><input type="checkbox"><span class="slider"></span></label>
+      </div>
+    </div>
+  </section>
+
+  <!-- PILLS -->
+  <section class="ds-section" id="pills">
+    <header>
+      <div class="section-mono-tag">pills</div>
+      <h2>Pills &amp; method badges</h2>
+      <p>Use pills for compact state. HTTP method pills are mono and color-coded.</p>
+    </header>
+    <div class="ds-block">
+      <div class="ds-block-head"><span>status pills</span><code>.pill.pill-{ok,warn,err,info,muted}</code></div>
+      <div class="ds-block-body">
+        <span class="pill pill-ok"><span class="pdot"></span>200 success</span>
+        <span class="pill pill-warn"><span class="pdot"></span>429 throttled</span>
+        <span class="pill pill-err"><span class="pdot"></span>500 error</span>
+        <span class="pill pill-info"><span class="pdot"></span>info</span>
+        <span class="pill pill-muted"><span class="pdot"></span>revoked</span>
+      </div>
+    </div>
+    <div class="ds-block">
+      <div class="ds-block-head"><span>http methods</span><code>.method-{get,post,put,delete}</code></div>
+      <div class="ds-block-body">
+        <span class="method method-get">GET</span>
+        <span class="method method-post">POST</span>
+        <span class="method method-put">PUT</span>
+        <span class="method method-delete">DELETE</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- CARDS -->
+  <section class="ds-section" id="cards">
+    <header>
+      <div class="section-mono-tag">cards</div>
+      <h2>Cards</h2>
+      <p>Default container. Use <code class="code">.card-head</code> for a labelled section bar and <code class="code">.card-body--flush</code> when the body holds a table (no padding).</p>
+    </header>
+    <div class="ds-block">
+      <div class="ds-block-head"><span>card with head</span><code>.card / .card-head / .card-body</code></div>
+      <div class="ds-block-body col">
+        <div class="card" style="max-width:520px;">
+          <div class="card-head">
+            <div class="card-head-title"><span class="dot"></span> Recent activity</div>
+            <span class="card-head-sub">last 24 hours</span>
+          </div>
+          <div class="card-body">
+            <p style="font-size:13px;color:var(--muted);line-height:1.6;margin:0;">All cards inherit the same border, radius, shadow and background tokens. The dot in the head is a glowing brand-green indicator.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TERMINAL -->
+  <section class="ds-section" id="terminal">
+    <header>
+      <div class="section-mono-tag">terminal</div>
+      <h2>Terminal window</h2>
+      <p>Used to wrap code, status output, and key-moment data tables. Always includes red/yellow/green dots and an optional title.</p>
+    </header>
+    <div class="ds-block">
+      <div class="ds-block-head"><span>terminal</span><code>.terminal / .terminal-bar / .terminal-body</code></div>
+      <div class="ds-block-body col">
+        <div class="terminal">
+          <div class="terminal-bar">
+            <div class="terminal-dots"><span class="r"></span><span class="y"></span><span class="g"></span></div>
+            <span class="terminal-title">jbridge — 80×24</span>
+          </div>
+          <div class="terminal-body">
+<span><span class="t-prompt">❯</span> curl <span class="t-flag">-X POST</span> <span class="t-str">"https://api.jbridge.ai/v1/chat/completions"</span> \</span>
+<span>     <span class="t-flag">-H</span> <span class="t-str">"Authorization: Bearer $JBRIDGE_API_KEY"</span> \</span>
+<span>     <span class="t-flag">-d</span> <span class="t-str">'{"model":"gpt-5.4","messages":[...]}'</span></span>
+<span class="t-newline"></span>
+<span class="t-output"><span class="ok">✓</span> 200 OK · <span class="info">model=gpt-5.4</span> · <span class="info">tokens=42</span> · <span class="info">latency=312ms</span></span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="ds-note">Syntax classes inside <code>.terminal-body</code>: <code>.t-prompt</code> green prompt · <code>.t-flag</code> blue flag · <code>.t-str</code> amber string · <code>.t-key</code> pink key · <code>.t-comment</code> dim · <code>.t-output</code> indented mute · with <code>.ok / .info / .warn</code> spans inside output.</div>
+  </section>
+
+  <!-- KPI -->
+  <section class="ds-section" id="kpi">
+    <header>
+      <div class="section-mono-tag">kpi</div>
+      <h2>KPI card</h2>
+      <p>Compact metric display. Big tabular number + delta indicator with directional color.</p>
+    </header>
+    <div class="ds-block">
+      <div class="ds-block-head"><span>kpi grid</span><code>.kpi-grid / .kpi / .kpi-delta.up/.down/.flat</code></div>
+      <div class="ds-block-body col">
+        <div class="kpi-grid">
+          <div class="kpi">
+            <div class="kpi-label"><span class="lk">//</span> credits balance</div>
+            <div class="kpi-value">$24.86</div>
+            <div class="kpi-delta up">↑ +$5.00 added today</div>
+          </div>
+          <div class="kpi">
+            <div class="kpi-label"><span class="lk">//</span> requests · 24h</div>
+            <div class="kpi-value">1,284</div>
+            <div class="kpi-delta up">↑ +18.2%</div>
+          </div>
+          <div class="kpi">
+            <div class="kpi-label"><span class="lk">//</span> avg latency</div>
+            <div class="kpi-value">312<span class="unit">ms</span></div>
+            <div class="kpi-delta down">↓ −42ms vs last week</div>
+          </div>
+          <div class="kpi">
+            <div class="kpi-label"><span class="lk">//</span> tokens · 24h</div>
+            <div class="kpi-value">2.41<span class="unit">M</span></div>
+            <div class="kpi-delta flat">± steady</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TABLES -->
+  <section class="ds-section" id="tables">
+    <header>
+      <div class="section-mono-tag">tables</div>
+      <h2>Data tables</h2>
+      <p>Mono font, tabular numerics, sticky header. Wrap in <code class="code">.tbl-wrap</code> for horizontal overflow scroll.</p>
+    </header>
+    <div class="ds-block">
+      <div class="ds-block-head"><span>logs table</span><code>.tbl</code></div>
+      <div class="ds-block-body col" style="padding:0;">
+        <div class="tbl-wrap">
+          <table class="tbl">
+            <thead>
+              <tr>
+                <th>Time</th>
+                <th>Method</th>
+                <th>Model</th>
+                <th>Status</th>
+                <th class="r">Tokens</th>
+                <th class="r">Latency</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td class="fg">12:48:21</td><td><span class="method method-post">POST</span></td><td class="fg mono-strong">gpt-5.4</td><td><span class="pill pill-ok"><span class="pdot"></span>200</span></td><td class="r">1,284</td><td class="r">312ms</td></tr>
+              <tr><td class="fg">12:47:55</td><td><span class="method method-post">POST</span></td><td class="fg mono-strong">deepseek-v3.2</td><td><span class="pill pill-warn"><span class="pdot"></span>429</span></td><td class="r">—</td><td class="r">82ms</td></tr>
+              <tr><td class="fg">12:46:58</td><td><span class="method method-post">POST</span></td><td class="fg mono-strong">gpt-5.5</td><td><span class="pill pill-err"><span class="pdot"></span>500</span></td><td class="r">—</td><td class="r">2.4s</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TABS -->
+  <section class="ds-section" id="tabs">
+    <header>
+      <div class="section-mono-tag">tabs</div>
+      <h2>Tabs</h2>
+    </header>
+    <div class="ds-block">
+      <div class="ds-block-head"><span>segmented tabs</span><code>.tabs / .tab / .tab.active</code></div>
+      <div class="ds-block-body col">
+        <div class="tabs" style="max-width:400px;">
+          <a class="tab active" href="#">curl</a>
+          <a class="tab" href="#">Node.js</a>
+          <a class="tab" href="#">Python</a>
+          <a class="tab" href="#">Anthropic</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SIDEBAR NAV -->
+  <section class="ds-section" id="nav">
+    <header>
+      <div class="section-mono-tag">sidebar nav</div>
+      <h2>Sidebar navigation</h2>
+      <p>Active state has a green left bar with glow + filled green-tinted background.</p>
+    </header>
+    <div class="ds-block">
+      <div class="ds-block-head"><span>side-link / side-group-label</span><code>.side-link / .side-link.active</code></div>
+      <div class="ds-block-body" style="background:rgba(10,10,10,.65);">
+        <div class="ds-mini-sidebar">
+          <div class="side-group-label">Workspace</div>
+          <a href="#" class="side-link active" aria-current="page">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 12 12 3l9 9"/><path d="M5 10v10h14V10"/></svg>
+            Overview
+          </a>
+          <a href="#" class="side-link">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 4h16v4H4z"/><path d="M4 12h16v4H4z"/><path d="M4 20h10"/></svg>
+            Logs
+          </a>
+          <a href="#" class="side-link">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M2 10h20"/></svg>
+            Credits
+            <span class="side-badge">+$5</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BANNERS -->
+  <section class="ds-section" id="banners">
+    <header>
+      <div class="section-mono-tag">banners</div>
+      <h2>Inline banners</h2>
+    </header>
+    <div class="ds-block">
+      <div class="ds-block-head"><span>banner variants</span><code>.banner-{info,warn,ok}</code></div>
+      <div class="ds-block-body col">
+        <div class="banner banner-ok">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          <div><div class="banner-title">Success</div><div class="banner-body">Your API key was created. Copy it now — it won't be shown again.</div></div>
+        </div>
+        <div class="banner banner-warn">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4M12 17h.01"/><path d="m10.29 3.86-8.18 14.18A2 2 0 0 0 3.83 21h16.34a2 2 0 0 0 1.72-2.96L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>
+          <div><div class="banner-title">Low balance</div><div class="banner-body">Credits will run out in ~28 days at current rate. Enable auto-refill.</div></div>
+        </div>
+        <div class="banner banner-info">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+          <div><div class="banner-title">New region available</div><div class="banner-body">eu-west-1 is now available. Update your workspace settings to switch.</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ICONS -->
+  <section class="ds-section" id="icons">
+    <header>
+      <div class="section-mono-tag">icons</div>
+      <h2>Icon conventions</h2>
+      <p>All icons are inline SVG, <code class="code">stroke-width: 1.8–2</code>, single-line outline style. Never use emoji as icons.</p>
+    </header>
+    <div class="ds-block">
+      <div class="ds-block-head"><span>library reference</span><code>inline svg · 16–20px · stroke 1.8–2</code></div>
+      <div class="ds-block-body col">
+        <div class="ds-icons">
+          <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 12 12 3l9 9"/><path d="M5 10v10h14V10"/></svg><span>home</span></div>
+          <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4h16v4H4z"/><path d="M4 12h16v4H4z"/><path d="M4 20h10"/></svg><span>logs</span></div>
+          <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="7.5" cy="15.5" r="5.5"/><path d="m21 2-9.6 9.6"/></svg><span>key</span></div>
+          <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M2 10h20"/></svg><span>card</span></div>
+          <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 11a4 4 0 1 0-3-7"/><circle cx="12" cy="14" r="4"/><path d="M8 20a4 4 0 0 1 8 0"/></svg><span>users</span></div>
+          <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg><span>zap</span></div>
+          <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg><span>user</span></div>
+          <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2 4 6v6c0 5 3.5 9.3 8 10 4.5-.7 8-5 8-10V6z"/></svg><span>shield</span></div>
+          <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a14.5 14.5 0 0 0 0 20"/></svg><span>globe</span></div>
+          <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2"/></svg><span>sun</span></div>
+          <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg><span>moon</span></div>
+          <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg><span>copy</span></div>
+          <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg><span>search</span></div>
+          <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg><span>logout</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ANIMATION -->
+  <section class="ds-section" id="animation">
+    <header>
+      <div class="section-mono-tag">animation</div>
+      <h2>Animation</h2>
+      <p>Durations 150–300ms with native easing. Only animate <code class="code">transform</code> and <code class="code">opacity</code>. Always respect <code class="code">prefers-reduced-motion</code>.</p>
+    </header>
+    <div class="ds-block">
+      <div class="ds-block-head"><span>shimmer sweep — 3.4s ease-in-out infinite</span><code>.shimmer-green</code></div>
+      <div class="ds-block-body" style="font-size:38px;font-weight:900;letter-spacing:-.03em;">
+        <span class="shimmer-green">One API. Every Model.</span>
+      </div>
+    </div>
+    <div class="ds-block">
+      <div class="ds-block-head"><span>blink — terminal cursor</span><code>animation: blink 1.2s step-end infinite;</code></div>
+      <div class="ds-block-body" style="font-family:var(--mono);font-size:14px;color:var(--fg);">
+        $ jbridge run<span style="display:inline-block;width:8px;height:16px;background:var(--green);margin-left:4px;border-radius:1px;animation:blink 1.2s step-end infinite;vertical-align:-3px;"></span>
+      </div>
+    </div>
+    <div class="ds-block">
+      <div class="ds-block-head"><span>button lift — transform / shadow</span><code>:hover { transform: translateY(-1px); }</code></div>
+      <div class="ds-block-body">
+        <button class="btn btn-primary">Hover me</button>
+        <button class="btn btn-secondary">Hover me</button>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<script src="../shared/dashboard.js"></script>
+</body>
+</html>

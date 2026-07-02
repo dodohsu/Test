@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>API Keys · JBridge.ai</title>
+<script>(function(){try{var t=localStorage.getItem('jb-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);var l=localStorage.getItem('jb-lang');if(l&&/^(en|zh-TW|zh-CN|ja|ko)$/.test(l))document.documentElement.setAttribute('lang',l);}catch(e){}}());</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared/dashboard.css">
+</head>
+<body>
+
+<header class="topnav">
+  <div class="topnav-inner">
+    <div class="topnav-left">
+      <button class="nav-hamburger" id="hamburger" aria-label="Toggle navigation" aria-expanded="false"><span></span><span></span><span></span></button>
+      <a href="../../proposal-terminal-pro-v2.html" class="logo" aria-label="JBridge home">
+        <span class="logo-mark">J</span>
+        <span class="logo-wordmark">JBridge<span class="logo-ai">.ai</span></span>
+      </a>
+      <div class="topnav-crumb" aria-label="Breadcrumb">
+        <span>~/</span><span class="sep">›</span><span>settings</span><span class="sep">›</span><span class="cur">api-keys</span>
+      </div>
+    </div>
+    <div class="topnav-right">
+      <span class="env-pill">production</span>
+      <a href="https://staging.jbridge.ai/docs" class="btn btn-ghost btn-sm" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        <span data-i18n="topnav.docs">Docs</span>
+      </a>
+      <button class="user-chip" aria-label="Account menu">
+        <span class="user-avatar">KK</span>
+        <span class="user-name">kk@jbridge.ai</span>
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<aside class="sidebar" id="sidebar" aria-label="Primary navigation">
+  <div class="side-group-label" data-i18n="nav.group.workspace">Workspace</div>
+  <a href="../dashboard/index.html" class="side-link">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 12 12 3l9 9"/><path d="M5 10v10h14V10"/></svg>
+    <span data-i18n="nav.overview">Overview</span>
+  </a>
+  <a href="../logs/index.html" class="side-link">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 4h16v4H4z"/><path d="M4 12h16v4H4z"/><path d="M4 20h10"/></svg>
+    <span data-i18n="nav.logs">Logs</span>
+  </a>
+  <a href="../api-keys/index.html" class="side-link active" aria-current="page">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="7.5" cy="15.5" r="5.5"/><path d="m21 2-9.6 9.6"/><path d="m15.5 7.5 2.3 2.3a1 1 0 0 0 1.4 0l2.1-2.1a1 1 0 0 0 0-1.4L19 4"/></svg>
+    <span data-i18n="nav.api_keys">API Keys</span>
+  </a>
+  <a href="../credits/index.html" class="side-link">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M2 10h20"/><path d="M6 14h4"/></svg>
+    <span data-i18n="nav.credits">Credits</span>
+  </a>
+  <a href="../referral/index.html" class="side-link">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M17 11a4 4 0 1 0-3-7"/><path d="M3 11a4 4 0 1 1 3-7"/><circle cx="12" cy="14" r="4"/><path d="M8 20a4 4 0 0 1 8 0"/></svg>
+    <span data-i18n="nav.referral">Referral</span>
+  </a>
+
+  <div class="side-group-label" data-i18n="nav.group.get_started">Get started</div>
+  <a href="../quickstart/index.html" class="side-link">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+    <span data-i18n="nav.quickstart">Quickstart</span>
+  </a>
+
+  <div class="side-group-label" data-i18n="nav.group.settings">Settings</div>
+  <a href="../settings/account/index.html" class="side-link">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>
+    <span data-i18n="nav.account">Account</span>
+  </a>
+  <a href="../settings/security/index.html" class="side-link">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 2 4 6v6c0 5 3.5 9.3 8 10 4.5-.7 8-5 8-10V6z"/></svg>
+    <span data-i18n="nav.security">Security</span>
+  </a>
+
+  <div class="side-footer">
+    <div class="side-actions" role="group" aria-label="Account actions">
+      <button type="button" class="side-action" data-theme-toggle aria-label="Toggle light or dark theme" aria-pressed="false">
+        <svg class="side-ic ic-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+        <svg class="side-ic ic-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        <span class="side-action-label" data-theme-label>淺色</span>
+      </button>
+      <div class="side-lang-wrap">
+        <button type="button" class="side-action" data-lang-toggle aria-haspopup="listbox" aria-expanded="false" aria-label="Switch language">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/></svg>
+          <span class="side-action-label" data-lang-label>English</span>
+          <svg class="side-action-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 15 6-6 6 6"/></svg>
+        </button>
+        <ul class="side-lang-menu" role="listbox" aria-label="Language" hidden>
+          <li role="option" data-lang="en" aria-selected="true"><svg class="side-lang-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span class="side-lang-name">English</span><span class="side-lang-tag">EN</span></li>
+          <li role="option" data-lang="zh-TW"><svg class="side-lang-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span class="side-lang-name">繁體中文</span><span class="side-lang-tag">ZH-TW</span></li>
+          <li role="option" data-lang="zh-CN"><svg class="side-lang-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span class="side-lang-name">简体中文</span><span class="side-lang-tag">ZH-CN</span></li>
+          <li role="option" data-lang="ja"><svg class="side-lang-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span class="side-lang-name">日本語</span><span class="side-lang-tag">JA</span></li>
+          <li role="option" data-lang="ko"><svg class="side-lang-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span class="side-lang-name">한국어</span><span class="side-lang-tag">KO</span></li>
+        </ul>
+      </div>
+      <a href="../../proposal-terminal-pro-v2.html" class="side-action" aria-label="Home">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m3 12 9-9 9 9"/><path d="M5 10v10h14V10"/></svg>
+        <span class="side-action-label" data-i18n="side.home">首頁</span>
+      </a>
+      <button type="button" class="side-action danger" data-logout aria-label="Sign out">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>
+        <span class="side-action-label" data-i18n="side.logout">登出</span>
+      </button>
+    </div>
+    <div class="side-status">
+      <span class="status-dot"></span> <span data-i18n="side.status.ok">all systems operational</span> · <span class="dim">ap-northeast-1</span>
+    </div>
+  </div>
+</aside>
+<div class="sidebar-backdrop" id="sidebarBackdrop" aria-hidden="true"></div>
+
+<main class="app-main">
+  <div class="app-content">
+
+    <div class="page-head">
+      <div class="page-head-text">
+        <div class="section-mono-tag">api-keys</div>
+        <h1 class="page-title" data-i18n="page.api_keys.title">API keys</h1>
+        <p class="page-sub" data-i18n="page.api_keys.sub">Authenticate requests to the JBridge gateway. Store keys securely — they are shown in full only once at creation.</p>
+      </div>
+      <div class="page-actions">
+        <button class="btn btn-primary">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+          Create new key
+        </button>
+      </div>
+    </div>
+
+    <!-- Newly created key banner -->
+    <div class="banner banner-ok" role="status">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+      <div style="flex:1;min-width:0;">
+        <div class="banner-title">New key created — copy it now</div>
+        <div class="banner-body">For security, we won't show it again. Store it in your secret manager.</div>
+        <div class="hstack" style="margin-top:10px;background:var(--bg-input);border:1px solid var(--border-hi);border-radius:var(--radius);padding:8px 10px;">
+          <code id="newKey" class="mono fg" style="flex:1;overflow-x:auto;font-size:13px;letter-spacing:.02em;" data-real="sk-jb-prod-x9k2mNvA7tQwLpE3fR8uZ1cYhBdGsK4j" data-mask="••••••••••••••••••••••••••••••••••••" data-hidden="false">sk-jb-prod-x9k2mNvA7tQwLpE3fR8uZ1cYhBdGsK4j</code>
+          <button class="btn btn-icon btn-ghost" data-toggle-secret="#newKey" aria-label="Toggle key visibility">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s4-8 10-8 10 8 10 8-4 8-10 8S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+          <button class="btn btn-secondary btn-sm" data-copy="sk-jb-prod-x9k2mNvA7tQwLpE3fR8uZ1cYhBdGsK4j" aria-label="Copy API key">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            Copy
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="kpi-grid">
+      <div class="kpi">
+        <div class="kpi-label"><span class="lk">//</span> active keys</div>
+        <div class="kpi-value">3</div>
+        <div class="kpi-delta flat">of 10 limit</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label"><span class="lk">//</span> revoked</div>
+        <div class="kpi-value">1</div>
+        <div class="kpi-delta flat">past 30 days</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label"><span class="lk">//</span> requests · key</div>
+        <div class="kpi-value">428<span class="unit">/24h</span></div>
+        <div class="kpi-delta up">+12%</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label"><span class="lk">//</span> rate limit</div>
+        <div class="kpi-value">10k<span class="unit">/min</span></div>
+        <div class="kpi-delta flat">workspace default</div>
+      </div>
+    </div>
+
+    <!-- Keys table -->
+    <div class="card">
+      <div class="card-head">
+        <div class="card-head-title"><span class="dot"></span> Your keys</div>
+        <span class="card-head-sub">~/.jbridge/keys.json</span>
+      </div>
+      <div class="card-body card-body--flush">
+        <div class="tbl-wrap">
+          <table class="tbl">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Prefix</th>
+                <th>Models</th>
+                <th>Rate limit</th>
+                <th>Created</th>
+                <th>Last used</th>
+                <th>Status</th>
+                <th class="r">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="fg mono-strong">production-server</td>
+                <td>sk-jb-prod-•••a3f</td>
+                <td>
+                  <span class="pill pill-muted"><span class="pdot"></span>all models</span>
+                </td>
+                <td>10k / min</td>
+                <td>2026-03-12</td>
+                <td>12 sec ago</td>
+                <td><span class="pill pill-ok"><span class="pdot"></span>active</span></td>
+                <td class="r">
+                  <div class="hstack" style="justify-content:flex-end;gap:4px;">
+                    <button class="btn btn-ghost btn-sm" aria-label="Edit production-server">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                    </button>
+                    <button class="btn btn-danger btn-sm">Revoke</button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td class="fg mono-strong">staging-ci</td>
+                <td>sk-jb-stg-•••b7c</td>
+                <td>
+                  <span class="pill pill-info"><span class="pdot"></span>3 models</span>
+                </td>
+                <td>2k / min</td>
+                <td>2026-04-02</td>
+                <td>3 hr ago</td>
+                <td><span class="pill pill-ok"><span class="pdot"></span>active</span></td>
+                <td class="r">
+                  <div class="hstack" style="justify-content:flex-end;gap:4px;">
+                    <button class="btn btn-ghost btn-sm" aria-label="Edit staging-ci">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                    </button>
+                    <button class="btn btn-danger btn-sm">Revoke</button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td class="fg mono-strong">dev-local</td>
+                <td>sk-jb-dev-•••e1d</td>
+                <td>
+                  <span class="pill pill-warn"><span class="pdot"></span>cheap only</span>
+                </td>
+                <td>500 / min</td>
+                <td>2026-05-08</td>
+                <td>2 days ago</td>
+                <td><span class="pill pill-ok"><span class="pdot"></span>active</span></td>
+                <td class="r">
+                  <div class="hstack" style="justify-content:flex-end;gap:4px;">
+                    <button class="btn btn-ghost btn-sm" aria-label="Edit dev-local">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                    </button>
+                    <button class="btn btn-danger btn-sm">Revoke</button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td class="fg mono-strong">old-prototype</td>
+                <td>sk-jb-prod-•••c0d</td>
+                <td><span class="pill pill-muted"><span class="pdot"></span>—</span></td>
+                <td>—</td>
+                <td>2025-12-01</td>
+                <td>21 days ago</td>
+                <td><span class="pill pill-err"><span class="pdot"></span>revoked</span></td>
+                <td class="r">
+                  <button class="btn btn-ghost btn-sm" disabled>—</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Usage tip terminal -->
+    <div class="terminal" style="margin-top:20px;">
+      <div class="terminal-bar">
+        <div class="terminal-dots"><span class="r"></span><span class="y"></span><span class="g"></span></div>
+        <span class="terminal-title">authenticate.sh — example</span>
+        <div class="terminal-bar-actions">
+          <button class="btn btn-ghost btn-sm" data-copy='curl -X POST https://api.jbridge.ai/v1/chat/completions \
+  -H "Authorization: Bearer $JBRIDGE_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d "{\"model\":\"gpt-5.4\",\"messages\":[{\"role\":\"user\",\"content\":\"Hello!\"}]}"' aria-label="Copy example">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            Copy
+          </button>
+        </div>
+      </div>
+      <div class="terminal-body">
+        <span><span class="t-prompt">❯</span> export JBRIDGE_API_KEY=<span class="t-str">"sk-jb-prod-•••a3f"</span></span>
+        <span class="t-newline"></span>
+        <span><span class="t-prompt">❯</span> curl <span class="t-flag">-X POST</span> https://api.jbridge.ai/v1/chat/completions \</span>
+        <span>   <span class="t-flag">-H</span> <span class="t-str">"Authorization: Bearer $JBRIDGE_API_KEY"</span> \</span>
+        <span>   <span class="t-flag">-H</span> <span class="t-str">"Content-Type: application/json"</span> \</span>
+        <span>   <span class="t-flag">-d</span> <span class="t-str">'{"model":"gpt-5.4","messages":[{"role":"user","content":"Hello!"}]}'</span></span>
+        <span class="t-newline"></span>
+        <span class="t-output"><span class="ok">✓</span> 200 OK · <span class="info">model=gpt-5.4</span> · <span class="info">tokens=42</span> · <span class="info">latency=312ms</span></span>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<script src="../shared/dashboard.js"></script>
+</body>
+</html>
